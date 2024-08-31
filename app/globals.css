@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import slick-carousel styles */
+@import "~slick-carousel/slick/slick.css";
+@import "~slick-carousel/slick/slick-theme.css";
+
+
 /* :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
@@ -31,6 +36,16 @@ body {
   text-shadow: 0 0 5px #ff0000, 0 0 10px #ff0000, 0 0 15px #ff0000, 0 0 20px #ff0000, 0 0 25px #ff0000, 0 0 30px #ff0000, 0 0 35px #ff0000;
 }
 
+/* Add this to your global CSS or a relevant stylesheet */
+.icon-slide {
+  display: inline-block;
+  transition: transform 2s ease-in-out;
+}
+
+/* Add a hover effect to show the animation */
+.icon-slide:hover {
+  transform: scale(1.1); /* Slightly enlarges the icon on hover */
+}
 
 /* @layer utilities {
   .text-balance {
