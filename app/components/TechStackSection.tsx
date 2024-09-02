@@ -15,13 +15,14 @@ import "../../app/globals.css";
 
 // Slider settings
 const sliderSettings = {
-  dots: true,
+  dots: false,
   infinite: true,
   speed: 2000,
   slidesToShow: 3,
-  slidesToScroll: 1,
+  slidesToScroll: 3,
   autoplay: true,
-  autoplaySpeed: 10,
+  autoplaySpeed: 0,
+  cssEase: "linear",
   pauseOnHover: true,
   arrows: false,
   responsive: [

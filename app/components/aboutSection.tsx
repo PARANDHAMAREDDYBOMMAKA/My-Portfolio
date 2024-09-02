@@ -29,7 +29,7 @@ const AboutSection: React.FC = () => (
           </div>
         </div>
       </div>
-      <div className="text-center md:text-left">
+      <div className="text-center text-xl md:text-left">
         <p>
           Hello, I'm <strong>Parandhama Reddy</strong>, born on 7th May 2006.
           I'm proud to be an Indian, and currently, I am single. I am proficient

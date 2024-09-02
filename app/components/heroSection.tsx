@@ -9,7 +9,7 @@ const HeroSection: React.FC = () => {
       className="flex flex-col items-center justify-center h-screen bg-gradient-to-b from-blue-900 via-purple-800 to-indigo-700 text-white text-center"
     >
       <div className="flex flex-col items-center mb-8">
-        <h1 className="text-5xl font-extrabold mb-4">
+        <h1 className="text-5xl font-extrabold mb-4  animate-pulse">
           {Array.from("Code. Create. Innovate: A Showcase of My Work").map(
             (char, index) => (
               <span
