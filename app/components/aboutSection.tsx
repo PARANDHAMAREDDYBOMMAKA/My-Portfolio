@@ -31,10 +31,7 @@ const AboutSection: React.FC = () => (
       </div>
       <div className="text-center text-xl md:text-left">
         <p>
-          Hello, I'm <strong>Parandhama Reddy</strong>, born on 7th May 2006.
-          I'm proud to be an Indian, and currently, I am single. I am proficient
-          in English, Hindi, and Telugu. You can reach out to me via email at{" "}
-          <a href="mailto:rparandhama63@gmail.com">rparandhama63@gmail.com</a>.
+          Hello, I'm <strong>Parandhama Reddy</strong>, I am a Full-Stack web developer and I am proficient in English, Hindi, and Telugu.
         </p>
 
         <p>
@@ -43,7 +40,7 @@ const AboutSection: React.FC = () => (
           journey was completed at Allen Career Institute, where I graduated in
           2023.
         </p>
-
+        <br />
         <p>
           My technical expertise spans across several programming languages,
           including Python, HTML, CSS, and JavaScript. I have substantial
@@ -51,7 +48,7 @@ const AboutSection: React.FC = () => (
           development tools such as Tailwind CSS and Chakra UI. Additionally, I
           have a good understanding of database management.
         </p>
-
+        <br />
         <p>Outside of work, I enjoy Playing Badminton and Travelling.</p>
       </div>
     </div>
