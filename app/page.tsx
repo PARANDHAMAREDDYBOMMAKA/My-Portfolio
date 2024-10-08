@@ -5,16 +5,19 @@ import ProjectsSection from "./components/projectsSection";
 import ContactSection from "./components/ContactSection";
 import Footer from "./components/footer";
 import TechStacksSection from "./components/TechStackSection";
+import React from "react";
 
 const Home: React.FC = () => (
   <>
-    <Header />
-    <HeroSection />
-    <AboutSection />
-    <TechStacksSection />
-    <ProjectsSection />
-    <ContactSection />
-    <Footer />
+    <div className="p-0 m-0">
+      <Header />
+      <HeroSection />
+      <AboutSection />
+      <TechStacksSection />
+      <ProjectsSection />
+      <ContactSection />
+      <Footer />
+    </div>
   </>
 );
 
