@@ -9,13 +9,13 @@ const AboutSection: React.FC = () => (
     <div className="flex flex-col md:flex-row items-center">
       <div className="flex-shrink-0 mb-6 md:mb-0 md:mr-8 relative">
         <div className="relative group w-[400px] h-[450px] rounded-[100px_15px_100px_10px] overflow-hidden shadow-lg before:content-[''] before:absolute before:bottom-[-20px] before:left-[50px] before:w-[40px] before:h-[40px] before:bg-gradient-to-b from-blue-900 via-purple-800 to-indigo-700 before:clip-path-polygon-[50%_0%,_0%_100%,_100%_100%]">
-          <div className="absolute top-[-10px] left-[-10px] w-[calc(100%+5px)] h-[calc(100%+5px)] rounded-[100px_15px_100px_10px] overflow-x-auto overflow-clip ">
+          <div className="absolute top-[-10px] left-[-10px] w-[calc(100%+5px)] h-[calc(100%+5px)] rounded-[100px_15px_100px_15px] overflow-x-auto overflow-clip ">
             <Image
               src="/photo.jpeg"
               alt="Profile Picture"
               fill
               priority
-              sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              sizes="(max-width: 768px) 100vw, (max-width: 1080px) 50vw, 33vw"
               className="object-cover transition-transform transform group-hover:scale-110"
             />
           </div>
