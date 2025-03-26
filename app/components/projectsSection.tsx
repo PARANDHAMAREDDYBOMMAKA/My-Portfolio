@@ -1,14 +1,32 @@
 "use client";
-
 import { motion } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useInView } from "framer-motion";
 import ProjectCard from "./projectCard";
 import { projects } from "../utils/data";
 
+interface Particle {
+  x: number;
+  y: number;
+}
+
 const ProjectsSection: React.FC = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
+  const [particles, setParticles] = useState<Particle[]>([]);
+
+  useEffect(() => {
+    // Only run in the browser
+    const particleCount = 50;
+    const newParticles: Particle[] = Array.from(
+      { length: particleCount },
+      () => ({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+      })
+    );
+    setParticles(newParticles);
+  }, []);
 
   return (
     <motion.section
@@ -21,13 +39,13 @@ const ProjectsSection: React.FC = () => {
     >
       {/* Background particle effect */}
       <div className="absolute inset-0 pointer-events-none">
-        {[...Array(50)].map((_, i) => (
+        {particles.map((particle, i) => (
           <motion.div
             key={i}
             initial={{
               opacity: 0,
-              x: Math.random() * window.innerWidth,
-              y: Math.random() * window.innerHeight,
+              x: particle.x,
+              y: particle.y,
             }}
             animate={{
               opacity: [0, 1, 0],

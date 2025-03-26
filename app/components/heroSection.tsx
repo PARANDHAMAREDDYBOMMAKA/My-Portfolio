@@ -115,7 +115,7 @@ const HeroSection: React.FC = () => {
           transition={{ delay: 0.5, type: "tween" }}
           className="text-2xl mb-6 text-gray-300 max-w-2xl mx-auto"
         >
-          Hi! I'm Parandhama Reddy, a Full Stack Developer passionate about
+          Hi! I&apos;m Parandhama Reddy, a Full Stack Developer passionate about
           transforming ideas into digital realities.
         </motion.p>
         <motion.div
