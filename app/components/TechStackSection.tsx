@@ -1,124 +1,246 @@
-"use client"; // Ensure this component is treated as a client component
+"use client";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React, { useRef, useState } from "react";
+import { motion } from "framer-motion";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import * as THREE from "three";
+import { OrbitControls } from "@react-three/drei";
 import {
   faReact,
   faNodeJs,
   faPython,
   faJs,
-  faJava,
+  faHtml5,
+  faCss3Alt,
+  faGitAlt,
 } from "@fortawesome/free-brands-svg-icons";
-import { faHtml5, faCss3Alt } from "@fortawesome/free-brands-svg-icons";
-import { SiTailwindcss, SiChakraui, SiExpress } from "react-icons/si";
-import Slider from "react-slick";
-import "../../app/globals.css";
+import {
+  SiTailwindcss,
+  SiChakraui,
+  SiMongodb,
+  SiTypescript,
+  SiNextdotjs,
+} from "react-icons/si";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 
-// Slider settings
-const sliderSettings = {
-  dots: false,
-  infinite: true,
-  speed: 5000,
-  slidesToShow: 3,
-  slidesToScroll: 1,
-  autoplay: true,
-  autoplaySpeed: 1,
-  cssEase: "linear",
-  pauseOnHover: true,
-  arrows: false,
-  responsive: [
-    {
-      breakpoint: 1024,
-      settings: {
-        slidesToShow: 2,
-        slidesToScroll: 1,
-      },
-    },
-    {
-      breakpoint: 600,
-      settings: {
-        slidesToShow: 1,
-        slidesToScroll: 1,
-      },
-    },
-  ],
+// 3D Tech Stack Visualization
+const TechStackBackground = () => {
+  const groupRef = useRef<THREE.Group>(null);
+  const { viewport } = useThree();
+
+  useFrame(({ clock, mouse }) => {
+    if (groupRef.current) {
+      const time = clock.getElapsedTime();
+
+      // Dynamic rotation and floating
+      groupRef.current.rotation.x = Math.sin(time * 0.2) * 0.1;
+      groupRef.current.rotation.y = Math.cos(time * 0.3) * 0.1;
+
+      // Subtle mouse interaction
+      groupRef.current.position.x = THREE.MathUtils.lerp(
+        groupRef.current.position.x,
+        (mouse.x * viewport.width) / 10,
+        0.05
+      );
+      groupRef.current.position.y = THREE.MathUtils.lerp(
+        groupRef.current.position.y,
+        (mouse.y * viewport.height) / 10,
+        0.05
+      );
+    }
+  });
+
+  return (
+    <group ref={groupRef}>
+      {[...Array(20)].map((_, i) => (
+        <mesh
+          key={i}
+          position={[
+            Math.random() * 10 - 5,
+            Math.random() * 10 - 5,
+            Math.random() * -10,
+          ]}
+          rotation={[
+            Math.random() * Math.PI,
+            Math.random() * Math.PI,
+            Math.random() * Math.PI,
+          ]}
+        >
+          <octahedronGeometry args={[0.5, 0]} />
+          <meshStandardMaterial
+            color={`hsl(${Math.random() * 360}, 50%, 50%)`}
+            opacity={0.3}
+            transparent
+          />
+        </mesh>
+      ))}
+    </group>
+  );
 };
 
-const TechStacksSection: React.FC = () => (
-  <section id="techstacks" className="py-20 px-10 bg-black text-white">
-    <h2 className="text-4xl font-bold text-center mb-6">
-      Tech Stacks I’m Familiar With
-    </h2>
-    <div className="relative cursor-pointer">
-      <Slider {...sliderSettings}>
-        {[
-          {
-            icon: <FontAwesomeIcon icon={faReact} />,
-            color: "text-blue-400",
-            label: "React",
-          },
-          {
-            icon: <FontAwesomeIcon icon={faNodeJs} />,
-            color: "text-green-400",
-            label: "Node.js",
-          },
-          {
-            icon: <FontAwesomeIcon icon={faPython} />,
-            color: "text-yellow-400",
-            label: "Python",
-          },
-          {
-            icon: <FontAwesomeIcon icon={faJs} />,
-            color: "text-yellow-500",
-            label: "JavaScript",
-          },
-          {
-            icon: <FontAwesomeIcon icon={faJava} />,
-            color: "text-red-500",
-            label: "Java",
-          },
-          {
-            icon: <FontAwesomeIcon icon={faHtml5} />,
-            color: "text-red-600",
-            label: "HTML",
-          },
-          {
-            icon: <FontAwesomeIcon icon={faCss3Alt} />,
-            color: "text-blue-600",
-            label: "CSS",
-          },
-          {
-            icon: <SiTailwindcss className="text-5xl" />,
-            color: "text-blue-500",
-            label: "Tailwind CSS",
-          },
-          {
-            icon: <SiChakraui className="text-5xl" />,
-            color: "text-teal-500",
-            label: "Chakra UI",
-          },
-          {
-            icon: <SiExpress className="text-5xl" />,
-            color: "text-gray-600",
-            label: "Express",
-          },
-        ].map(({ icon, color, label }, index) => (
-          <div key={index} className="flex justify-center items-center p-4">
-            <div className="relative rounded-lg shadow-lg p-4">
-              <div
-                className={`absolute text-[80px] mb-12 top-0 left-0 right-0 bottom-0 flex justify-center items-center ${color}`}
-              >
-                {icon}
+const TechStacksSection: React.FC = () => {
+  const [activeCategory, setActiveCategory] = useState("All");
+  const [hoveredTech, setHoveredTech] = useState<string | null>(null);
+
+  const techStacks = [
+    {
+      category: "Frontend",
+      technologies: [
+        {
+          name: "React",
+          icon: faReact,
+          color: "text-blue-400",
+          proficiency: 90,
+        },
+        {
+          name: "Next.js",
+          icon: faReact as IconDefinition,
+          color: "text-white",
+          proficiency: 85,
+        },
+        {
+          name: "Tailwind CSS",
+          icon: faReact as IconDefinition,
+          color: "text-blue-500",
+          proficiency: 80,
+        },
+      ],
+    },
+    {
+      category: "Backend",
+      technologies: [
+        {
+          name: "Node.js",
+          icon: faNodeJs,
+          color: "text-green-400",
+          proficiency: 85,
+        },
+        {
+          name: "Python",
+          icon: faPython,
+          color: "text-blue-600",
+          proficiency: 90,
+        },
+        {
+          name: "MongoDB",
+          icon: faReact as IconDefinition,
+          color: "text-green-600",
+          proficiency: 75,
+        },
+      ],
+    },
+    {
+      category: "Languages",
+      technologies: [
+        {
+          name: "JavaScript",
+          icon: faJs,
+          color: "text-yellow-400",
+          proficiency: 90,
+        },
+        {
+          name: "TypeScript",
+          icon: faReact as IconDefinition,
+          color: "text-blue-500",
+          proficiency: 80,
+        },
+      ],
+    },
+  ];
+
+  const filteredTechs =
+    activeCategory === "All"
+      ? techStacks.flatMap((category) => category.technologies)
+      : techStacks.find((cat) => cat.category === activeCategory)
+          ?.technologies || [];
+
+  return (
+    <motion.section
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      transition={{ duration: 0.6 }}
+      className="min-h-screen bg-gradient-to-br from-black via-indigo-900 to-purple-900 text-white relative overflow-hidden py-20 px-10"
+    >
+      {/* 3D Background */}
+      <div className="absolute inset-0 z-0">
+        <Canvas
+          camera={{ position: [0, 0, 5] }}
+          style={{ width: "100%", height: "100%", position: "absolute" }}
+        >
+          <ambientLight intensity={0.5} />
+          <pointLight position={[10, 10, 10]} />
+          <TechStackBackground />
+          <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={0.2} />
+        </Canvas>
+      </div>
+
+      <div className="container mx-auto relative z-10">
+        <h2 className="text-5xl font-bold text-center mb-12 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
+          Technology Landscape
+        </h2>
+
+        {/* Category Filters */}
+        <div className="flex justify-center mb-12 space-x-4">
+          {["All", ...techStacks.map((cat) => cat.category)].map((category) => (
+            <motion.button
+              key={category}
+              onClick={() => setActiveCategory(category)}
+              className={`
+                px-6 py-2 rounded-full transition-all duration-300
+                ${
+                  activeCategory === category
+                    ? "bg-purple-600 text-white"
+                    : "bg-white/10 text-white hover:bg-white/20"
+                }
+              `}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              {category}
+            </motion.button>
+          ))}
+        </div>
+
+        {/* Tech Grid */}
+        <div className="grid md:grid-cols-4 gap-8">
+          {filteredTechs.map((tech) => (
+            <motion.div
+              key={tech.name}
+              className="bg-white/10 backdrop-blur-md rounded-xl p-6 text-center relative overflow-hidden"
+              onHoverStart={() => setHoveredTech(tech.name)}
+              onHoverEnd={() => setHoveredTech(null)}
+              whileHover={{ scale: 1.05 }}
+            >
+              <div className="relative z-10">
+                <FontAwesomeIcon
+                  icon={tech.icon}
+                  className={`text-6xl mx-auto mb-4 ${tech.color}`}
+                />
+                <h3 className="text-xl font-bold mb-2">{tech.name}</h3>
+
+                {hoveredTech === tech.name && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mt-4"
+                  >
+                    <div className="w-full bg-purple-200 rounded-full h-2.5 dark:bg-purple-700 mb-2">
+                      <div
+                        className="bg-purple-600 h-2.5 rounded-full"
+                        style={{ width: `${tech.proficiency}%` }}
+                      ></div>
+                    </div>
+                    <p className="text-sm">Proficiency: {tech.proficiency}%</p>
+                  </motion.div>
+                )}
               </div>
-              <br />
-              <div className="mt-16 text-center">
-                <span className="text-xl">{label}</span>
-              </div>
-            </div>
-          </div>
-        ))}
-      </Slider>
-    </div>
-  </section>
-);
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </motion.section>
+  );
+};
 
 export default TechStacksSection;

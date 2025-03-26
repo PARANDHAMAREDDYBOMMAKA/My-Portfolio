@@ -1,60 +1,182 @@
-/* eslint-disable react/no-unescaped-entities */
-import Image from "next/image";
+"use client";
 
-const AboutSection: React.FC = () => (
-  <section
-    id="about"
-    className="py-20 px-10 bg-gradient-to-b from-blue-900 via-purple-800 to-indigo-700"
-  >
-    <div className="flex flex-col md:flex-row items-center">
-      <div className="flex-shrink-0 mb-6 md:mb-0 md:mr-8 relative">
-        <div className="relative group w-[400px] h-[450px] rounded-[100px_15px_100px_10px] overflow-hidden shadow-lg before:content-[''] before:absolute before:bottom-[-20px] before:left-[50px] before:w-[40px] before:h-[40px] before:bg-gradient-to-b from-blue-900 via-purple-800 to-indigo-700 before:clip-path-polygon-[50%_0%,_0%_100%,_100%_100%]">
-          <div className="absolute top-[-10px] left-[-10px] w-[calc(100%+5px)] h-[calc(100%+5px)] rounded-[100px_15px_100px_15px] overflow-x-auto overflow-clip ">
+import Image from "next/image";
+import { motion } from "framer-motion";
+import React, { useRef, useState } from "react";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import * as THREE from "three";
+import { OrbitControls } from "@react-three/drei";
+
+// 3D Floating Icons Component
+const FloatingIcons = () => {
+  const groupRef = useRef<THREE.Group>(null);
+  const { viewport } = useThree();
+
+  useFrame(({ clock, mouse }) => {
+    if (groupRef.current) {
+      const time = clock.getElapsedTime();
+      groupRef.current.rotation.y = Math.sin(time * 0.5) * 0.2;
+      groupRef.current.rotation.x = Math.cos(time * 0.3) * 0.1;
+
+      // Subtle mouse interaction
+      groupRef.current.position.x = THREE.MathUtils.lerp(
+        groupRef.current.position.x,
+        (mouse.x * viewport.width) / 10,
+        0.05
+      );
+      groupRef.current.position.y = THREE.MathUtils.lerp(
+        groupRef.current.position.y,
+        (mouse.y * viewport.height) / 10,
+        0.05
+      );
+    }
+  });
+
+  return (
+    <group ref={groupRef}>
+      {/* Code, Laptop, and Brain icons as 3D shapes */}
+      <mesh position={[-2, 1, 0]}>
+        <boxGeometry args={[1, 1, 1]} />
+        <meshStandardMaterial color="#4a90e2" />
+      </mesh>
+      <mesh position={[0, -1, 0]}>
+        <cylinderGeometry args={[0.7, 0.7, 1, 32]} />
+        <meshStandardMaterial color="#9b59b6" />
+      </mesh>
+      <mesh position={[2, 1, 0]}>
+        <sphereGeometry args={[0.8, 32, 32]} />
+        <meshStandardMaterial color="#2ecc71" />
+      </mesh>
+    </group>
+  );
+};
+
+const AboutSection: React.FC = () => {
+  const [activeSkill, setActiveSkill] = useState<string | null>(null);
+
+  const skillCategories = [
+    {
+      name: "Programming",
+      skills: [
+        { name: "Python", level: 90 },
+        { name: "JavaScript", level: 85 },
+        { name: "TypeScript", level: 75 },
+      ],
+    },
+    {
+      name: "Web Technologies",
+      skills: [
+        { name: "React", level: 90 },
+        { name: "Node.js", level: 80 },
+        { name: "Express.js", level: 75 },
+      ],
+    },
+    {
+      name: "Design & Tools",
+      skills: [
+        { name: "Tailwind CSS", level: 85 },
+        { name: "MongoDB", level: 70 },
+        { name: "Git", level: 80 },
+      ],
+    },
+  ];
+
+  return (
+    <motion.section
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      transition={{ duration: 0.6 }}
+      className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-black text-white relative overflow-hidden py-20 px-10"
+    >
+      {/* 3D Background Canvas */}
+      <div className="absolute inset-0 z-0">
+        <Canvas
+          camera={{ position: [0, 0, 5] }}
+          style={{ width: "100%", height: "100%", position: "absolute" }}
+        >
+          <ambientLight intensity={0.5} />
+          <pointLight position={[10, 10, 10]} />
+          <FloatingIcons />
+          <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={0.5} />
+        </Canvas>
+      </div>
+
+      <div className="container mx-auto relative z-10 grid md:grid-cols-2 gap-12 items-center">
+        {/* Profile Image */}
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          whileInView={{ scale: 1, opacity: 1 }}
+          className="flex justify-center"
+        >
+          <div className="relative w-80 h-80 rounded-full overflow-hidden border-4 border-purple-500 shadow-2xl">
             <Image
               src="/photo.jpeg"
-              alt="Profile Picture"
-              fill
-              priority
-              sizes="(max-width: 768px) 100vw, (max-width: 1080px) 50vw, 33vw"
-              className="object-cover transition-transform transform group-hover:scale-110"
+              alt="Parandhama Reddy"
+              layout="fill"
+              objectFit="cover"
+              className="transform hover:scale-110 transition-transform duration-300"
             />
           </div>
-          <div className="absolute inset-0 flex items-end justify-start opacity-0 group-hover:opacity-100 transition-opacity">
-            <p className="text-sm font-regular bg-black text-opacity-5 bg-opacity-60 px-2 py-1 rounded-lg">
-              Full Stack <br />
-              Developer
-              <br />
-              <span className="text-white">
-                <strong>Parandhama Reddy</strong>
-              </span>
+        </motion.div>
+
+        {/* About Content */}
+        <motion.div
+          initial={{ x: 50, opacity: 0 }}
+          whileInView={{ x: 0, opacity: 1 }}
+          className="space-y-6"
+        >
+          <h2 className="text-5xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
+            Parandhama Reddy
+          </h2>
+
+          <div className="bg-white/10 backdrop-blur-md p-6 rounded-xl">
+            <p className="mb-4">
+              A passionate Full Stack Developer with a keen interest in
+              transforming innovative ideas into digital realities. I blend
+              technical expertise with creative problem-solving to build
+              impactful web solutions.
             </p>
           </div>
-        </div>
-      </div>
-      <div className="text-center text-xl md:text-left">
-        <p>
-          Hello, I'm <strong>Parandhama Reddy</strong>, I am a Full-Stack web developer and I am proficient in English, Hindi, and Telugu.
-        </p>
 
-        <p>
-          I am currently pursuing my B.Tech at Apollo University, integrated
-          with Kalvium, with an expected graduation in 2027. My high school
-          journey was completed at Allen Career Institute, where I graduated in
-          2023.
-        </p>
-        <br />
-        <p>
-          My technical expertise spans across several programming languages,
-          including Python, HTML, CSS, and JavaScript. I have substantial
-          experience with the MERN stack, and I am also proficient in web
-          development tools such as Tailwind CSS and Chakra UI. Additionally, I
-          have a good understanding of database management.
-        </p>
-        <br />
-        <p>Outside of work, I enjoy Playing Badminton and Travelling.</p>
+          {/* Skill Categories */}
+          <div>
+            <h3 className="text-2xl font-semibold mb-4">Skill Landscape</h3>
+            {skillCategories.map((category) => (
+              <div key={category.name} className="mb-6">
+                <h4 className="text-xl font-medium mb-2">{category.name}</h4>
+                <div className="space-y-2">
+                  {category.skills.map((skill) => (
+                    <div
+                      key={skill.name}
+                      className="flex items-center space-x-3"
+                      onMouseEnter={() => setActiveSkill(skill.name)}
+                      onMouseLeave={() => setActiveSkill(null)}
+                    >
+                      <div
+                        className={`h-2 bg-purple-500 rounded-full transition-all duration-300 ${
+                          activeSkill === skill.name ? "w-full" : "w-1/2"
+                        }`}
+                        style={{ width: `${skill.level}%` }}
+                      />
+                      <span
+                        className={`transition-all duration-300 ${
+                          activeSkill === skill.name
+                            ? "text-white font-bold"
+                            : "text-gray-400"
+                        }`}
+                      >
+                        {skill.name}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
       </div>
-    </div>
-  </section>
-);
+    </motion.section>
+  );
+};
 
 export default AboutSection;

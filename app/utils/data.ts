@@ -1,5 +1,6 @@
 // utils/data.ts
 export interface Project {
+  [x: string]: any;
   id: number;
   title: string;
   description: string;
