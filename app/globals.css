@@ -1,114 +1,515 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 /* Import slick-carousel styles */
-@import "~slick-carousel/slick/slick.css";
-@import "~slick-carousel/slick/slick-theme.css";
+@import "slick-carousel/slick/slick.css";
+@import "slick-carousel/slick/slick-theme.css";
+
+/* ===========================
+   FUTURISTIC CYBERPUNK THEME
+   =========================== */
+
+:root {
+  /* Primary Neon Colors */
+  --neon-cyan: #00f0ff;
+  --neon-pink: #ff006e;
+  --neon-purple: #a855f7;
+  --neon-blue: #3b82f6;
+  --neon-green: #10b981;
+  --neon-orange: #ff6b35;
+  --neon-yellow: #fbbf24;
+
+  /* Dark Background Shades */
+  --bg-darkest: #0a0a0f;
+  --bg-dark: #121218;
+  --bg-card: #1a1a24;
+  --bg-elevated: #222230;
+
+  /* Accent Colors */
+  --accent-primary: #8b5cf6;
+  --accent-secondary: #ec4899;
+  --accent-tertiary: #06b6d4;
+
+  /* Glass Effects */
+  --glass-bg: rgba(26, 26, 36, 0.7);
+  --glass-border: rgba(139, 92, 246, 0.2);
+  --glass-highlight: rgba(255, 255, 255, 0.05);
+
+  /* Grid Pattern */
+  --grid-color: rgba(139, 92, 246, 0.1);
+
+  /* Text Colors */
+  --text-primary: #ffffff;
+  --text-secondary: #e0e0e0;
+  --text-muted: #a1a1aa;
+
+  /* Glow Effects */
+  --glow-cyan: 0 0 20px rgba(0, 240, 255, 0.5);
+  --glow-pink: 0 0 20px rgba(255, 0, 110, 0.5);
+  --glow-purple: 0 0 20px rgba(168, 85, 247, 0.5);
+}
+
+html {
+  scroll-behavior: smooth;
+}
 
 html,
 body {
-  background-color: #121212;
-  color: #e0e0e0;
+  background-color: var(--bg-darkest);
+  color: var(--text-secondary);
   margin: 0;
-  font-family: Arial, sans-serif;
+  padding: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   min-height: 100vh;
-  overflow-x: hidden; /* Prevent horizontal scrolling */
+  overflow-x: hidden;
   width: 100%;
-  /* Ensure no overflow on html and body */
+  position: relative;
 }
 
 * {
   box-sizing: border-box;
 }
 
+/* ===========================
+   CUSTOM SCROLLBAR (HIDDEN)
+   =========================== */
+
+::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+  display: none;
+}
+
+::-webkit-scrollbar-track {
+  display: none;
+}
+
+::-webkit-scrollbar-thumb {
+  display: none;
+}
+
+/* Hide scrollbar for Firefox */
+html {
+  scrollbar-width: none;
+}
+
+/* Hide scrollbar for IE and Edge */
 body {
-  margin: 0;
-  padding: 0; /* Remove default body padding */
+  -ms-overflow-style: none;
 }
 
-/* Glow text effect */
+/* ===========================
+   ANIMATED GRID BACKGROUND
+   =========================== */
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image:
+    linear-gradient(var(--grid-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+  background-size: 50px 50px;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  animation: gridMove 20s linear infinite;
+}
+
+@keyframes gridMove {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(50px, 50px); }
+}
+
+/* ===========================
+   GLASSMORPHISM UTILITIES
+   =========================== */
+
+.glass {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.glass-strong {
+  background: rgba(26, 26, 36, 0.9);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* ===========================
+   GLOW TEXT EFFECTS
+   =========================== */
+
 .glow-text {
-  color: #ffffff;
-  text-shadow: 0 0 5px #ff0000, 0 0 10px #ff0000, 0 0 15px #ff0000,
-    0 0 20px #ff0000, 0 0 25px #ff0000, 0 0 30px #ff0000, 0 0 35px #ff0000;
+  color: var(--text-primary);
+  text-shadow:
+    0 0 10px rgba(139, 92, 246, 0.8),
+    0 0 20px rgba(139, 92, 246, 0.6),
+    0 0 30px rgba(139, 92, 246, 0.4),
+    0 0 40px rgba(139, 92, 246, 0.2);
+  animation: textGlow 3s ease-in-out infinite alternate;
 }
 
-/* Hover and animation effects */
-.icon-slide {
-  display: inline-block;
-  transition: transform 2s ease-in-out;
-}
-
-.icon-slide:hover {
-  transform: scale(1.1);
-}
-
-/* Fade-in animation */
-@keyframes fade-in {
+@keyframes textGlow {
   0% {
-    opacity: 0;
-    transform: translateY(10px);
+    text-shadow:
+      0 0 10px rgba(139, 92, 246, 0.8),
+      0 0 20px rgba(139, 92, 246, 0.6),
+      0 0 30px rgba(139, 92, 246, 0.4);
   }
-
   100% {
+    text-shadow:
+      0 0 20px rgba(139, 92, 246, 1),
+      0 0 30px rgba(139, 92, 246, 0.8),
+      0 0 40px rgba(139, 92, 246, 0.6),
+      0 0 50px rgba(139, 92, 246, 0.4);
+  }
+}
+
+.glow-cyan {
+  text-shadow:
+    0 0 10px var(--neon-cyan),
+    0 0 20px var(--neon-cyan),
+    0 0 30px var(--neon-cyan);
+}
+
+.glow-pink {
+  text-shadow:
+    0 0 10px var(--neon-pink),
+    0 0 20px var(--neon-pink),
+    0 0 30px var(--neon-pink);
+}
+
+/* ===========================
+   HOLOGRAPHIC EFFECTS
+   =========================== */
+
+.holographic {
+  background: linear-gradient(
+    135deg,
+    #667eea 0%,
+    #764ba2 25%,
+    #f093fb 50%,
+    #4facfe 75%,
+    #00f2fe 100%
+  );
+  background-size: 400% 400%;
+  animation: holographicShift 8s ease infinite;
+}
+
+@keyframes holographicShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.holographic-border {
+  position: relative;
+  border: 2px solid transparent;
+  background: linear-gradient(var(--bg-card), var(--bg-card)) padding-box,
+              linear-gradient(135deg, var(--neon-cyan), var(--neon-purple), var(--neon-pink)) border-box;
+}
+
+/* ===========================
+   NEON BORDER EFFECTS
+   =========================== */
+
+.neon-border {
+  border: 2px solid var(--neon-purple);
+  box-shadow:
+    0 0 5px var(--neon-purple),
+    0 0 10px var(--neon-purple),
+    inset 0 0 10px rgba(168, 85, 247, 0.2);
+  transition: all 0.3s ease;
+}
+
+.neon-border:hover {
+  border-color: var(--neon-cyan);
+  box-shadow:
+    0 0 10px var(--neon-cyan),
+    0 0 20px var(--neon-cyan),
+    0 0 30px rgba(0, 240, 255, 0.3),
+    inset 0 0 15px rgba(0, 240, 255, 0.2);
+}
+
+/* ===========================
+   MAGNETIC BUTTON EFFECT
+   =========================== */
+
+.magnetic-btn {
+  position: relative;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.magnetic-btn::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+  filter: blur(10px);
+}
+
+.magnetic-btn:hover::before {
+  opacity: 0.8;
+}
+
+/* ===========================
+   FADE IN ANIMATIONS
+   =========================== */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
 .animate-fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.6s ease-out forwards;
+}
+
+/* ===========================
+   CARD EFFECTS
+   =========================== */
+
+.cyber-card {
+  position: relative;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(12px);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.cyber-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    var(--neon-purple) 30deg,
+    transparent 60deg
+  );
   opacity: 0;
-  animation: fade-in 0.5s forwards;
+  transition: opacity 0.3s ease;
+  animation: rotate 4s linear infinite;
 }
 
-/* Responsive Text Sizing */
-.glow-text {
-  @apply text-lg md:text-2xl lg:text-4xl xl:text-6xl;
+.cyber-card::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  background: var(--bg-card);
+  border-radius: inherit;
+  z-index: 1;
 }
 
-/* Container Responsiveness */
-.card {
-  @apply w-full sm:w-1/2 lg:w-1/3;
+.cyber-card > * {
+  position: relative;
+  z-index: 2;
 }
 
-/* Media Responsiveness */
+.cyber-card:hover::before {
+  opacity: 0.3;
+}
+
+@keyframes rotate {
+  100% { transform: rotate(360deg); }
+}
+
+/* ===========================
+   3D PERSPECTIVE EFFECTS
+   =========================== */
+
+.perspective-card {
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.perspective-card:hover {
+  transform: rotateY(5deg) rotateX(5deg) scale(1.02);
+}
+
+/* ===========================
+   PULSE ANIMATIONS
+   =========================== */
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(168, 85, 247, 0.8),
+                0 0 60px rgba(168, 85, 247, 0.4);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* ===========================
+   RESPONSIVE UTILITIES
+   =========================== */
+
 img,
 video,
 iframe {
-  max-width: 100%; /* Ensure images, videos, iframes are responsive */
+  max-width: 100%;
   height: auto;
 }
 
-/* Prevent horizontal overflow on small screens */
+/* Selection Styles */
+::selection {
+  background-color: var(--neon-purple);
+  color: var(--text-primary);
+}
+
+::-moz-selection {
+  background-color: var(--neon-purple);
+  color: var(--text-primary);
+}
+
+/* ===========================
+   LOADING ANIMATIONS
+   =========================== */
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.shimmer {
+  animation: shimmer 2s infinite linear;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    transparent 100%
+  );
+  background-size: 1000px 100%;
+}
+
+/* Scan line animation */
+@keyframes scan {
+  0% {
+    top: 0%;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    top: 100%;
+    opacity: 0;
+  }
+}
+
+.animate-scan {
+  animation: scan 3s ease-in-out infinite;
+}
+
+/* Slow spin animation */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 8s linear infinite;
+}
+
+/* ===========================
+   MOBILE RESPONSIVENESS
+   =========================== */
+
+@media screen and (max-width: 768px) {
+  body::before {
+    background-size: 30px 30px;
+  }
+
+  .glow-text {
+    font-size: clamp(1.5rem, 4vw, 3rem);
+  }
+}
+
 @media screen and (max-width: 400px) {
   html,
   body {
     width: 100%;
-    overflow-x: hidden; /* Prevent horizontal scrolling */
+    overflow-x: hidden;
   }
 
-  /* Optional: Set padding and margin to ensure no overflow */
   * {
-    box-sizing: border-box;
     padding: 0;
     margin: 0;
   }
 
-  /* Ensure all containers do not exceed the width of the screen */
   .card,
   .container {
     width: 100%;
     max-width: 100%;
-    padding: 0;
-    margin: 0;
   }
 
-  /* Prevent images or videos from causing overflow */
   img,
   video,
   iframe {
-    width: 100%; /* Prevent wide elements from overflowing */
+    width: 100%;
     max-width: 100%;
   }
 }

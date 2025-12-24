@@ -28,7 +28,7 @@ export const projects: Project[] = [
     title: "Converse",
     description: "A social networking platform that connects people with similar interests and provides a safe space for meaningful conversations.",
     link: "https://chat-app-silk-nine.vercel.app/",
-    imageUrl: "https://firebasestorage.googleapis.com/v0/b/capstone-46186.appspot.com/o/Screenshot%202025-03-21%20at%2011.12.26%E2%80%AFAM.png?alt=media&token=dea37517-ca2a-438f-894c-08e57d529df8",
+    imageUrl: "https://firebasestorage.googleapis.com/v0/b/capstone-46186.appspot.com/o/Screenshot%202025-12-24%20at%209.41.19%E2%80%AFPM.png?alt=media&token=0ec4416d-dadb-43c0-a6bc-af2d37a0cd59",
   },
   {
     id: 4,
@@ -43,6 +43,13 @@ export const projects: Project[] = [
     description: "A platfrom where the library can manage their books and users can borrow books.",
     link: "https://library-management-gamma-nine.vercel.app/",
     imageUrl: "https://firebasestorage.googleapis.com/v0/b/capstone-46186.appspot.com/o/Screenshot%202025-03-21%20at%2011.17.18%E2%80%AFAM.png?alt=media&token=b40c321e-11dd-42d5-a407-fbf683a7a59e",
+  },
+  {
+    id: 6,
+    title: "Farmcon",
+    description: "A web application that connects farmers with consumers, providing a platform for buying and selling fresh produce directly.",
+    link: "https://farmcon-cyan.vercel.app/",
+    imageUrl: "https://firebasestorage.googleapis.com/v0/b/capstone-46186.appspot.com/o/Screenshot%202025-12-24%20at%209.45.07%E2%80%AFPM.png?alt=media&token=26539b98-0b80-4ee2-bcd6-8aad5eea0136",
   },
 
   // Add more projects as needed

@@ -3,7 +3,9 @@
 import { Project } from "../utils/data";
 import { motion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import Image from "next/image";
+import gsap from "gsap";
 
 interface ProjectCardProps {
   project: Project;
@@ -11,85 +13,127 @@ interface ProjectCardProps {
 
 const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+
+    const card = cardRef.current;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rotateX = (y - centerY) / 15;
+    const rotateY = -(x - centerX) / 15;
+
+    gsap.to(card, {
+      rotationX: rotateX,
+      rotationY: rotateY,
+      duration: 0.3,
+      ease: "power2.out",
+      transformPerspective: 1000,
+    });
+  };
+
+  const handleMouseLeave = () => {
+    if (!cardRef.current) return;
+
+    gsap.to(cardRef.current, {
+      rotationX: 0,
+      rotationY: 0,
+      duration: 0.5,
+      ease: "power2.out",
+    });
+  };
 
   return (
     <motion.div
-      variants={{
-        hidden: { opacity: 0, scale: 0.9 },
-        visible: { opacity: 1, scale: 1 },
-      }}
-      transition={{ duration: 0.5 }}
-      className="relative group"
+      ref={cardRef}
+      className="relative cyber-card rounded-2xl overflow-hidden group h-full"
+      style={{ transformStyle: "preserve-3d" }}
+      onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseLeave={() => {
+        setIsHovered(false);
+        handleMouseLeave();
+      }}
+      whileHover={{ scale: 1.02 }}
     >
-      <div
-        className="relative bg-gray-900 p-6 rounded-xl shadow-lg 
-        transition-all duration-300 
-        hover:shadow-2xl hover:scale-105 
-        hover:bg-gradient-to-br 
-        hover:from-purple-800 
-        hover:to-indigo-800 
-        overflow-hidden"
-      >
-        {/* Image Container */}
-        <div className="relative mb-4 overflow-hidden rounded-lg">
-          <motion.img
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
+      {/* Holographic gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-[var(--neon-cyan)]/20 via-[var(--neon-purple)]/20 to-[var(--neon-pink)]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+      {/* Image Container */}
+      <div className="relative h-64 overflow-hidden">
+        <motion.div
+          className="relative w-full h-full"
+          animate={{ scale: isHovered ? 1.1 : 1 }}
+          transition={{ duration: 0.4 }}
+        >
+          <Image
             src={project.imageUrl}
             alt={project.title}
-            className="rounded-lg w-full h-48 object-cover 
-              transition-transform duration-300 
-              group-hover:scale-110"
+            fill
+            className="object-cover"
           />
-          {/* Hover Overlay */}
-          {isHovered && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="absolute inset-0 bg-black bg-opacity-50 
-              flex items-center justify-center 
-              rounded-lg z-10"
-            >
-              <motion.a
-                href={project.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                className="bg-white/20 p-3 rounded-full backdrop-blur-md"
-              >
-                <ExternalLink className="text-white" size={24} />
-              </motion.a>
-            </motion.div>
-          )}
-        </div>
 
-        {/* Project Title */}
-        <h3 className="text-xl font-bold text-purple-400 mb-2 group-hover:text-white transition-colors">
+          {/* Gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-card)] via-transparent to-transparent opacity-60" />
+        </motion.div>
+
+        {/* Hover Link Overlay */}
+        {isHovered && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-10"
+          >
+            <motion.a
+              href={project.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group/link"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-[var(--neon-cyan)] to-[var(--neon-purple)] rounded-full blur-lg opacity-50 group-hover/link:opacity-100 transition-opacity" />
+                <div className="relative bg-[var(--bg-card)] p-4 rounded-full border-2 border-[var(--neon-cyan)]">
+                  <ExternalLink className="text-[var(--neon-cyan)]" size={32} />
+                </div>
+              </div>
+            </motion.a>
+          </motion.div>
+        )}
+      </div>
+
+      {/* Content */}
+      <div className="relative p-6 z-10">
+        <h3 className="text-2xl font-bold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-[var(--neon-cyan)] to-[var(--neon-purple)]">
           {project.title}
         </h3>
 
-        {/* Project Description */}
-        <p className="text-gray-400 mb-4 group-hover:text-gray-200 transition-colors">
+        <p className="text-gray-400 mb-6 leading-relaxed">
           {project.description}
         </p>
 
-        {/* Project Link Button */}
         <motion.a
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
           href={project.link}
           target="_blank"
           rel="noopener noreferrer"
-          className="bg-purple-500 text-white px-4 py-2 rounded-lg 
-          hover:bg-purple-600 transition duration-300 inline-block"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[var(--neon-cyan)] to-[var(--neon-purple)] rounded-full font-semibold text-white transition-all duration-300 group/btn"
+          whileHover={{ scale: 1.05, y: -2 }}
+          whileTap={{ scale: 0.95 }}
         >
-          View Project
+          <span>View Project</span>
+          <ExternalLink size={16} className="group-hover/btn:translate-x-1 transition-transform" />
         </motion.a>
       </div>
+
+      {/* Corner accents */}
+      <div className="absolute top-3 left-3 w-8 h-8 border-l-2 border-t-2 border-[var(--neon-cyan)]/50 rounded-tl-lg" />
+      <div className="absolute bottom-3 right-3 w-8 h-8 border-r-2 border-b-2 border-[var(--neon-purple)]/50 rounded-br-lg" />
     </motion.div>
   );
 };
