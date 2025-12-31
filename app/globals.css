@@ -63,10 +63,49 @@ body {
   overflow-x: hidden;
   width: 100%;
   position: relative;
+  /* Performance optimizations */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 * {
   box-sizing: border-box;
+}
+
+/* ===========================
+   PERFORMANCE OPTIMIZATIONS
+   =========================== */
+
+/* GPU acceleration for animations */
+.gpu-accelerated {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  will-change: transform;
+}
+
+/* Optimize animated elements */
+.animate-fade-in-up,
+.animate-fade-in,
+.animate-slide-in-right,
+.cyber-card,
+.perspective-card {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Remove will-change after animation */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* ===========================
@@ -481,10 +520,57 @@ iframe {
 @media screen and (max-width: 768px) {
   body::before {
     background-size: 30px 30px;
+    /* Reduce animation complexity on mobile */
+    animation-duration: 30s;
   }
 
   .glow-text {
     font-size: clamp(1.5rem, 4vw, 3rem);
+    /* Simplify text glow on mobile */
+    text-shadow:
+      0 0 10px rgba(139, 92, 246, 0.6),
+      0 0 20px rgba(139, 92, 246, 0.4);
+    animation: none;
+  }
+
+  /* Disable expensive effects on mobile */
+  .holographic {
+    animation: none;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  }
+
+  .animate-pulse-glow {
+    animation: none;
+  }
+
+  /* Simplify animations on mobile */
+  .animate-scan {
+    animation-duration: 4s;
+  }
+
+  .cyber-card::before {
+    animation-duration: 6s;
+  }
+
+  /* Reduce padding on mobile */
+  section {
+    padding-top: 4rem !important;
+    padding-bottom: 4rem !important;
+  }
+}
+
+@media screen and (max-width: 640px) {
+  /* Further simplify on small mobile devices */
+  .glow-text {
+    font-size: clamp(1.25rem, 5vw, 2rem);
+  }
+
+  /* Disable blur effects on small screens for performance */
+  .glass,
+  .glass-strong {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(26, 26, 36, 0.95);
   }
 }
 
@@ -511,5 +597,40 @@ iframe {
   iframe {
     width: 100%;
     max-width: 100%;
+  }
+
+  /* Disable expensive animations on very small screens */
+  .animate-fade-in-up,
+  .animate-fade-in,
+  .animate-slide-in-right {
+    animation: fadeIn 0.3s ease-out forwards;
+  }
+
+  .cyber-card::before,
+  .animate-pulse-glow,
+  .shimmer {
+    animation: none;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  /* Disable hover effects on touch devices */
+  .perspective-card:hover {
+    transform: none;
+  }
+
+  /* Simplify interactions for touch */
+  .magnetic-btn {
+    transition: transform 0.2s ease;
+  }
+
+  .magnetic-btn::before {
+    display: none;
+  }
+
+  /* Remove 3D transforms on touch devices */
+  [style*="preserve-3d"] {
+    transform-style: flat !important;
   }
 }

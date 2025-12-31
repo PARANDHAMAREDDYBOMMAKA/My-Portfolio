@@ -6,6 +6,7 @@ import { ExternalLink } from "lucide-react";
 import { useRef, useState } from "react";
 import Image from "next/image";
 import gsap from "gsap";
+import { useDevice } from "../hooks/useDevice";
 
 interface ProjectCardProps {
   project: Project;
@@ -14,9 +15,10 @@ interface ProjectCardProps {
 const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
   const [isHovered, setIsHovered] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
+  const { isTouchDevice } = useDevice();
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
+    if (isTouchDevice || !cardRef.current) return;
 
     const card = cardRef.current;
     const rect = card.getBoundingClientRect();
@@ -37,7 +39,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
   };
 
   const handleMouseLeave = () => {
-    if (!cardRef.current) return;
+    if (isTouchDevice || !cardRef.current) return;
 
     gsap.to(cardRef.current, {
       rotationX: 0,
@@ -51,17 +53,17 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
     <motion.div
       ref={cardRef}
       className="relative cyber-card rounded-2xl overflow-hidden group h-full"
-      style={{ transformStyle: "preserve-3d" }}
+      style={{ transformStyle: isTouchDevice ? "flat" : "preserve-3d" }}
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => {
         setIsHovered(false);
         handleMouseLeave();
       }}
-      whileHover={{ scale: 1.02 }}
+      whileHover={isTouchDevice ? {} : { scale: 1.02 }}
     >
       {/* Holographic gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[var(--neon-cyan)]/20 via-[var(--neon-purple)]/20 to-[var(--neon-pink)]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      <div className="absolute inset-0 bg-linear-to-br from-(--neon-cyan)/20 via-(--neon-purple)/20 to-(--neon-pink)/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
       {/* Image Container */}
       <div className="relative h-64 overflow-hidden">
@@ -78,7 +80,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
           />
 
           {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-card)] via-transparent to-transparent opacity-60" />
+          <div className="absolute inset-0 bg-linear-to-t from-(--bg-card) via-transparent to-transparent opacity-60" />
         </motion.div>
 
         {/* Hover Link Overlay */}
@@ -98,9 +100,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
               whileTap={{ scale: 0.9 }}
             >
               <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-[var(--neon-cyan)] to-[var(--neon-purple)] rounded-full blur-lg opacity-50 group-hover/link:opacity-100 transition-opacity" />
-                <div className="relative bg-[var(--bg-card)] p-4 rounded-full border-2 border-[var(--neon-cyan)]">
-                  <ExternalLink className="text-[var(--neon-cyan)]" size={32} />
+                <div className="absolute inset-0 bg-linear-to-r from-(--neon-cyan) to-(--ne
+                on-purple) rounded-full blur-lg opacity-50 group-hover/link:opacity-100 transition-opacity" />
+                <div className="relative bg-(--bg-card) p-4 rounded-full border-2 border-(--neon-cyan)">
+                  <ExternalLink className="text-(--neon-cyan)" size={32} />
                 </div>
               </div>
             </motion.a>
@@ -110,7 +113,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
 
       {/* Content */}
       <div className="relative p-6 z-10">
-        <h3 className="text-2xl font-bold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-[var(--neon-cyan)] to-[var(--neon-purple)]">
+        <h3 className="text-2xl font-bold mb-3 bg-clip-text text-transparent bg-linear-to-r from-(--neon-cyan) to-(--neon-purple)">
           {project.title}
         </h3>
 
@@ -122,7 +125,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
           href={project.link}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[var(--neon-cyan)] to-[var(--neon-purple)] rounded-full font-semibold text-white transition-all duration-300 group/btn"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-linear-to-r from-(--neon-cyan) to-(--neon-purple) rounded-full font-semibold text-white transition-all duration-300 group/btn"
           whileHover={{ scale: 1.05, y: -2 }}
           whileTap={{ scale: 0.95 }}
         >
@@ -132,8 +135,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
       </div>
 
       {/* Corner accents */}
-      <div className="absolute top-3 left-3 w-8 h-8 border-l-2 border-t-2 border-[var(--neon-cyan)]/50 rounded-tl-lg" />
-      <div className="absolute bottom-3 right-3 w-8 h-8 border-r-2 border-b-2 border-[var(--neon-purple)]/50 rounded-br-lg" />
+      <div className="absolute top-3 left-3 w-8 h-8 border-l-2 border-t-2 border-(--neon-cyan)/50 rounded-tl-lg" />
+      <div className="absolute bottom-3 right-3 w-8 h-8 border-r-2 border-b-2 border-(--neon-purple)/50 rounded-br-lg" />
     </motion.div>
   );
 };

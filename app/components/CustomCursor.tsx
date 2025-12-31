@@ -2,14 +2,18 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
+import { useDevice } from '../hooks/useDevice';
 
 export default function CustomCursor() {
   const cursorRef = useRef<HTMLDivElement>(null);
   const cursorDotRef = useRef<HTMLDivElement>(null);
   const [isPointer, setIsPointer] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
+  const { isTouchDevice } = useDevice();
 
   useEffect(() => {
+    // Don't add event listeners on touch devices
+    if (isTouchDevice) return;
     const cursor = cursorRef.current;
     const cursorDot = cursorDotRef.current;
     if (!cursor || !cursorDot) return;
@@ -65,14 +69,19 @@ export default function CustomCursor() {
       document.removeEventListener('mouseleave', handleMouseLeave);
       cancelAnimationFrame(animationId);
     };
-  }, []);
+  }, [isTouchDevice]);
+
+  // Don't render cursor on touch devices
+  if (isTouchDevice) {
+    return null;
+  }
 
   return (
     <>
       {/* Outer cursor ring */}
       <motion.div
         ref={cursorRef}
-        className={`fixed top-0 left-0 w-10 h-10 pointer-events-none z-[9999] ${isHidden ? 'opacity-0' : 'opacity-100'}`}
+        className={`fixed top-0 left-0 w-10 h-10 pointer-events-none z-9999 ${isHidden ? 'opacity-0' : 'opacity-100'}`}
         style={{ transform: 'translate(-50%, -50%)' }}
         animate={{
           scale: isPointer ? 1.5 : 1,
@@ -86,14 +95,14 @@ export default function CustomCursor() {
         <div className="relative w-full h-full">
           {/* Neon ring */}
           <div
-            className="absolute inset-0 rounded-full border-2 border-[var(--neon-cyan)]"
+            className="absolute inset-0 rounded-full border-2 border-(--neon-cyan)"
             style={{
               boxShadow: '0 0 10px var(--neon-cyan), inset 0 0 10px rgba(0, 240, 255, 0.2)',
             }}
           />
           {/* Animated pulse */}
           <div
-            className="absolute inset-0 rounded-full border border-[var(--neon-purple)] opacity-50 animate-ping"
+            className="absolute inset-0 rounded-full border border-(--neon-purple) opacity-50 animate-ping"
           />
         </div>
       </motion.div>
@@ -101,7 +110,7 @@ export default function CustomCursor() {
       {/* Inner cursor dot */}
       <motion.div
         ref={cursorDotRef}
-        className={`fixed top-0 left-0 w-2 h-2 pointer-events-none z-[9999] ${isHidden ? 'opacity-0' : 'opacity-100'}`}
+        className={`fixed top-0 left-0 w-2 h-2 pointer-events-none z-9999 ${isHidden ? 'opacity-0' : 'opacity-100'}`}
         style={{ transform: 'translate(-50%, -50%)' }}
         animate={{
           scale: isPointer ? 0 : 1,
@@ -113,7 +122,7 @@ export default function CustomCursor() {
         }}
       >
         <div
-          className="w-full h-full rounded-full bg-[var(--neon-cyan)]"
+          className="w-full h-full rounded-full bg-(--neon-cyan)"
           style={{
             boxShadow: '0 0 10px var(--neon-cyan)',
           }}

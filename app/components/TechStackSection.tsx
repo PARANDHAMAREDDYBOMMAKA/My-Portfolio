@@ -5,6 +5,7 @@ import { motion, useInView } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useDevice } from "../hooks/useDevice";
 import {
   faReact,
   faNodeJs,
@@ -45,6 +46,7 @@ const TechStacksSection: React.FC = () => {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
   const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
+  const { isMobile, isTouchDevice } = useDevice();
 
   const techStacks: Technology[] = [
     {
@@ -177,16 +179,17 @@ const TechStacksSection: React.FC = () => {
         titleRef.current?.appendChild(span);
       });
 
+      // Simpler animation on mobile
       gsap.fromTo(
         titleRef.current.children,
-        { y: 100, opacity: 0, rotationX: -90 },
+        { y: isMobile ? 50 : 100, opacity: 0, rotationX: isMobile ? 0 : -90 },
         {
           y: 0,
           opacity: 1,
           rotationX: 0,
-          duration: 0.8,
-          stagger: 0.02,
-          ease: "back.out(1.7)",
+          duration: isMobile ? 0.5 : 0.8,
+          stagger: isMobile ? 0.01 : 0.02,
+          ease: isMobile ? "power2.out" : "back.out(1.7)",
         }
       );
     }
@@ -194,19 +197,20 @@ const TechStacksSection: React.FC = () => {
     cardsRef.current.forEach((card, index) => {
       if (!card) return;
 
+      // Simpler animation on mobile
       gsap.fromTo(
         card,
         {
-          y: 100,
+          y: isMobile ? 50 : 100,
           opacity: 0,
-          rotationY: -90,
+          rotationY: isMobile ? 0 : -90,
         },
         {
           y: 0,
           opacity: 1,
           rotationY: 0,
-          duration: 1,
-          delay: index * 0.05,
+          duration: isMobile ? 0.6 : 1,
+          delay: index * (isMobile ? 0.03 : 0.05),
           ease: "power3.out",
           scrollTrigger: {
             trigger: card,
@@ -217,49 +221,51 @@ const TechStacksSection: React.FC = () => {
         }
       );
 
-      // 3D tilt effect on mousemove
-      const handleMouseMove = (e: MouseEvent) => {
-        if (!card) return;
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-        const rotateX = (y - centerY) / 10;
-        const rotateY = -(x - centerX) / 10;
+      // 3D tilt effect on mousemove (disabled on mobile/touch devices)
+      if (!isTouchDevice) {
+        const handleMouseMove = (e: MouseEvent) => {
+          if (!card) return;
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const centerX = rect.width / 2;
+          const centerY = rect.height / 2;
+          const rotateX = (y - centerY) / 10;
+          const rotateY = -(x - centerX) / 10;
 
-        gsap.to(card, {
-          rotationX: rotateX,
-          rotationY: rotateY,
-          duration: 0.3,
-          ease: "power2.out",
-        });
-      };
+          gsap.to(card, {
+            rotationX: rotateX,
+            rotationY: rotateY,
+            duration: 0.3,
+            ease: "power2.out",
+          });
+        };
 
-      const handleMouseLeave = () => {
-        gsap.to(card, {
-          rotationX: 0,
-          rotationY: 0,
-          duration: 0.5,
-          ease: "power2.out",
-        });
-      };
+        const handleMouseLeave = () => {
+          gsap.to(card, {
+            rotationX: 0,
+            rotationY: 0,
+            duration: 0.5,
+            ease: "power2.out",
+          });
+        };
 
-      card.addEventListener("mousemove", handleMouseMove);
-      card.addEventListener("mouseleave", handleMouseLeave);
+        card.addEventListener("mousemove", handleMouseMove);
+        card.addEventListener("mouseleave", handleMouseLeave);
 
-      return () => {
-        card.removeEventListener("mousemove", handleMouseMove);
-        card.removeEventListener("mouseleave", handleMouseLeave);
-      };
+        return () => {
+          card.removeEventListener("mousemove", handleMouseMove);
+          card.removeEventListener("mouseleave", handleMouseLeave);
+        };
+      }
     });
-  }, [isInView, filteredTechs]);
+  }, [isInView, filteredTechs, isMobile, isTouchDevice]);
 
   return (
     <motion.section
       id="techstacks"
       ref={sectionRef}
-      className="relative min-h-screen py-20 px-4 md:px-8 bg-[var(--bg-darkest)] text-white overflow-hidden"
+      className="relative min-h-screen py-20 px-4 md:px-8 bg-(--bg-darkest) text-white overflow-hidden"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6 }}
@@ -273,7 +279,7 @@ const TechStacksSection: React.FC = () => {
             transition={{ duration: 0.6 }}
             className="text-center mb-4"
           >
-            <span className="text-sm uppercase tracking-widest text-[var(--neon-cyan)] font-semibold">
+            <span className="text-sm uppercase tracking-widest text-(--neon-cyan) font-semibold">
               Technologies & Tools
             </span>
           </motion.div>
@@ -313,7 +319,7 @@ const TechStacksSection: React.FC = () => {
               {activeCategory === category && (
                 <motion.div
                   layoutId="activeCategory"
-                  className="absolute inset-0 bg-gradient-to-r from-[var(--neon-cyan)] to-[var(--neon-purple)] rounded-full"
+                  className="absolute inset-0 bg-linear-to-r from-(--neon-cyan) to-(--neon-purple) rounded-full"
                   style={{ zIndex: -1 }}
                   transition={{ type: "spring", stiffness: 380, damping: 30 }}
                 />
@@ -324,17 +330,17 @@ const TechStacksSection: React.FC = () => {
         </div>
 
         {/* Tech Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 perspective-1000">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 perspective-1000">
           {filteredTechs.map((tech, index) => (
             <div
               key={tech.name}
               ref={(el) => {
                 cardsRef.current[index] = el;
               }}
-              className="perspective-card cyber-card rounded-2xl p-6 relative overflow-hidden group"
-              style={{ transformStyle: "preserve-3d" }}
+              className="perspective-card cyber-card rounded-2xl p-4 md:p-6 relative overflow-hidden group"
+              style={{ transformStyle: isTouchDevice ? "flat" : "preserve-3d" }}
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-[var(--neon-cyan)]/10 to-[var(--neon-purple)]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="absolute inset-0 bg-linear-to-br from-(--neon-cyan)/10 to-(--neon-purple)/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
               <div className="relative z-10 flex flex-col items-center text-center h-full justify-between">
                 {/* Icon */}
@@ -361,11 +367,11 @@ const TechStacksSection: React.FC = () => {
                 <div className="w-full">
                   <div className="flex justify-between text-xs mb-1">
                     <span className="text-gray-400">Proficiency</span>
-                    <span className="text-[var(--neon-cyan)] font-semibold">
+                    <span className="text-(--neon-cyan) font-semibold">
                       {tech.proficiency}%
                     </span>
                   </div>
-                  <div className="w-full h-1.5 bg-[var(--bg-elevated)] rounded-full overflow-hidden">
+                  <div className="w-full h-1.5 bg-(--bg-elevated) rounded-full overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={isInView ? { width: `${tech.proficiency}%` } : { width: 0 }}
@@ -374,7 +380,7 @@ const TechStacksSection: React.FC = () => {
                         delay: index * 0.05,
                         ease: "easeOut",
                       }}
-                      className="h-full bg-gradient-to-r from-[var(--neon-cyan)] to-[var(--neon-purple)]"
+                      className="h-full bg-linear-to-r from-(--neon-cyan) to-(--neon-purple)"
                       style={{
                         boxShadow: `0 0 10px ${tech.color}`,
                       }}
@@ -396,8 +402,8 @@ const TechStacksSection: React.FC = () => {
       </div>
 
       {/* Decorative elements */}
-      <div className="absolute top-1/4 right-10 w-3 h-3 rounded-full bg-[var(--neon-cyan)] animate-ping" />
-      <div className="absolute bottom-1/3 left-20 w-2 h-2 rounded-full bg-[var(--neon-pink)] animate-pulse" />
+      <div className="absolute top-1/4 right-10 w-3 h-3 rounded-full bg-(--neon-cyan) animate-ping" />
+      <div className="absolute bottom-1/3 left-20 w-2 h-2 rounded-full bg-(--neon-pink) animate-pulse" />
     </motion.section>
   );
 };

@@ -5,6 +5,7 @@ import { motion, useInView } from "framer-motion";
 import React, { useRef, useEffect, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useDevice } from "../hooks/useDevice";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -17,6 +18,7 @@ const AboutSection: React.FC = () => {
   const statsRef = useRef<(HTMLDivElement | null)[]>([]);
   const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
+  const { isMobile, isTouchDevice } = useDevice();
 
   useEffect(() => {
     if (!isInView) return;
@@ -33,43 +35,44 @@ const AboutSection: React.FC = () => {
         titleRef.current?.appendChild(span);
       });
 
+      // Simpler animation on mobile
       gsap.fromTo(
         titleRef.current.children,
         {
-          y: 100,
+          y: isMobile ? 50 : 100,
           opacity: 0,
-          rotationX: -90,
+          rotationX: isMobile ? 0 : -90,
         },
         {
           y: 0,
           opacity: 1,
           rotationX: 0,
-          duration: 0.8,
-          stagger: 0.02,
-          ease: "back.out(1.7)",
+          duration: isMobile ? 0.5 : 0.8,
+          stagger: isMobile ? 0.01 : 0.02,
+          ease: isMobile ? "power2.out" : "back.out(1.7)",
         }
       );
     }
 
-    // Animate cards with GSAP ScrollTrigger
+    // Animate cards with GSAP ScrollTrigger (simpler on mobile)
     cardsRef.current.forEach((card, index) => {
       if (!card) return;
 
       gsap.fromTo(
         card,
         {
-          y: 100,
+          y: isMobile ? 50 : 100,
           opacity: 0,
-          scale: 0.8,
-          rotationY: -15,
+          scale: isMobile ? 1 : 0.8,
+          rotationY: isMobile ? 0 : -15,
         },
         {
           y: 0,
           opacity: 1,
           scale: 1,
           rotationY: 0,
-          duration: 1,
-          delay: index * 0.1,
+          duration: isMobile ? 0.6 : 1,
+          delay: index * (isMobile ? 0.05 : 0.1),
           ease: "power3.out",
           scrollTrigger: {
             trigger: card,
@@ -105,13 +108,15 @@ const AboutSection: React.FC = () => {
         },
       });
     });
-  }, [isInView]);
+  }, [isInView, isMobile]);
 
-  // 3D tilt effect on mouse move
+  // 3D tilt effect on mouse move (disabled on mobile/touch devices)
   const handleCardMouseMove = (
     e: React.MouseEvent<HTMLDivElement>,
     index: number
   ) => {
+    if (isTouchDevice) return;
+
     const card = cardsRef.current[index];
     if (!card) return;
 
@@ -134,6 +139,8 @@ const AboutSection: React.FC = () => {
   };
 
   const handleCardMouseLeave = (index: number) => {
+    if (isTouchDevice) return;
+
     const card = cardsRef.current[index];
     if (!card) return;
 
@@ -203,15 +210,15 @@ const AboutSection: React.FC = () => {
     <motion.section
       id="about"
       ref={sectionRef}
-      className="relative min-h-screen py-20 px-4 md:px-8 bg-[var(--bg-darkest)] text-white overflow-hidden"
+      className="relative min-h-screen py-20 px-4 md:px-8 bg-(--bg-darkest) text-white overflow-hidden"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6 }}
     >
       {/* Animated background effects */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-[var(--neon-purple)]/5 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[var(--neon-cyan)]/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-(--neon-purple)/5 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-(--neon-cyan)/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
       </div>
 
       {/* Section Title */}
@@ -222,7 +229,7 @@ const AboutSection: React.FC = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-4"
         >
-          <span className="text-sm uppercase tracking-widest text-[var(--neon-cyan)] font-semibold">
+          <span className="text-sm uppercase tracking-widest text-(--neon-cyan) font-semibold">
             Get to know me
           </span>
         </motion.div>
@@ -262,15 +269,15 @@ const AboutSection: React.FC = () => {
               <div className="cyber-card rounded-2xl p-6 text-center relative overflow-hidden">
                 {/* Animated border */}
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[var(--neon-cyan)] to-[var(--neon-purple)] opacity-20 blur-xl" />
+                  <div className="absolute inset-0 bg-linear-to-br from-(--neon-cyan) to-(--neon-purple) opacity-20 blur-xl" />
                 </div>
 
                 <div className="relative z-10">
                   <div className="flex items-center justify-center mb-2">
-                    <span className="stat-count text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[var(--neon-cyan)] to-[var(--neon-purple)]">
+                    <span className="stat-count text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-linear-to-r from-(--neon-cyan) to-(--neon-purple)">
                       {stat.value}
                     </span>
-                    <span className="text-3xl md:text-4xl font-bold text-[var(--neon-cyan)]">
+                    <span className="text-3xl md:text-4xl font-bold text-(--neon-cyan)">
                       {stat.suffix}
                     </span>
                   </div>
@@ -280,7 +287,7 @@ const AboutSection: React.FC = () => {
                 </div>
 
                 {/* Corner accent */}
-                <div className="absolute top-2 right-2 w-8 h-8 border-t-2 border-r-2 border-[var(--neon-cyan)]/30 rounded-tr-lg" />
+                <div className="absolute top-2 right-2 w-8 h-8 border-t-2 border-r-2 border-(--neon-cyan)/30 rounded-tr-lg" />
               </div>
             </motion.div>
           ))}
@@ -298,15 +305,15 @@ const AboutSection: React.FC = () => {
             onMouseMove={(e) => handleCardMouseMove(e, 0)}
             onMouseLeave={() => handleCardMouseLeave(0)}
             onMouseEnter={() => setHoveredCard(0)}
-            className="cyber-card rounded-3xl p-8 md:col-span-1 md:row-span-2 flex flex-col items-center justify-center relative overflow-hidden group"
-            style={{ transformStyle: "preserve-3d" }}
+            className="cyber-card rounded-3xl p-6 md:p-8 md:col-span-1 md:row-span-2 flex flex-col items-center justify-center relative overflow-hidden group"
+            style={{ transformStyle: isTouchDevice ? "flat" : "preserve-3d" }}
           >
             {/* Animated gradient background */}
-            <div className="absolute inset-0 bg-gradient-to-br from-[var(--neon-cyan)]/10 via-[var(--neon-purple)]/10 to-[var(--neon-pink)]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="absolute inset-0 bg-linear-to-br from-(--neon-cyan)/10 via-(--neon-purple)/10 to-(--neon-pink)/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
             {/* Scan line effect */}
             <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-              <div className="absolute w-full h-0.5 bg-gradient-to-r from-transparent via-[var(--neon-cyan)] to-transparent animate-scan" />
+              <div className="absolute w-full h-0.5 bg-linear-to-r from-transparent via-(--neon-cyan) to-transparent animate-scan" />
             </div>
 
             <div className="relative z-10 flex flex-col items-center">
@@ -316,9 +323,9 @@ const AboutSection: React.FC = () => {
                 transition={{ type: "spring", stiffness: 300 }}
               >
                 {/* Rotating border */}
-                <div className="absolute inset-0 rounded-full border-4 border-transparent bg-gradient-to-r from-[var(--neon-cyan)] via-[var(--neon-purple)] to-[var(--neon-pink)] opacity-0 group-hover/image:opacity-100 transition-opacity duration-500 animate-spin-slow" style={{ padding: "4px" }} />
+                <div className="absolute inset-0 rounded-full border-4 border-transparent bg-linear-to-r from-(--neon-cyan) via-(--neon-purple) to-(--neon-pink) opacity-0 group-hover/image:opacity-100 transition-opacity duration-500 animate-spin-slow" style={{ padding: "4px" }} />
 
-                <div className="absolute inset-1 rounded-full border-4 border-[var(--neon-cyan)] shadow-[0_0_30px_rgba(0,240,255,0.5)] z-10" />
+                <div className="absolute inset-1 rounded-full border-4 border-(--neon-cyan) shadow-[0_0_30px_rgba(0,240,255,0.5)] z-10" />
 
                 <Image
                   src="/photo.jpeg"
@@ -329,7 +336,7 @@ const AboutSection: React.FC = () => {
                 />
               </motion.div>
 
-              <h3 className="text-2xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-[var(--neon-cyan)] to-[var(--neon-purple)] mb-2">
+              <h3 className="text-2xl font-bold text-center bg-clip-text text-transparent bg-linear-to-r from-(--neon-cyan) to-(--neon-purple) mb-2">
                 Parandhama Reddy
               </h3>
 
@@ -338,15 +345,15 @@ const AboutSection: React.FC = () => {
               </p>
 
               <div className="flex gap-2 mt-2">
-                <div className="w-2 h-2 rounded-full bg-[var(--neon-green)] animate-pulse" />
+                <div className="w-2 h-2 rounded-full bg-(--neon-green) animate-pulse" />
                 <span className="text-xs text-gray-500">Available for work</span>
               </div>
 
               {/* Holographic code lines */}
               <div className="mt-6 w-full space-y-2 opacity-50 group-hover:opacity-100 transition-opacity duration-500">
-                <div className="h-1 bg-gradient-to-r from-transparent via-[var(--neon-cyan)]/50 to-transparent rounded" />
-                <div className="h-1 bg-gradient-to-r from-transparent via-[var(--neon-purple)]/50 to-transparent rounded w-3/4 mx-auto" />
-                <div className="h-1 bg-gradient-to-r from-transparent via-[var(--neon-pink)]/50 to-transparent rounded w-1/2 mx-auto" />
+                <div className="h-1 bg-linear-to-r from-transparent via-(--neon-cyan)/50 to-transparent rounded" />
+                <div className="h-1 bg-linear-to-r from-transparent via-(--neon-purple)/50 to-transparent rounded w-3/4 mx-auto" />
+                <div className="h-1 bg-linear-to-r from-transparent via-(--neon-pink)/50 to-transparent rounded w-1/2 mx-auto" />
               </div>
             </div>
           </motion.div>
@@ -362,16 +369,16 @@ const AboutSection: React.FC = () => {
               onMouseLeave={() => handleCardMouseLeave(index + 1)}
               onMouseEnter={() => setHoveredCard(card.id)}
               className={`cyber-card rounded-3xl p-6 md:p-8 ${card.className} relative overflow-hidden group`}
-              style={{ transformStyle: "preserve-3d" }}
+              style={{ transformStyle: isTouchDevice ? "flat" : "preserve-3d" }}
             >
               {/* Gradient overlay */}
               <div
-                className={`absolute inset-0 bg-gradient-to-br ${card.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}
+                className={`absolute inset-0 bg-linear-to-br ${card.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}
               />
 
               {/* Scan line effect */}
               <div className="absolute inset-0 opacity-0 group-hover:opacity-30 transition-opacity duration-500">
-                <div className="absolute w-full h-0.5 bg-gradient-to-r from-transparent via-[var(--neon-cyan)] to-transparent animate-scan" />
+                <div className="absolute w-full h-0.5 bg-linear-to-r from-transparent via-(--neon-cyan) to-transparent animate-scan" />
               </div>
 
               {/* Corner accents */}
@@ -382,7 +389,7 @@ const AboutSection: React.FC = () => {
                 <div>
                   {/* Fixed gradient on title */}
                   <h3
-                    className={`text-2xl font-bold mb-3 bg-clip-text text-transparent bg-gradient-to-r ${card.gradient}`}
+                    className={`text-2xl font-bold mb-3 bg-clip-text text-transparent bg-linear-to-r ${card.gradient}`}
                   >
                     {card.title}
                   </h3>
@@ -390,7 +397,7 @@ const AboutSection: React.FC = () => {
                 </div>
 
                 {/* Animated accent line */}
-                <div className="mt-4 h-1 bg-gradient-to-r from-transparent via-[var(--neon-cyan)]/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="mt-4 h-1 bg-linear-to-r from-transparent via-(--neon-cyan)/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               </div>
 
               {/* Glow effect on hover */}
@@ -404,10 +411,10 @@ const AboutSection: React.FC = () => {
       </div>
 
       {/* Floating particles decoration */}
-      <div className="absolute top-20 left-10 w-2 h-2 rounded-full bg-[var(--neon-cyan)] animate-ping" />
-      <div className="absolute bottom-40 right-20 w-3 h-3 rounded-full bg-[var(--neon-pink)] animate-pulse" />
-      <div className="absolute top-1/3 right-1/4 w-2 h-2 rounded-full bg-[var(--neon-purple)] animate-ping" />
-      <div className="absolute top-1/2 left-1/4 w-2 h-2 rounded-full bg-[var(--neon-cyan)] animate-pulse" />
+      <div className="absolute top-20 left-10 w-2 h-2 rounded-full bg-(--neon-cyan) animate-ping" />
+      <div className="absolute bottom-40 right-20 w-3 h-3 rounded-full bg-(--neon-pink) animate-pulse" />
+      <div className="absolute top-1/3 right-1/4 w-2 h-2 rounded-full bg-(--neon-purple) animate-ping" />
+      <div className="absolute top-1/2 left-1/4 w-2 h-2 rounded-full bg-(--neon-cyan) animate-pulse" />
     </motion.section>
   );
 };

@@ -9,6 +9,7 @@ import * as THREE from "three";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import gsap from "gsap";
+import { useDevice } from "../hooks/useDevice";
 
 // Advanced Cyberpunk Sphere with complex shader
 const CyberpunkSphere = () => {
@@ -141,11 +142,12 @@ const CyberpunkSphere = () => {
 };
 
 // Particle field with custom behavior
-const ParticleField = () => {
+const ParticleField = ({ isMobile }: { isMobile: boolean }) => {
   const particlesRef = useRef<THREE.Points>(null);
 
   const [positions, colors] = useMemo(() => {
-    const count = 2000;
+    // Reduce particle count significantly on mobile
+    const count = isMobile ? 500 : 2000;
     const positions = new Float32Array(count * 3);
     const colors = new Float32Array(count * 3);
 
@@ -174,7 +176,7 @@ const ParticleField = () => {
     }
 
     return [positions, colors];
-  }, []);
+  }, [isMobile]);
 
   useFrame(({ clock }) => {
     if (particlesRef.current) {
@@ -211,13 +213,15 @@ const ParticleField = () => {
   );
 };
 
-const HeroBackground: React.FC = () => {
+const HeroBackground: React.FC<{ isMobile: boolean }> = ({ isMobile }) => {
   return (
     <Suspense fallback={null}>
       <Canvas
         camera={{ position: [0, 0, 8], fov: 50 }}
         style={{ position: "absolute", width: "100%", height: "100%" }}
-        dpr={[1, 2]}
+        dpr={isMobile ? [1, 1] : [1, 2]}
+        performance={{ min: 0.5 }}
+        gl={{ antialias: !isMobile, powerPreference: isMobile ? "low-power" : "high-performance" }}
       >
         <color attach="background" args={["#0a0a0f"]} />
         <fog attach="fog" args={["#0a0a0f", 5, 30]} />
@@ -225,43 +229,49 @@ const HeroBackground: React.FC = () => {
         <ambientLight intensity={0.4} />
         <pointLight position={[10, 10, 10]} intensity={0.6} color="#00f0ff" />
         <pointLight position={[-10, -10, -10]} intensity={0.3} color="#ff006e" />
-        <spotLight
-          position={[0, 5, 5]}
-          angle={0.5}
-          penumbra={1}
-          intensity={0.8}
-          color="#a855f7"
-        />
+        {!isMobile && (
+          <spotLight
+            position={[0, 5, 5]}
+            angle={0.5}
+            penumbra={1}
+            intensity={0.8}
+            color="#a855f7"
+          />
+        )}
 
         <CyberpunkSphere />
-        <ParticleField />
-        <Sparkles
-          count={80}
-          scale={15}
-          size={1.5}
-          speed={0.3}
-          opacity={0.3}
-          color="#00f0ff"
-        />
+        <ParticleField isMobile={isMobile} />
+        {!isMobile && (
+          <Sparkles
+            count={80}
+            scale={15}
+            size={1.5}
+            speed={0.3}
+            opacity={0.3}
+            color="#00f0ff"
+          />
+        )}
 
         <Environment preset="night" />
         <OrbitControls
           enableZoom={false}
           enablePan={false}
           autoRotate
-          autoRotateSpeed={0.3}
+          autoRotateSpeed={isMobile ? 0.15 : 0.3}
           maxPolarAngle={Math.PI / 2}
           minPolarAngle={Math.PI / 2}
         />
 
-        <EffectComposer>
-          <Bloom
-            intensity={0.6}
-            luminanceThreshold={0.4}
-            luminanceSmoothing={0.9}
-            blendFunction={BlendFunction.SCREEN}
-          />
-        </EffectComposer>
+        {!isMobile && (
+          <EffectComposer>
+            <Bloom
+              intensity={0.6}
+              luminanceThreshold={0.4}
+              luminanceSmoothing={0.9}
+              blendFunction={BlendFunction.SCREEN}
+            />
+          </EffectComposer>
+        )}
       </Canvas>
     </Suspense>
   );
@@ -270,6 +280,7 @@ const HeroBackground: React.FC = () => {
 const HeroSection: React.FC = () => {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
+  const { isMobile } = useDevice();
 
   useEffect(() => {
     if (titleRef.current) {
@@ -283,16 +294,17 @@ const HeroSection: React.FC = () => {
         titleRef.current?.appendChild(span);
       });
 
+      // Simpler animation on mobile
       gsap.fromTo(
         titleRef.current.children,
-        { y: 100, opacity: 0, rotationX: -90 },
+        { y: isMobile ? 50 : 100, opacity: 0, rotationX: isMobile ? 0 : -90 },
         {
           y: 0,
           opacity: 1,
           rotationX: 0,
-          duration: 1,
-          stagger: 0.03,
-          ease: "back.out(1.7)",
+          duration: isMobile ? 0.6 : 1,
+          stagger: isMobile ? 0.015 : 0.03,
+          ease: isMobile ? "power2.out" : "back.out(1.7)",
         }
       );
     }
@@ -300,23 +312,23 @@ const HeroSection: React.FC = () => {
     if (subtitleRef.current) {
       gsap.fromTo(
         subtitleRef.current,
-        { y: 50, opacity: 0 },
-        { y: 0, opacity: 1, duration: 1, delay: 0.5, ease: "power3.out" }
+        { y: isMobile ? 30 : 50, opacity: 0 },
+        { y: 0, opacity: 1, duration: isMobile ? 0.6 : 1, delay: isMobile ? 0.3 : 0.5, ease: "power3.out" }
       );
     }
-  }, []);
+  }, [isMobile]);
 
   return (
-    <section className="relative flex flex-col items-center justify-center h-screen text-white text-center overflow-hidden">
-      <HeroBackground />
+    <section className="relative flex flex-col items-center justify-center min-h-screen h-screen text-white text-center overflow-hidden">
+      <HeroBackground isMobile={isMobile} />
 
       {/* Dark gradient overlay for better text readability */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[var(--bg-darkest)]/40 to-[var(--bg-darkest)]/60 z-[5]" />
+      <div className="absolute inset-0 bg-linear-to-b from-transparent via-(--bg-darkest)/40 to-(--bg-darkest)/60 z-5" />
 
       <div className="relative z-10 px-4 max-w-6xl mx-auto">
         <h1
           ref={titleRef}
-          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-6 glow-text leading-tight"
+          className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-4 sm:mb-6 glow-text leading-tight px-2"
           style={{
             fontFamily: "'Inter', sans-serif",
             fontWeight: 900,
@@ -328,36 +340,36 @@ const HeroSection: React.FC = () => {
 
         <p
           ref={subtitleRef}
-          className="text-base sm:text-lg md:text-xl lg:text-2xl mb-8 text-gray-300 max-w-3xl mx-auto leading-relaxed px-4"
+          className="text-sm sm:text-lg md:text-xl lg:text-2xl mb-6 sm:mb-8 text-gray-300 max-w-3xl mx-auto leading-relaxed px-4"
         >
           Hi! I&apos;m <span className="glow-cyan font-semibold">Parandhama Reddy</span>,
           a Full Stack Developer crafting immersive digital experiences at the intersection of
           <span className="glow-pink font-semibold"> technology</span> and
-          <span className="text-[var(--neon-purple)] font-semibold"> creativity</span>.
+          <span className="text-(--neon-purple) font-semibold"> creativity</span>.
         </p>
 
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 1.2, type: "spring", stiffness: 200 }}
-          className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+          className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4 w-full max-w-md sm:max-w-none"
         >
-          <Link href="#projects">
+          <Link href="#projects" className="w-full sm:w-auto">
             <motion.button
               whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.95 }}
-              className="group relative px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-[var(--neon-cyan)] to-[var(--neon-purple)] rounded-full text-sm sm:text-base md:text-lg font-bold overflow-hidden transition-all duration-300"
+              className="group relative w-full px-6 sm:px-8 py-3 sm:py-4 bg-linear-to-r from-(--neon-cyan) to-(--neon-purple) rounded-full text-sm sm:text-base md:text-lg font-bold overflow-hidden transition-all duration-300"
             >
               <span className="relative z-10">Explore My Universe</span>
-              <div className="absolute inset-0 bg-gradient-to-r from-[var(--neon-purple)] to-[var(--neon-pink)] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="absolute inset-0 bg-linear-to-r from-(--neon-purple) to-(--neon-pink) opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </motion.button>
           </Link>
 
-          <Link href="#contact">
+          <Link href="#contact" className="w-full sm:w-auto">
             <motion.button
               whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.95 }}
-              className="px-6 sm:px-8 py-3 sm:py-4 border-2 border-[var(--neon-cyan)] rounded-full text-sm sm:text-base md:text-lg font-bold neon-border bg-transparent transition-all duration-300"
+              className="w-full px-6 sm:px-8 py-3 sm:py-4 border-2 border-(--neon-cyan) rounded-full text-sm sm:text-base md:text-lg font-bold neon-border bg-transparent transition-all duration-300"
             >
               Get In Touch
             </motion.button>
@@ -374,11 +386,11 @@ const HeroSection: React.FC = () => {
           }}
           className="absolute bottom-10 left-1/2 transform -translate-x-1/2"
         >
-          <div className="w-6 h-10 border-2 border-[var(--neon-cyan)] rounded-full flex justify-center p-2">
+          <div className="w-6 h-10 border-2 border-(--neon-cyan) rounded-full flex justify-center p-2">
             <motion.div
               animate={{ y: [0, 12, 0] }}
               transition={{ repeat: Infinity, duration: 1.5 }}
-              className="w-1.5 h-1.5 bg-[var(--neon-cyan)] rounded-full"
+              className="w-1.5 h-1.5 bg-(--neon-cyan) rounded-full"
               style={{ boxShadow: "0 0 10px var(--neon-cyan)" }}
             />
           </div>

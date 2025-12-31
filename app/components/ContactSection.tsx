@@ -4,6 +4,7 @@ import React, { useRef, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
 import gsap from "gsap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useDevice } from "../hooks/useDevice";
 import {
   faInstagram,
   faGithub,
@@ -18,6 +19,7 @@ const ContactSection: React.FC = () => {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const socialRefs = useRef<(HTMLAnchorElement | null)[]>([]);
   const isInView = useInView(sectionRef, { once: true, amount: 0.3 });
+  const { isMobile } = useDevice();
 
   const socialLinks = [
     {
@@ -66,16 +68,17 @@ const ContactSection: React.FC = () => {
         titleRef.current?.appendChild(span);
       });
 
+      // Simpler animation on mobile
       gsap.fromTo(
         titleRef.current.children,
-        { y: 100, opacity: 0, rotationX: -90 },
+        { y: isMobile ? 50 : 100, opacity: 0, rotationX: isMobile ? 0 : -90 },
         {
           y: 0,
           opacity: 1,
           rotationX: 0,
-          duration: 0.8,
-          stagger: 0.02,
-          ease: "back.out(1.7)",
+          duration: isMobile ? 0.5 : 0.8,
+          stagger: isMobile ? 0.01 : 0.02,
+          ease: isMobile ? "power2.out" : "back.out(1.7)",
         }
       );
     }
@@ -83,36 +86,37 @@ const ContactSection: React.FC = () => {
     socialRefs.current.forEach((social, index) => {
       if (!social) return;
 
+      // Simpler animation on mobile
       gsap.fromTo(
         social,
         {
-          y: 50,
+          y: isMobile ? 30 : 50,
           opacity: 0,
-          scale: 0.5,
+          scale: isMobile ? 0.8 : 0.5,
         },
         {
           y: 0,
           opacity: 1,
           scale: 1,
-          duration: 0.8,
-          delay: 0.5 + index * 0.1,
-          ease: "back.out(1.7)",
+          duration: isMobile ? 0.5 : 0.8,
+          delay: 0.5 + index * (isMobile ? 0.05 : 0.1),
+          ease: isMobile ? "power2.out" : "back.out(1.7)",
         }
       );
     });
-  }, [isInView]);
+  }, [isInView, isMobile]);
 
   return (
     <motion.section
       id="contact"
       ref={sectionRef}
-      className="relative py-20 px-4 md:px-8 bg-[var(--bg-darkest)] text-white overflow-hidden flex items-center justify-center"
+      className="relative py-20 px-4 md:px-8 bg-(--bg-darkest) text-white overflow-hidden flex items-center justify-center"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6 }}
     >
       {/* Animated background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[var(--neon-purple)]/5 via-transparent to-[var(--neon-cyan)]/5 animate-pulse" />
+      <div className="absolute inset-0 bg-linear-to-br from-(--neon-purple)/5 via-transparent to-(--neon-cyan)/5 animate-pulse" />
 
       <div className="container mx-auto max-w-4xl relative z-10">
         {/* Section Title */}
@@ -123,7 +127,7 @@ const ContactSection: React.FC = () => {
             transition={{ duration: 0.6 }}
             className="mb-4"
           >
-            <span className="text-sm uppercase tracking-widest text-[var(--neon-cyan)] font-semibold">
+            <span className="text-sm uppercase tracking-widest text-(--neon-cyan) font-semibold">
               Get In Touch
             </span>
           </motion.div>
@@ -151,7 +155,7 @@ const ContactSection: React.FC = () => {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={isInView ? { opacity: 1, scale: 1 } : {}}
             transition={{ duration: 0.6, delay: 0.5 }}
-            className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[var(--neon-cyan)] to-[var(--neon-purple)] rounded-full font-semibold text-lg hover:shadow-[0_0_30px_rgba(0,240,255,0.5)] transition-all duration-300 group"
+            className="inline-flex items-center gap-3 px-8 py-4 bg-linear-to-r from-(--neon-cyan) to-(--neon-purple) rounded-full font-semibold text-lg hover:shadow-[0_0_30px_rgba(0,240,255,0.5)] transition-all duration-300 group"
             whileHover={{ scale: 1.05, y: -2 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -184,7 +188,7 @@ const ContactSection: React.FC = () => {
                 className="group relative"
               >
                 <motion.div
-                  className="relative flex items-center justify-center w-16 h-16 rounded-full glass-strong border-2 border-[var(--glass-border)] hover:border-[var(--neon-cyan)] transition-all duration-300"
+                  className="relative flex items-center justify-center w-16 h-16 rounded-full glass-strong border-2 border-(--glass-border) hover:border-(--neon-cyan) transition-all duration-300"
                   whileHover={{ scale: 1.1, y: -5 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -212,9 +216,9 @@ const ContactSection: React.FC = () => {
       </div>
 
       {/* Decorative elements */}
-      <div className="absolute top-20 left-20 w-2 h-2 rounded-full bg-[var(--neon-cyan)] animate-ping" />
-      <div className="absolute bottom-40 right-20 w-3 h-3 rounded-full bg-[var(--neon-pink)] animate-pulse" />
-      <div className="absolute top-1/2 right-10 w-2 h-2 rounded-full bg-[var(--neon-purple)] animate-ping" />
+      <div className="absolute top-20 left-20 w-2 h-2 rounded-full bg-(--neon-cyan) animate-ping" />
+      <div className="absolute bottom-40 right-20 w-3 h-3 rounded-full bg-(--neon-pink) animate-pulse" />
+      <div className="absolute top-1/2 right-10 w-2 h-2 rounded-full bg-(--neon-purple) animate-ping" />
     </motion.section>
   );
 };

@@ -6,6 +6,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { projects } from "../utils/data";
 import ProjectCard from "./projectCard";
+import { useDevice } from "../hooks/useDevice";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -16,6 +17,7 @@ const ProjectsSection: React.FC = () => {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
   const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
+  const { isMobile } = useDevice();
 
   useEffect(() => {
     if (!isInView) return;
@@ -31,16 +33,17 @@ const ProjectsSection: React.FC = () => {
         titleRef.current?.appendChild(span);
       });
 
+      // Simpler animation on mobile
       gsap.fromTo(
         titleRef.current.children,
-        { y: 100, opacity: 0, rotationX: -90 },
+        { y: isMobile ? 50 : 100, opacity: 0, rotationX: isMobile ? 0 : -90 },
         {
           y: 0,
           opacity: 1,
           rotationX: 0,
-          duration: 0.8,
-          stagger: 0.02,
-          ease: "back.out(1.7)",
+          duration: isMobile ? 0.5 : 0.8,
+          stagger: isMobile ? 0.01 : 0.02,
+          ease: isMobile ? "power2.out" : "back.out(1.7)",
         }
       );
     }
@@ -48,21 +51,22 @@ const ProjectsSection: React.FC = () => {
     cardsRef.current.forEach((card, index) => {
       if (!card) return;
 
+      // Simpler animation on mobile
       gsap.fromTo(
         card,
         {
-          y: 150,
+          y: isMobile ? 50 : 150,
           opacity: 0,
-          scale: 0.8,
-          rotationY: -30,
+          scale: isMobile ? 1 : 0.8,
+          rotationY: isMobile ? 0 : -30,
         },
         {
           y: 0,
           opacity: 1,
           scale: 1,
           rotationY: 0,
-          duration: 1.2,
-          delay: index * 0.15,
+          duration: isMobile ? 0.6 : 1.2,
+          delay: index * (isMobile ? 0.08 : 0.15),
           ease: "power3.out",
           scrollTrigger: {
             trigger: card,
@@ -73,13 +77,13 @@ const ProjectsSection: React.FC = () => {
         }
       );
     });
-  }, [isInView]);
+  }, [isInView, isMobile]);
 
   return (
     <motion.section
       id="projects"
       ref={sectionRef}
-      className="relative min-h-screen py-20 px-4 md:px-8 bg-[var(--bg-darkest)] text-white overflow-hidden"
+      className="relative min-h-screen py-20 px-4 md:px-8 bg-(--bg-darkest) text-white overflow-hidden"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6 }}
@@ -93,7 +97,7 @@ const ProjectsSection: React.FC = () => {
             transition={{ duration: 0.6 }}
             className="text-center mb-4"
           >
-            <span className="text-sm uppercase tracking-widest text-[var(--neon-cyan)] font-semibold">
+            <span className="text-sm uppercase tracking-widest text-(--neon-cyan) font-semibold">
               My Work
             </span>
           </motion.div>
@@ -117,7 +121,7 @@ const ProjectsSection: React.FC = () => {
         </div>
 
         {/* Projects Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {projects.map((project, index) => (
             <div
               key={project.id}
@@ -132,8 +136,8 @@ const ProjectsSection: React.FC = () => {
       </div>
 
       {/* Decorative elements */}
-      <div className="absolute top-20 right-20 w-3 h-3 rounded-full bg-[var(--neon-purple)] animate-ping" />
-      <div className="absolute bottom-40 left-10 w-2 h-2 rounded-full bg-[var(--neon-cyan)] animate-pulse" />
+      <div className="absolute top-20 right-20 w-3 h-3 rounded-full bg-(--neon-purple) animate-ping" />
+      <div className="absolute bottom-40 left-10 w-2 h-2 rounded-full bg-(--neon-cyan) animate-pulse" />
     </motion.section>
   );
 };
