@@ -210,34 +210,41 @@ const AboutSection: React.FC = () => {
     <motion.section
       id="about"
       ref={sectionRef}
-      className="relative min-h-screen py-20 px-4 md:px-8 bg-(--bg-darkest) text-white overflow-hidden"
+      className="relative bg-(--bg-darkest) text-white overflow-hidden"
+      style={{
+        minHeight: '100vh',
+        padding: 'clamp(3rem, 8vh, 5rem) clamp(1rem, 4vw, 2rem)',
+      }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6 }}
     >
-      {/* Animated background effects */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-(--neon-purple)/5 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-(--neon-cyan)/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
+        <div className="absolute top-0 left-1/4 bg-(--neon-purple)/5 rounded-full blur-3xl animate-pulse" style={{ width: 'clamp(200px, 30vw, 384px)', height: 'clamp(200px, 30vw, 384px)' }} />
+        <div className="absolute bottom-0 right-1/4 bg-(--neon-cyan)/5 rounded-full blur-3xl animate-pulse" style={{ width: 'clamp(200px, 30vw, 384px)', height: 'clamp(200px, 30vw, 384px)', animationDelay: "1s" }} />
       </div>
 
-      {/* Section Title */}
-      <div className="container mx-auto max-w-7xl mb-16 relative z-10">
+      <div className="container mx-auto max-w-7xl relative z-10" style={{ marginBottom: 'clamp(2rem, 5vh, 4rem)' }}>
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
-          className="text-center mb-4"
+          className="text-center"
+          style={{ marginBottom: 'clamp(0.75rem, 2vh, 1rem)' }}
         >
-          <span className="text-sm uppercase tracking-widest text-(--neon-cyan) font-semibold">
+          <span className="uppercase tracking-widest text-(--neon-cyan) font-semibold" style={{ fontSize: 'clamp(0.75rem, 1.5vw, 0.875rem)' }}>
             Get to know me
           </span>
         </motion.div>
 
         <h2
           ref={titleRef}
-          className="text-5xl md:text-7xl font-bold text-center mb-8 glow-text"
-          style={{ perspective: "1000px" }}
+          className="font-bold text-center glow-text"
+          style={{
+            fontSize: 'clamp(2rem, 6vw, 4.5rem)',
+            marginBottom: 'clamp(1rem, 3vh, 2rem)',
+            perspective: "1000px"
+          }}
         >
           About Me
         </h2>
@@ -246,15 +253,18 @@ const AboutSection: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="text-xl text-center text-gray-400 max-w-3xl mx-auto"
+          className="text-center text-gray-400 mx-auto"
+          style={{
+            fontSize: 'clamp(0.875rem, 2vw, 1.25rem)',
+            maxWidth: 'min(90%, 48rem)',
+          }}
         >
           Crafting digital experiences that push the boundaries of what's possible
         </motion.p>
       </div>
 
-      {/* Stats Section */}
-      <div className="container mx-auto max-w-7xl mb-16 relative z-10">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
+      <div className="container mx-auto max-w-7xl relative z-10" style={{ marginBottom: 'clamp(2rem, 5vh, 4rem)' }}>
+        <div className="grid grid-cols-1 sm:grid-cols-3" style={{ gap: 'clamp(1rem, 2vw, 1.5rem)' }}>
           {stats.map((stat, index) => (
             <motion.div
               key={stat.id}
@@ -296,7 +306,7 @@ const AboutSection: React.FC = () => {
 
       {/* Bento Grid Layout */}
       <div className="container mx-auto max-w-7xl relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 auto-rows-[200px]">
+        <div className="grid grid-cols-1 md:grid-cols-3 auto-rows-auto" style={{ gap: 'clamp(1rem, 2vw, 1.5rem)', gridAutoRows: 'minmax(clamp(180px, 25vh, 250px), auto)' }}>
           {/* Profile Card - Special */}
           <motion.div
             ref={(el) => {
@@ -305,8 +315,8 @@ const AboutSection: React.FC = () => {
             onMouseMove={(e) => handleCardMouseMove(e, 0)}
             onMouseLeave={() => handleCardMouseLeave(0)}
             onMouseEnter={() => setHoveredCard(0)}
-            className="cyber-card rounded-3xl p-6 md:p-8 md:col-span-1 md:row-span-2 flex flex-col items-center justify-center relative overflow-hidden group"
-            style={{ transformStyle: isTouchDevice ? "flat" : "preserve-3d" }}
+            className="cyber-card rounded-3xl md:col-span-1 md:row-span-2 flex flex-col items-center justify-center relative overflow-hidden group"
+            style={{ padding: 'clamp(1.5rem, 4vw, 2rem)', transformStyle: isTouchDevice ? "flat" : "preserve-3d" }}
           >
             {/* Animated gradient background */}
             <div className="absolute inset-0 bg-linear-to-br from-(--neon-cyan)/10 via-(--neon-purple)/10 to-(--neon-pink)/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -368,8 +378,8 @@ const AboutSection: React.FC = () => {
               onMouseMove={(e) => handleCardMouseMove(e, index + 1)}
               onMouseLeave={() => handleCardMouseLeave(index + 1)}
               onMouseEnter={() => setHoveredCard(card.id)}
-              className={`cyber-card rounded-3xl p-6 md:p-8 ${card.className} relative overflow-hidden group`}
-              style={{ transformStyle: isTouchDevice ? "flat" : "preserve-3d" }}
+              className={`cyber-card rounded-3xl ${card.className} relative overflow-hidden group`}
+              style={{ padding: 'clamp(1.5rem, 4vw, 2rem)', transformStyle: isTouchDevice ? "flat" : "preserve-3d" }}
             >
               {/* Gradient overlay */}
               <div

@@ -150,16 +150,17 @@ body::before {
   background-image:
     linear-gradient(var(--grid-color) 1px, transparent 1px),
     linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
-  background-size: 50px 50px;
+  background-size: clamp(30px, 5vw, 50px) clamp(30px, 5vw, 50px);
   z-index: 0;
   pointer-events: none;
   opacity: 0.5;
   animation: gridMove 20s linear infinite;
+  will-change: transform;
 }
 
 @keyframes gridMove {
-  0% { transform: translate(0, 0); }
-  100% { transform: translate(50px, 50px); }
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(50px, 50px, 0); }
 }
 
 /* ===========================
@@ -519,21 +520,16 @@ iframe {
 
 @media screen and (max-width: 768px) {
   body::before {
-    background-size: 30px 30px;
-    /* Reduce animation complexity on mobile */
     animation-duration: 30s;
   }
 
   .glow-text {
-    font-size: clamp(1.5rem, 4vw, 3rem);
-    /* Simplify text glow on mobile */
     text-shadow:
       0 0 10px rgba(139, 92, 246, 0.6),
       0 0 20px rgba(139, 92, 246, 0.4);
     animation: none;
   }
 
-  /* Disable expensive effects on mobile */
   .holographic {
     animation: none;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
@@ -543,7 +539,6 @@ iframe {
     animation: none;
   }
 
-  /* Simplify animations on mobile */
   .animate-scan {
     animation-duration: 4s;
   }
@@ -551,55 +546,29 @@ iframe {
   .cyber-card::before {
     animation-duration: 6s;
   }
-
-  /* Reduce padding on mobile */
-  section {
-    padding-top: 4rem !important;
-    padding-bottom: 4rem !important;
-  }
 }
 
 @media screen and (max-width: 640px) {
-  /* Further simplify on small mobile devices */
-  .glow-text {
-    font-size: clamp(1.25rem, 5vw, 2rem);
-  }
-
-  /* Disable blur effects on small screens for performance */
   .glass,
   .glass-strong {
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     background: rgba(26, 26, 36, 0.95);
   }
 }
 
-@media screen and (max-width: 400px) {
-  html,
-  body {
-    width: 100%;
-    overflow-x: hidden;
+@media screen and (max-width: 480px) {
+  body::before {
+    animation: none;
   }
 
-  * {
-    padding: 0;
-    margin: 0;
+  .glass,
+  .glass-strong {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(26, 26, 36, 0.98);
   }
 
-  .card,
-  .container {
-    width: 100%;
-    max-width: 100%;
-  }
-
-  img,
-  video,
-  iframe {
-    width: 100%;
-    max-width: 100%;
-  }
-
-  /* Disable expensive animations on very small screens */
   .animate-fade-in-up,
   .animate-fade-in,
   .animate-slide-in-right {

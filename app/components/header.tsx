@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
 import gsap from "gsap";
 import { useDevice } from "../hooks/useDevice";
@@ -140,7 +141,15 @@ const Header: React.FC = () => {
           <nav className="relative z-10">
             {isMobile ? (
               <div className="flex items-center justify-between">
-                <span className="text-white font-bold text-lg">PR</span>
+                <div className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-(--neon-cyan) shadow-[0_0_15px_rgba(0,240,255,0.5)]">
+                  <Image
+                    src="/photo.jpeg"
+                    alt="PR"
+                    fill
+                    className="object-cover"
+                    priority
+                  />
+                </div>
                 <button
                   onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                   className="text-white p-2"

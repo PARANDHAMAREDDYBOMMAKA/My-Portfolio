@@ -8,6 +8,10 @@ interface DeviceInfo {
   isDesktop: boolean;
   isTouchDevice: boolean;
   isLowEndDevice: boolean;
+  isSmallMobile: boolean;
+  isLargeMobile: boolean;
+  screenWidth: number;
+  screenHeight: number;
 }
 
 export const useDevice = (): DeviceInfo => {
@@ -17,29 +21,48 @@ export const useDevice = (): DeviceInfo => {
     isDesktop: true,
     isTouchDevice: false,
     isLowEndDevice: false,
+    isSmallMobile: false,
+    isLargeMobile: false,
+    screenWidth: typeof window !== 'undefined' ? window.innerWidth : 1920,
+    screenHeight: typeof window !== 'undefined' ? window.innerHeight : 1080,
   });
 
   useEffect(() => {
     const checkDevice = () => {
       const width = window.innerWidth;
+      const height = window.innerHeight;
       const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-
-      // Check for low-end device based on hardware concurrency
       const isLowEndDevice = navigator.hardwareConcurrency ? navigator.hardwareConcurrency <= 4 : false;
 
       setDeviceInfo({
         isMobile: width < 768,
         isTablet: width >= 768 && width < 1024,
         isDesktop: width >= 1024,
+        isSmallMobile: width < 480,
+        isLargeMobile: width >= 480 && width < 768,
         isTouchDevice,
         isLowEndDevice,
+        screenWidth: width,
+        screenHeight: height,
       });
     };
 
     checkDevice();
-    window.addEventListener('resize', checkDevice);
 
-    return () => window.removeEventListener('resize', checkDevice);
+    let timeoutId: NodeJS.Timeout;
+    const handleResize = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(checkDevice, 100);
+    };
+
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('orientationchange', checkDevice);
+
+    return () => {
+      clearTimeout(timeoutId);
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('orientationchange', checkDevice);
+    };
   }, []);
 
   return deviceInfo;

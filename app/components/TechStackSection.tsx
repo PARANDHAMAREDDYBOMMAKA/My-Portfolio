@@ -265,29 +265,37 @@ const TechStacksSection: React.FC = () => {
     <motion.section
       id="techstacks"
       ref={sectionRef}
-      className="relative min-h-screen py-20 px-4 md:px-8 bg-(--bg-darkest) text-white overflow-hidden"
+      className="relative bg-(--bg-darkest) text-white overflow-hidden"
+      style={{
+        minHeight: '100vh',
+        padding: 'clamp(3rem, 8vh, 5rem) clamp(1rem, 4vw, 2rem)',
+      }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6 }}
     >
       <div className="container mx-auto max-w-7xl">
-        {/* Section Title */}
-        <div className="mb-16">
+        <div style={{ marginBottom: 'clamp(2rem, 5vh, 4rem)' }}>
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6 }}
-            className="text-center mb-4"
+            className="text-center"
+            style={{ marginBottom: 'clamp(0.75rem, 2vh, 1rem)' }}
           >
-            <span className="text-sm uppercase tracking-widest text-(--neon-cyan) font-semibold">
+            <span className="uppercase tracking-widest text-(--neon-cyan) font-semibold" style={{ fontSize: 'clamp(0.75rem, 1.5vw, 0.875rem)' }}>
               Technologies & Tools
             </span>
           </motion.div>
 
           <h2
             ref={titleRef}
-            className="text-5xl md:text-7xl font-bold text-center mb-8 glow-text"
-            style={{ perspective: "1000px" }}
+            className="font-bold text-center glow-text"
+            style={{
+              fontSize: 'clamp(2rem, 6vw, 4.5rem)',
+              marginBottom: 'clamp(1rem, 3vh, 2rem)',
+              perspective: "1000px"
+            }}
           >
             Tech Stack
           </h2>
@@ -296,23 +304,27 @@ const TechStacksSection: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="text-xl text-center text-gray-400 max-w-3xl mx-auto"
+            className="text-center text-gray-400 mx-auto"
+            style={{
+              fontSize: 'clamp(0.875rem, 2vw, 1.25rem)',
+              maxWidth: 'min(90%, 48rem)',
+            }}
           >
             A comprehensive arsenal of modern technologies
           </motion.p>
         </div>
 
-        {/* Category Filters */}
-        <div className="flex justify-center flex-wrap gap-3 mb-12">
+        <div className="flex justify-center flex-wrap mb-12" style={{ gap: 'clamp(0.5rem, 1.5vw, 0.75rem)', marginBottom: 'clamp(2rem, 4vh, 3rem)' }}>
           {categories.map((category) => (
             <motion.button
               key={category}
               onClick={() => setActiveCategory(category)}
-              className={`relative px-6 py-3 rounded-full font-semibold transition-all ${
+              className={`relative rounded-full font-semibold transition-all ${
                 activeCategory === category
                   ? "text-white"
                   : "text-gray-400 hover:text-white"
               }`}
+              style={{ padding: 'clamp(0.625rem, 2vh, 0.75rem) clamp(1rem, 3vw, 1.5rem)', fontSize: 'clamp(0.875rem, 1.8vw, 1rem)' }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -329,16 +341,15 @@ const TechStacksSection: React.FC = () => {
           ))}
         </div>
 
-        {/* Tech Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 perspective-1000">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 perspective-1000" style={{ gap: 'clamp(1rem, 2.5vw, 1.5rem)' }}>
           {filteredTechs.map((tech, index) => (
             <div
               key={tech.name}
               ref={(el) => {
                 cardsRef.current[index] = el;
               }}
-              className="perspective-card cyber-card rounded-2xl p-4 md:p-6 relative overflow-hidden group"
-              style={{ transformStyle: isTouchDevice ? "flat" : "preserve-3d" }}
+              className="perspective-card cyber-card rounded-2xl relative overflow-hidden group"
+              style={{ padding: 'clamp(1rem, 3vw, 1.5rem)', transformStyle: isTouchDevice ? "flat" : "preserve-3d" }}
             >
               <div className="absolute inset-0 bg-linear-to-br from-(--neon-cyan)/10 to-(--neon-purple)/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 

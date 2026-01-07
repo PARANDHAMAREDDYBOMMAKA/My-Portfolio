@@ -110,32 +110,38 @@ const ContactSection: React.FC = () => {
     <motion.section
       id="contact"
       ref={sectionRef}
-      className="relative py-20 px-4 md:px-8 bg-(--bg-darkest) text-white overflow-hidden flex items-center justify-center"
+      className="relative bg-(--bg-darkest) text-white overflow-hidden flex items-center justify-center"
+      style={{
+        minHeight: '100vh',
+        padding: 'clamp(3rem, 8vh, 5rem) clamp(1rem, 4vw, 2rem)',
+      }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6 }}
     >
-      {/* Animated background gradient */}
       <div className="absolute inset-0 bg-linear-to-br from-(--neon-purple)/5 via-transparent to-(--neon-cyan)/5 animate-pulse" />
 
       <div className="container mx-auto max-w-4xl relative z-10">
-        {/* Section Title */}
-        <div className="text-center mb-12">
+        <div className="text-center" style={{ marginBottom: 'clamp(2rem, 5vh, 3rem)' }}>
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6 }}
-            className="mb-4"
+            style={{ marginBottom: 'clamp(0.75rem, 2vh, 1rem)' }}
           >
-            <span className="text-sm uppercase tracking-widest text-(--neon-cyan) font-semibold">
+            <span className="uppercase tracking-widest text-(--neon-cyan) font-semibold" style={{ fontSize: 'clamp(0.75rem, 1.5vw, 0.875rem)' }}>
               Get In Touch
             </span>
           </motion.div>
 
           <h2
             ref={titleRef}
-            className="text-5xl md:text-7xl font-bold mb-8 glow-text"
-            style={{ perspective: "1000px" }}
+            className="font-bold glow-text"
+            style={{
+              fontSize: 'clamp(2rem, 6vw, 4.5rem)',
+              marginBottom: 'clamp(1rem, 3vh, 2rem)',
+              perspective: "1000px"
+            }}
           >
             Let's Connect
           </h2>
@@ -144,38 +150,50 @@ const ContactSection: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="text-xl text-gray-400 max-w-2xl mx-auto mb-8"
+            className="text-gray-400 mx-auto"
+            style={{
+              fontSize: 'clamp(0.875rem, 2vw, 1.25rem)',
+              maxWidth: 'min(90%, 40rem)',
+              marginBottom: 'clamp(1.5rem, 3vh, 2rem)',
+            }}
           >
             Ready to bring your ideas to life? Let's create something extraordinary together.
           </motion.p>
 
-          {/* Email */}
           <motion.a
             href="mailto:rparandhama63@gmail.com"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={isInView ? { opacity: 1, scale: 1 } : {}}
             transition={{ duration: 0.6, delay: 0.5 }}
-            className="inline-flex items-center gap-3 px-8 py-4 bg-linear-to-r from-(--neon-cyan) to-(--neon-purple) rounded-full font-semibold text-lg hover:shadow-[0_0_30px_rgba(0,240,255,0.5)] transition-all duration-300 group"
+            className="inline-flex items-center bg-linear-to-r from-(--neon-cyan) to-(--neon-purple) rounded-full font-semibold hover:shadow-[0_0_30px_rgba(0,240,255,0.5)] transition-all duration-300 group"
+            style={{
+              gap: 'clamp(0.5rem, 2vw, 0.75rem)',
+              padding: 'clamp(0.75rem, 2vh, 1rem) clamp(1.5rem, 4vw, 2rem)',
+              fontSize: 'clamp(0.875rem, 2vw, 1.125rem)',
+            }}
             whileHover={{ scale: 1.05, y: -2 }}
             whileTap={{ scale: 0.95 }}
           >
-            <Mail size={24} className="group-hover:rotate-12 transition-transform" />
-            <span>rparandhama63@gmail.com</span>
+            <Mail style={{ width: 'clamp(20px, 3vw, 24px)', height: 'clamp(20px, 3vw, 24px)' }} className="group-hover:rotate-12 transition-transform" />
+            <span className="break-all">rparandhama63@gmail.com</span>
           </motion.a>
         </div>
 
-        {/* Social Links */}
-        <div className="mt-16">
+        <div style={{ marginTop: 'clamp(2rem, 6vh, 4rem)' }}>
           <motion.p
             initial={{ opacity: 0 }}
             animate={isInView ? { opacity: 1 } : {}}
             transition={{ duration: 0.6, delay: 0.6 }}
-            className="text-center text-gray-500 mb-8 uppercase tracking-wider text-sm"
+            className="text-center text-gray-500 uppercase tracking-wider"
+            style={{
+              marginBottom: 'clamp(1.5rem, 3vh, 2rem)',
+              fontSize: 'clamp(0.75rem, 1.5vw, 0.875rem)',
+            }}
           >
             Or find me on
           </motion.p>
 
-          <div className="flex justify-center items-center gap-6 flex-wrap">
+          <div className="flex justify-center items-center flex-wrap" style={{ gap: 'clamp(1rem, 3vw, 1.5rem)' }}>
             {socialLinks.map((link, index) => (
               <a
                 key={link.name}
@@ -188,14 +206,15 @@ const ContactSection: React.FC = () => {
                 className="group relative"
               >
                 <motion.div
-                  className="relative flex items-center justify-center w-16 h-16 rounded-full glass-strong border-2 border-(--glass-border) hover:border-(--neon-cyan) transition-all duration-300"
+                  className="relative flex items-center justify-center rounded-full glass-strong border-2 border-(--glass-border) hover:border-(--neon-cyan) transition-all duration-300"
+                  style={{ width: 'clamp(3rem, 8vw, 4rem)', height: 'clamp(3rem, 8vw, 4rem)' }}
                   whileHover={{ scale: 1.1, y: -5 }}
                   whileTap={{ scale: 0.95 }}
                 >
                   <FontAwesomeIcon
                     icon={link.icon}
-                    className="text-2xl transition-colors duration-300"
-                    style={{ color: link.color }}
+                    className="transition-colors duration-300"
+                    style={{ color: link.color, fontSize: 'clamp(1.25rem, 3vw, 1.5rem)' }}
                   />
 
                   {/* Glow effect */}

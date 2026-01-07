@@ -15,8 +15,9 @@ import { useDevice } from "../hooks/useDevice";
 const CyberpunkSphere = () => {
   const sphereRef = useRef<THREE.Mesh>(null);
   const materialRef = useRef<THREE.ShaderMaterial>(null);
-  const { viewport } = useThree();
+  const { viewport, camera } = useThree();
   const mousePos = useRef({ x: 0, y: 0 });
+  const targetRotation = useRef({ x: 0, y: 0 });
 
   const uniforms = useMemo(
     () => ({
@@ -25,7 +26,8 @@ const CyberpunkSphere = () => {
       color2: { value: new THREE.Color("#a855f7") },
       color3: { value: new THREE.Color("#ff006e") },
       mousePos: { value: new THREE.Vector2(0, 0) },
-      intensity: { value: 0.8 },
+      intensity: { value: 1.2 },
+      distortion: { value: 0.3 },
     }),
     []
   );
@@ -33,27 +35,32 @@ const CyberpunkSphere = () => {
   useFrame(({ clock, pointer }) => {
     if (sphereRef.current && materialRef.current) {
       const time = clock.getElapsedTime();
-      mousePos.current = { x: pointer.x, y: pointer.y };
 
-      // Complex organic movement
-      const baseY = Math.sin(time * 0.5) * 0.5 + Math.cos(time * 0.3) * 0.3;
-      const baseX = Math.cos(time * 0.4) * 0.3;
+      const baseY = Math.sin(time * 0.5) * 0.4 + Math.cos(time * 0.3) * 0.2;
+      const baseX = Math.cos(time * 0.4) * 0.25;
+      const baseZ = Math.sin(time * 0.2) * 0.3;
 
-      // Multi-axis rotation
-      sphereRef.current.rotation.x = time * 0.1;
-      sphereRef.current.rotation.y = time * 0.15;
-      sphereRef.current.rotation.z = Math.sin(time * 0.05) * 0.2;
+      targetRotation.current.x = pointer.y * 0.5;
+      targetRotation.current.y = pointer.x * 0.5;
 
-      // Mouse interaction with smoother following
-      const targetX = baseX + (pointer.x * viewport.width) / 15;
-      const targetY = (pointer.y * viewport.height) / 15;
-      sphereRef.current.position.x = THREE.MathUtils.lerp(sphereRef.current.position.x, targetX, 0.03);
-      sphereRef.current.position.y = baseY;
-      sphereRef.current.position.z = THREE.MathUtils.lerp(sphereRef.current.position.z, targetY, 0.03);
+      sphereRef.current.rotation.x = THREE.MathUtils.lerp(sphereRef.current.rotation.x, targetRotation.current.x + time * 0.1, 0.05);
+      sphereRef.current.rotation.y = THREE.MathUtils.lerp(sphereRef.current.rotation.y, targetRotation.current.y + time * 0.15, 0.05);
+      sphereRef.current.rotation.z = Math.sin(time * 0.05) * 0.1;
 
-      // Update shader uniforms
+      const targetX = baseX + (pointer.x * viewport.width) / 12;
+      const targetY = baseY + (pointer.y * viewport.height) / 12;
+      const targetZPos = baseZ + (pointer.x * 0.5);
+
+      sphereRef.current.position.x = THREE.MathUtils.lerp(sphereRef.current.position.x, targetX, 0.05);
+      sphereRef.current.position.y = THREE.MathUtils.lerp(sphereRef.current.position.y, targetY, 0.05);
+      sphereRef.current.position.z = THREE.MathUtils.lerp(sphereRef.current.position.z, targetZPos - 2, 0.05);
+
+      const scale = 1 + Math.sin(time * 0.5) * 0.05;
+      sphereRef.current.scale.setScalar(scale);
+
       materialRef.current.uniforms.time.value = time;
       materialRef.current.uniforms.mousePos.value.set(pointer.x, pointer.y);
+      materialRef.current.uniforms.distortion.value = 0.3 + Math.sin(time * 0.3) * 0.1;
     }
   });
 
@@ -319,17 +326,18 @@ const HeroSection: React.FC = () => {
   }, [isMobile]);
 
   return (
-    <section className="relative flex flex-col items-center justify-center min-h-screen h-screen text-white text-center overflow-hidden">
+    <section className="relative flex flex-col items-center justify-center text-white text-center overflow-hidden" style={{ minHeight: '100vh', height: '100dvh' }}>
       <HeroBackground isMobile={isMobile} />
 
-      {/* Dark gradient overlay for better text readability */}
       <div className="absolute inset-0 bg-linear-to-b from-transparent via-(--bg-darkest)/40 to-(--bg-darkest)/60 z-5" />
 
-      <div className="relative z-10 px-4 max-w-6xl mx-auto">
+      <div className="relative z-10 w-full max-w-[90vw] sm:max-w-[85vw] md:max-w-6xl mx-auto" style={{ padding: 'clamp(1rem, 4vw, 2rem)' }}>
         <h1
           ref={titleRef}
-          className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-4 sm:mb-6 glow-text leading-tight px-2"
+          className="font-bold glow-text leading-tight"
           style={{
+            fontSize: 'clamp(1.75rem, 7vw, 6rem)',
+            marginBottom: 'clamp(1rem, 3vh, 2rem)',
             fontFamily: "'Inter', sans-serif",
             fontWeight: 900,
             letterSpacing: "-0.02em",
@@ -340,7 +348,13 @@ const HeroSection: React.FC = () => {
 
         <p
           ref={subtitleRef}
-          className="text-sm sm:text-lg md:text-xl lg:text-2xl mb-6 sm:mb-8 text-gray-300 max-w-3xl mx-auto leading-relaxed px-4"
+          className="text-gray-300 mx-auto leading-relaxed"
+          style={{
+            fontSize: 'clamp(0.875rem, 2.5vw, 1.5rem)',
+            marginBottom: 'clamp(1.5rem, 4vh, 2.5rem)',
+            maxWidth: '90%',
+            padding: '0 clamp(0.5rem, 2vw, 1rem)',
+          }}
         >
           Hi! I&apos;m <span className="glow-cyan font-semibold">Parandhama Reddy</span>,
           a Full Stack Developer crafting immersive digital experiences at the intersection of
@@ -352,31 +366,42 @@ const HeroSection: React.FC = () => {
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 1.2, type: "spring", stiffness: 200 }}
-          className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4 w-full max-w-md sm:max-w-none"
+          className="flex flex-col sm:flex-row justify-center items-center w-full"
+          style={{
+            gap: 'clamp(0.75rem, 2vw, 1rem)',
+            padding: '0 clamp(0.5rem, 2vw, 1rem)',
+          }}
         >
-          <Link href="#projects" className="w-full sm:w-auto">
+          <Link href="#projects" className="w-full sm:w-auto max-w-xs sm:max-w-none">
             <motion.button
               whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.95 }}
-              className="group relative w-full px-6 sm:px-8 py-3 sm:py-4 bg-linear-to-r from-(--neon-cyan) to-(--neon-purple) rounded-full text-sm sm:text-base md:text-lg font-bold overflow-hidden transition-all duration-300"
+              className="group relative w-full bg-linear-to-r from-(--neon-cyan) to-(--neon-purple) rounded-full font-bold overflow-hidden transition-all duration-300"
+              style={{
+                padding: 'clamp(0.75rem, 2vh, 1rem) clamp(1.5rem, 4vw, 2rem)',
+                fontSize: 'clamp(0.875rem, 2vw, 1.125rem)',
+              }}
             >
               <span className="relative z-10">Explore My Universe</span>
               <div className="absolute inset-0 bg-linear-to-r from-(--neon-purple) to-(--neon-pink) opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </motion.button>
           </Link>
 
-          <Link href="#contact" className="w-full sm:w-auto">
+          <Link href="#contact" className="w-full sm:w-auto max-w-xs sm:max-w-none">
             <motion.button
               whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.95 }}
-              className="w-full px-6 sm:px-8 py-3 sm:py-4 border-2 border-(--neon-cyan) rounded-full text-sm sm:text-base md:text-lg font-bold neon-border bg-transparent transition-all duration-300"
+              className="w-full border-2 border-(--neon-cyan) rounded-full font-bold neon-border bg-transparent transition-all duration-300"
+              style={{
+                padding: 'clamp(0.75rem, 2vh, 1rem) clamp(1.5rem, 4vw, 2rem)',
+                fontSize: 'clamp(0.875rem, 2vw, 1.125rem)',
+              }}
             >
               Get In Touch
             </motion.button>
           </Link>
         </motion.div>
 
-        {/* Scroll indicator */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1, y: [0, 10, 0] }}
@@ -384,7 +409,8 @@ const HeroSection: React.FC = () => {
             opacity: { delay: 2 },
             y: { repeat: Infinity, duration: 2, ease: "easeInOut" },
           }}
-          className="absolute bottom-10 left-1/2 transform -translate-x-1/2"
+          className="absolute left-1/2 transform -translate-x-1/2"
+          style={{ bottom: 'clamp(2rem, 5vh, 3rem)' }}
         >
           <div className="w-6 h-10 border-2 border-(--neon-cyan) rounded-full flex justify-center p-2">
             <motion.div

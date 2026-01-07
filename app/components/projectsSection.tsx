@@ -83,29 +83,37 @@ const ProjectsSection: React.FC = () => {
     <motion.section
       id="projects"
       ref={sectionRef}
-      className="relative min-h-screen py-20 px-4 md:px-8 bg-(--bg-darkest) text-white overflow-hidden"
+      className="relative bg-(--bg-darkest) text-white overflow-hidden"
+      style={{
+        minHeight: '100vh',
+        padding: 'clamp(3rem, 8vh, 5rem) clamp(1rem, 4vw, 2rem)',
+      }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6 }}
     >
       <div className="container mx-auto max-w-7xl">
-        {/* Section Title */}
-        <div className="mb-16">
+        <div style={{ marginBottom: 'clamp(2rem, 5vh, 4rem)' }}>
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6 }}
-            className="text-center mb-4"
+            className="text-center"
+            style={{ marginBottom: 'clamp(0.75rem, 2vh, 1rem)' }}
           >
-            <span className="text-sm uppercase tracking-widest text-(--neon-cyan) font-semibold">
+            <span className="uppercase tracking-widest text-(--neon-cyan) font-semibold" style={{ fontSize: 'clamp(0.75rem, 1.5vw, 0.875rem)' }}>
               My Work
             </span>
           </motion.div>
 
           <h2
             ref={titleRef}
-            className="text-5xl md:text-7xl font-bold text-center mb-8 glow-text"
-            style={{ perspective: "1000px" }}
+            className="font-bold text-center glow-text"
+            style={{
+              fontSize: 'clamp(2rem, 6vw, 4.5rem)',
+              marginBottom: 'clamp(1rem, 3vh, 2rem)',
+              perspective: "1000px"
+            }}
           >
             Projects
           </h2>
@@ -114,14 +122,17 @@ const ProjectsSection: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="text-xl text-center text-gray-400 max-w-3xl mx-auto"
+            className="text-center text-gray-400 mx-auto"
+            style={{
+              fontSize: 'clamp(0.875rem, 2vw, 1.25rem)',
+              maxWidth: 'min(90%, 48rem)',
+            }}
           >
             Showcasing innovative solutions and creative implementations
           </motion.p>
         </div>
 
-        {/* Projects Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3" style={{ gap: 'clamp(1.5rem, 3vw, 2rem)' }}>
           {projects.map((project, index) => (
             <div
               key={project.id}
