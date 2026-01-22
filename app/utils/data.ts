@@ -1,11 +1,10 @@
-// utils/data.ts
 export interface Project {
   [x: string]: any;
   id: number;
   title: string;
   description: string;
   link: string;
-  imageUrl: string; // New field for project image or video thumbnail
+  imageUrl: string;
 }
 
 export const projects: Project[] = [
@@ -52,5 +51,4 @@ export const projects: Project[] = [
     imageUrl: "https://firebasestorage.googleapis.com/v0/b/capstone-46186.appspot.com/o/Screenshot%202025-12-24%20at%209.45.07%E2%80%AFPM.png?alt=media&token=26539b98-0b80-4ee2-bcd6-8aad5eea0136",
   },
 
-  // Add more projects as needed
 ];

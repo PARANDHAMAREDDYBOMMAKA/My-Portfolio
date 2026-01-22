@@ -3,6 +3,8 @@
 import React, { useRef, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { Mail, MapPin, Send } from "lucide-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useDevice } from "../hooks/useDevice";
 import {
@@ -10,235 +12,306 @@ import {
   faGithub,
   faXTwitter,
   faLinkedin,
-  faFacebook,
 } from "@fortawesome/free-brands-svg-icons";
-import { Mail } from "lucide-react";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 const ContactSection: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
-  const socialRefs = useRef<(HTMLAnchorElement | null)[]>([]);
-  const isInView = useInView(sectionRef, { once: true, amount: 0.3 });
-  const { isMobile } = useDevice();
+  const cardRef = useRef<HTMLDivElement>(null);
+  const leftColRef = useRef<HTMLDivElement>(null);
+  const rightColRef = useRef<HTMLDivElement>(null);
+  const socialLinksRef = useRef<(HTMLAnchorElement | null)[]>([]);
+  const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
+  const { isMobile, isTouchDevice } = useDevice();
 
   const socialLinks = [
     {
       href: "https://github.com/PARANDHAMAREDDYBOMMAKA",
       icon: faGithub,
-      color: "#ffffff",
       name: "GitHub",
     },
     {
       href: "https://www.linkedin.com/in/parandhama-reddy-bommaka/",
       icon: faLinkedin,
-      color: "#0077B5",
       name: "LinkedIn",
     },
     {
       href: "https://x.com/PARANDHAMA123",
       icon: faXTwitter,
-      color: "#1DA1F2",
       name: "Twitter",
     },
     {
       href: "https://www.instagram.com/parandhamareddybommaka/",
       icon: faInstagram,
-      color: "#E1306C",
       name: "Instagram",
-    },
-    {
-      href: "https://www.facebook.com/parandhamareddy.sunny/",
-      icon: faFacebook,
-      color: "#1877F2",
-      name: "Facebook",
     },
   ];
 
   useEffect(() => {
     if (!isInView) return;
 
-    if (titleRef.current) {
-      const chars = titleRef.current.textContent?.split("") || [];
-      titleRef.current.innerHTML = "";
-
-      chars.forEach((char) => {
-        const span = document.createElement("span");
-        span.textContent = char === " " ? "\u00A0" : char;
-        span.style.display = "inline-block";
-        titleRef.current?.appendChild(span);
-      });
-
-      // Simpler animation on mobile
+    const ctx = gsap.context(() => {
       gsap.fromTo(
-        titleRef.current.children,
-        { y: isMobile ? 50 : 100, opacity: 0, rotationX: isMobile ? 0 : -90 },
+        titleRef.current,
+        { y: 80, opacity: 0 },
         {
           y: 0,
           opacity: 1,
-          rotationX: 0,
-          duration: isMobile ? 0.5 : 0.8,
-          stagger: isMobile ? 0.01 : 0.02,
-          ease: isMobile ? "power2.out" : "back.out(1.7)",
+          ease: "none",
+          scrollTrigger: {
+            trigger: titleRef.current,
+            start: "top 92%",
+            end: "top 65%",
+            scrub: 1,
+          },
         }
       );
-    }
 
-    socialRefs.current.forEach((social, index) => {
-      if (!social) return;
-
-      // Simpler animation on mobile
       gsap.fromTo(
-        social,
+        cardRef.current,
         {
-          y: isMobile ? 30 : 50,
+          y: 100,
           opacity: 0,
-          scale: isMobile ? 0.8 : 0.5,
+          scale: 0.96,
         },
         {
           y: 0,
           opacity: 1,
           scale: 1,
-          duration: isMobile ? 0.5 : 0.8,
-          delay: 0.5 + index * (isMobile ? 0.05 : 0.1),
-          ease: isMobile ? "power2.out" : "back.out(1.7)",
+          ease: "none",
+          scrollTrigger: {
+            trigger: cardRef.current,
+            start: "top 90%",
+            end: "top 55%",
+            scrub: 1.2,
+          },
         }
       );
-    });
-  }, [isInView, isMobile]);
+
+      gsap.fromTo(
+        leftColRef.current,
+        { x: -40, opacity: 0 },
+        {
+          x: 0,
+          opacity: 1,
+          ease: "none",
+          scrollTrigger: {
+            trigger: cardRef.current,
+            start: "top 85%",
+            end: "top 55%",
+            scrub: 1,
+          },
+        }
+      );
+
+      gsap.fromTo(
+        rightColRef.current,
+        { x: 40, opacity: 0 },
+        {
+          x: 0,
+          opacity: 1,
+          ease: "none",
+          scrollTrigger: {
+            trigger: cardRef.current,
+            start: "top 85%",
+            end: "top 55%",
+            scrub: 1,
+          },
+        }
+      );
+
+      socialLinksRef.current.forEach((link, index) => {
+        if (!link) return;
+
+        gsap.fromTo(
+          link,
+          { y: 40, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            ease: "none",
+            scrollTrigger: {
+              trigger: link,
+              start: "top 95%",
+              end: "top 75%",
+              scrub: 1,
+            },
+            delay: index * 0.08,
+          }
+        );
+
+        if (!isTouchDevice) {
+          const handleMouseMove = (e: MouseEvent) => {
+            const rect = link.getBoundingClientRect();
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
+
+            gsap.to(link, {
+              x: x * 0.2,
+              y: y * 0.2,
+              scale: 1.08,
+              duration: 0.3,
+              ease: "power2.out",
+            });
+          };
+
+          const handleMouseLeave = () => {
+            gsap.to(link, {
+              x: 0,
+              y: 0,
+              scale: 1,
+              duration: 0.5,
+              ease: "elastic.out(1, 0.4)",
+            });
+          };
+
+          link.addEventListener("mousemove", handleMouseMove);
+          link.addEventListener("mouseleave", handleMouseLeave);
+        }
+      });
+
+      if (!isMobile) {
+        gsap.to(cardRef.current, {
+          y: -30,
+          ease: "none",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 2,
+          },
+        });
+      }
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, [isInView, isMobile, isTouchDevice]);
 
   return (
-    <motion.section
+    <section
       id="contact"
       ref={sectionRef}
-      className="relative bg-(--bg-darkest) text-white overflow-hidden flex items-center justify-center"
-      style={{
-        minHeight: '100vh',
-        padding: 'clamp(3rem, 8vh, 5rem) clamp(1rem, 4vw, 2rem)',
-      }}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.6 }}
+      className="relative py-24 md:py-32 bg-(--bg-secondary) overflow-hidden"
+      style={{ perspective: "1000px" }}
     >
-      <div className="absolute inset-0 bg-linear-to-br from-(--neon-purple)/5 via-transparent to-(--neon-cyan)/5 animate-pulse" />
-
-      <div className="container mx-auto max-w-4xl relative z-10">
-        <div className="text-center" style={{ marginBottom: 'clamp(2rem, 5vh, 3rem)' }}>
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
+      <div className="max-w-4xl mx-auto px-6">
+        <div className="text-center mb-16">
+          <motion.span
+            initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6 }}
-            style={{ marginBottom: 'clamp(0.75rem, 2vh, 1rem)' }}
+            transition={{ duration: 0.5 }}
+            className="section-label mb-4 block"
           >
-            <span className="uppercase tracking-widest text-(--neon-cyan) font-semibold" style={{ fontSize: 'clamp(0.75rem, 1.5vw, 0.875rem)' }}>
-              Get In Touch
-            </span>
-          </motion.div>
-
+            Contact
+          </motion.span>
           <h2
             ref={titleRef}
-            className="font-bold glow-text"
-            style={{
-              fontSize: 'clamp(2rem, 6vw, 4.5rem)',
-              marginBottom: 'clamp(1rem, 3vh, 2rem)',
-              perspective: "1000px"
-            }}
+            className="section-title mb-4"
+            style={{ transformStyle: "preserve-3d" }}
           >
-            Let's Connect
+            Let&apos;s Work Together
           </h2>
-
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="text-gray-400 mx-auto"
-            style={{
-              fontSize: 'clamp(0.875rem, 2vw, 1.25rem)',
-              maxWidth: 'min(90%, 40rem)',
-              marginBottom: 'clamp(1.5rem, 3vh, 2rem)',
-            }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="section-subtitle mx-auto"
           >
-            Ready to bring your ideas to life? Let's create something extraordinary together.
+            Have a project in mind? I&apos;d love to hear about it. Let&apos;s discuss how I can help.
           </motion.p>
-
-          <motion.a
-            href="mailto:rparandhama63@gmail.com"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={isInView ? { opacity: 1, scale: 1 } : {}}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            className="inline-flex items-center bg-linear-to-r from-(--neon-cyan) to-(--neon-purple) rounded-full font-semibold hover:shadow-[0_0_30px_rgba(0,240,255,0.5)] transition-all duration-300 group"
-            style={{
-              gap: 'clamp(0.5rem, 2vw, 0.75rem)',
-              padding: 'clamp(0.75rem, 2vh, 1rem) clamp(1.5rem, 4vw, 2rem)',
-              fontSize: 'clamp(0.875rem, 2vw, 1.125rem)',
-            }}
-            whileHover={{ scale: 1.05, y: -2 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <Mail style={{ width: 'clamp(20px, 3vw, 24px)', height: 'clamp(20px, 3vw, 24px)' }} className="group-hover:rotate-12 transition-transform" />
-            <span className="break-all">rparandhama63@gmail.com</span>
-          </motion.a>
         </div>
 
-        <div style={{ marginTop: 'clamp(2rem, 6vh, 4rem)' }}>
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={isInView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.6, delay: 0.6 }}
-            className="text-center text-gray-500 uppercase tracking-wider"
-            style={{
-              marginBottom: 'clamp(1.5rem, 3vh, 2rem)',
-              fontSize: 'clamp(0.75rem, 1.5vw, 0.875rem)',
-            }}
-          >
-            Or find me on
-          </motion.p>
+        <div
+          ref={cardRef}
+          className="card-elevated p-8 md:p-12"
+          style={{ transformStyle: "preserve-3d" }}
+        >
+          <div className="grid md:grid-cols-2 gap-8 md:gap-12">
+            <div ref={leftColRef}>
+              <h3 className="text-xl font-semibold text-(--text-primary) mb-4">
+                Get in Touch
+              </h3>
+              <p className="text-(--text-secondary) mb-8 leading-relaxed">
+                I&apos;m currently available for freelance work and full-time opportunities.
+                If you have a project that needs development, I&apos;d love to help.
+              </p>
 
-          <div className="flex justify-center items-center flex-wrap" style={{ gap: 'clamp(1rem, 3vw, 1.5rem)' }}>
-            {socialLinks.map((link, index) => (
-              <a
-                key={link.name}
-                ref={(el) => {
-                  socialRefs.current[index] = el;
-                }}
-                href={link.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group relative"
-              >
-                <motion.div
-                  className="relative flex items-center justify-center rounded-full glass-strong border-2 border-(--glass-border) hover:border-(--neon-cyan) transition-all duration-300"
-                  style={{ width: 'clamp(3rem, 8vw, 4rem)', height: 'clamp(3rem, 8vw, 4rem)' }}
-                  whileHover={{ scale: 1.1, y: -5 }}
-                  whileTap={{ scale: 0.95 }}
+              <div className="space-y-4">
+                <motion.a
+                  href="mailto:rparandhama63@gmail.com"
+                  whileHover={{ scale: 1.02, x: 5 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="flex items-center gap-4 p-4 rounded-xl bg-(--bg-card) border border-(--border-subtle) hover:border-(--primary)/30 transition-all group"
                 >
-                  <FontAwesomeIcon
-                    icon={link.icon}
-                    className="transition-colors duration-300"
-                    style={{ color: link.color, fontSize: 'clamp(1.25rem, 3vw, 1.5rem)' }}
-                  />
+                  <div className="w-10 h-10 rounded-lg bg-(--primary)/10 flex items-center justify-center group-hover:bg-(--primary)/20 group-hover:scale-110 transition-all">
+                    <Mail className="w-5 h-5 text-(--primary)" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-(--text-muted) mb-0.5">Email</p>
+                    <p className="text-sm text-(--text-primary) font-medium">rparandhama63@gmail.com</p>
+                  </div>
+                </motion.a>
 
-                  {/* Glow effect */}
-                  <div
-                    className="absolute inset-0 rounded-full blur-xl opacity-0 group-hover:opacity-50 transition-opacity duration-300"
-                    style={{ backgroundColor: link.color }}
-                  />
-                </motion.div>
+                <div className="flex items-center gap-4 p-4 rounded-xl bg-(--bg-card) border border-(--border-subtle)">
+                  <div className="w-10 h-10 rounded-lg bg-(--primary)/10 flex items-center justify-center">
+                    <MapPin className="w-5 h-5 text-(--primary)" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-(--text-muted) mb-0.5">Location</p>
+                    <p className="text-sm text-(--text-primary) font-medium">Available Worldwide</p>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-                {/* Tooltip */}
-                <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                  {link.name}
-                </span>
-              </a>
-            ))}
+            <div ref={rightColRef}>
+              <h3 className="text-xl font-semibold text-(--text-primary) mb-4">
+                Connect With Me
+              </h3>
+              <p className="text-(--text-secondary) mb-8 leading-relaxed">
+                Follow me on social media to stay updated with my latest projects and thoughts.
+              </p>
+
+              <div className="grid grid-cols-2 gap-3">
+                {socialLinks.map((link, index) => (
+                  <a
+                    key={link.name}
+                    ref={(el) => { socialLinksRef.current[index] = el; }}
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-4 rounded-xl bg-(--bg-card) border border-(--border-subtle) hover:border-(--primary)/30 transition-all group"
+                    style={{ transformStyle: "preserve-3d" }}
+                  >
+                    <FontAwesomeIcon
+                      icon={link.icon}
+                      className="w-5 h-5 text-(--text-secondary) group-hover:text-(--primary) group-hover:scale-110 transition-all"
+                    />
+                    <span className="text-sm font-medium text-(--text-primary)">
+                      {link.name}
+                    </span>
+                  </a>
+                ))}
+              </div>
+
+              <motion.a
+                href="mailto:rparandhama63@gmail.com"
+                whileHover={{ scale: 1.02, y: -3 }}
+                whileTap={{ scale: 0.98 }}
+                className="mt-8 w-full flex items-center justify-center gap-2 px-6 py-4 bg-(--primary) hover:bg-(--primary-dark) text-white font-medium rounded-xl transition-all shadow-lg shadow-(--primary)/20"
+              >
+                <Send size={18} />
+                <span>Send a Message</span>
+              </motion.a>
+            </div>
           </div>
         </div>
       </div>
-
-      {/* Decorative elements */}
-      <div className="absolute top-20 left-20 w-2 h-2 rounded-full bg-(--neon-cyan) animate-ping" />
-      <div className="absolute bottom-40 right-20 w-3 h-3 rounded-full bg-(--neon-pink) animate-pulse" />
-      <div className="absolute top-1/2 right-10 w-2 h-2 rounded-full bg-(--neon-purple) animate-ping" />
-    </motion.section>
+    </section>
   );
 };
 

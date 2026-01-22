@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, AnimatePresence } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -13,7 +13,6 @@ import {
   faJs,
   faHtml5,
   faCss3Alt,
-  faSwift,
   faJava,
 } from "@fortawesome/free-brands-svg-icons";
 import {
@@ -35,130 +34,39 @@ interface Technology {
   name: string;
   icon: IconDefinition | IconType;
   color: string;
-  proficiency: number;
   category: string;
-  description: string;
 }
 
 const TechStacksSection: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState("All");
   const sectionRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const labelRef = useRef<HTMLSpanElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
+  const subtitleRef = useRef<HTMLParagraphElement>(null);
+  const filterRef = useRef<HTMLDivElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
-  const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
+  const isInView = useInView(sectionRef, { once: true, amount: 0.1 });
   const { isMobile, isTouchDevice } = useDevice();
 
   const techStacks: Technology[] = [
-    {
-      name: "React",
-      icon: faReact,
-      color: "#61DAFB",
-      proficiency: 95,
-      category: "Frontend",
-      description: "UI Library",
-    },
-    {
-      name: "Next.js",
-      icon: SiNextdotjs,
-      color: "#ffffff",
-      proficiency: 90,
-      category: "Frontend",
-      description: "React Framework",
-    },
-    {
-      name: "TypeScript",
-      icon: SiTypescript,
-      color: "#3178C6",
-      proficiency: 85,
-      category: "Languages",
-      description: "Type-Safe JS",
-    },
-    {
-      name: "JavaScript",
-      icon: faJs,
-      color: "#F7DF1E",
-      proficiency: 95,
-      category: "Languages",
-      description: "Core Language",
-    },
-    {
-      name: "Node.js",
-      icon: faNodeJs,
-      color: "#339933",
-      proficiency: 90,
-      category: "Backend",
-      description: "Runtime Environment",
-    },
-    {
-      name: "Express.js",
-      icon: SiExpress,
-      color: "#ffffff",
-      proficiency: 85,
-      category: "Backend",
-      description: "Web Framework",
-    },
-    {
-      name: "MongoDB",
-      icon: SiMongodb,
-      color: "#47A248",
-      proficiency: 85,
-      category: "Databases",
-      description: "NoSQL Database",
-    },
-    {
-      name: "PostgreSQL",
-      icon: SiPostgresql,
-      color: "#4169E1",
-      proficiency: 80,
-      category: "Databases",
-      description: "SQL Database",
-    },
-    {
-      name: "Python",
-      icon: faPython,
-      color: "#3776AB",
-      proficiency: 90,
-      category: "Languages",
-      description: "Versatile Language",
-    },
-    {
-      name: "C++",
-      icon: SiCplusplus,
-      color: "#00599C",
-      proficiency: 75,
-      category: "Languages",
-      description: "Systems Programming",
-    },
-    {
-      name: "Java",
-      icon: faJava,
-      color: "#ED8B00",
-      proficiency: 80,
-      category: "Languages",
-      description: "Enterprise Language",
-    },
-    {
-      name: "HTML5",
-      icon: faHtml5,
-      color: "#E34F26",
-      proficiency: 95,
-      category: "Frontend",
-      description: "Markup Language",
-    },
-    {
-      name: "CSS3",
-      icon: faCss3Alt,
-      color: "#1572B6",
-      proficiency: 90,
-      category: "Frontend",
-      description: "Styling Language",
-    },
+    { name: "React", icon: faReact, color: "#61DAFB", category: "Frontend" },
+    { name: "Next.js", icon: SiNextdotjs, color: "#ffffff", category: "Frontend" },
+    { name: "TypeScript", icon: SiTypescript, color: "#3178C6", category: "Languages" },
+    { name: "JavaScript", icon: faJs, color: "#F7DF1E", category: "Languages" },
+    { name: "Node.js", icon: faNodeJs, color: "#339933", category: "Backend" },
+    { name: "Express.js", icon: SiExpress, color: "#ffffff", category: "Backend" },
+    { name: "MongoDB", icon: SiMongodb, color: "#47A248", category: "Database" },
+    { name: "PostgreSQL", icon: SiPostgresql, color: "#4169E1", category: "Database" },
+    { name: "Python", icon: faPython, color: "#3776AB", category: "Languages" },
+    { name: "C++", icon: SiCplusplus, color: "#00599C", category: "Languages" },
+    { name: "Java", icon: faJava, color: "#ED8B00", category: "Languages" },
+    { name: "HTML5", icon: faHtml5, color: "#E34F26", category: "Frontend" },
+    { name: "CSS3", icon: faCss3Alt, color: "#1572B6", category: "Frontend" },
   ];
 
-  const categories = [
-    "All",
-    ...Array.from(new Set(techStacks.map((tech) => tech.category))),
-  ];
+  const categories = ["All", ...Array.from(new Set(techStacks.map((tech) => tech.category)))];
 
   const filteredTechs =
     activeCategory === "All"
@@ -168,254 +76,246 @@ const TechStacksSection: React.FC = () => {
   useEffect(() => {
     if (!isInView) return;
 
-    if (titleRef.current) {
-      const chars = titleRef.current.textContent?.split("") || [];
-      titleRef.current.innerHTML = "";
-
-      chars.forEach((char) => {
-        const span = document.createElement("span");
-        span.textContent = char === " " ? "\u00A0" : char;
-        span.style.display = "inline-block";
-        titleRef.current?.appendChild(span);
-      });
-
-      // Simpler animation on mobile
-      gsap.fromTo(
-        titleRef.current.children,
-        { y: isMobile ? 50 : 100, opacity: 0, rotationX: isMobile ? 0 : -90 },
-        {
-          y: 0,
-          opacity: 1,
-          rotationX: 0,
-          duration: isMobile ? 0.5 : 0.8,
-          stagger: isMobile ? 0.01 : 0.02,
-          ease: isMobile ? "power2.out" : "back.out(1.7)",
-        }
-      );
-    }
-
-    cardsRef.current.forEach((card, index) => {
-      if (!card) return;
-
-      // Simpler animation on mobile
-      gsap.fromTo(
-        card,
-        {
-          y: isMobile ? 50 : 100,
-          opacity: 0,
-          rotationY: isMobile ? 0 : -90,
-        },
-        {
-          y: 0,
-          opacity: 1,
-          rotationY: 0,
-          duration: isMobile ? 0.6 : 1,
-          delay: index * (isMobile ? 0.03 : 0.05),
-          ease: "power3.out",
+    const ctx = gsap.context(() => {
+      if (!isMobile) {
+        const scrollTl = gsap.timeline({
           scrollTrigger: {
-            trigger: card,
-            start: "top 90%",
-            end: "top 20%",
-            toggleActions: "play none none reverse",
+            trigger: sectionRef.current,
+            start: "top top",
+            end: "+=180%",
+            scrub: 0.8,
+            pin: true,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
           },
-        }
-      );
+        });
 
-      // 3D tilt effect on mousemove (disabled on mobile/touch devices)
-      if (!isTouchDevice) {
-        const handleMouseMove = (e: MouseEvent) => {
+        scrollTl.fromTo(labelRef.current,
+          { y: 40, opacity: 0, clipPath: "inset(100% 0% 0% 0%)" },
+          { y: 0, opacity: 1, clipPath: "inset(0% 0% 0% 0%)", duration: 0.1 },
+        0);
+
+        scrollTl.fromTo(titleRef.current,
+          { y: 80, opacity: 0, clipPath: "inset(100% 0% 0% 0%)" },
+          { y: 0, opacity: 1, clipPath: "inset(0% 0% 0% 0%)", duration: 0.15 },
+        0.03);
+
+        scrollTl.fromTo(subtitleRef.current,
+          { y: 50, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.1 },
+        0.1);
+
+        scrollTl.fromTo(filterRef.current,
+          { y: 30, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.1 },
+        0.18);
+
+        const cols = 5;
+        cardsRef.current.forEach((card, index) => {
           if (!card) return;
-          const rect = card.getBoundingClientRect();
-          const x = e.clientX - rect.left;
-          const y = e.clientY - rect.top;
-          const centerX = rect.width / 2;
-          const centerY = rect.height / 2;
-          const rotateX = (y - centerY) / 10;
-          const rotateY = -(x - centerX) / 10;
+          const row = Math.floor(index / cols);
+          const col = index % cols;
+          const waveOffset = (row + col) * 0.015;
 
-          gsap.to(card, {
-            rotationX: rotateX,
-            rotationY: rotateY,
-            duration: 0.3,
-            ease: "power2.out",
-          });
-        };
+          scrollTl.fromTo(card,
+            { y: 60, opacity: 0, scale: 0.85, rotateY: -15 },
+            { y: 0, opacity: 1, scale: 1, rotateY: 0, duration: 0.08 },
+          0.25 + waveOffset);
+        });
 
-        const handleMouseLeave = () => {
-          gsap.to(card, {
-            rotationX: 0,
-            rotationY: 0,
-            duration: 0.5,
-            ease: "power2.out",
-          });
-        };
+        scrollTl.to(labelRef.current,
+          { y: -80, opacity: 0, duration: 0.1 },
+        0.7);
 
-        card.addEventListener("mousemove", handleMouseMove);
-        card.addEventListener("mouseleave", handleMouseLeave);
+        scrollTl.to(titleRef.current,
+          { y: -150, opacity: 0, clipPath: "inset(0% 0% 100% 0%)", duration: 0.12 },
+        0.72);
 
-        return () => {
-          card.removeEventListener("mousemove", handleMouseMove);
-          card.removeEventListener("mouseleave", handleMouseLeave);
-        };
+        scrollTl.to(subtitleRef.current,
+          { y: -100, opacity: 0, duration: 0.1 },
+        0.74);
+
+        scrollTl.to(filterRef.current,
+          { y: -60, opacity: 0, duration: 0.08 },
+        0.75);
+
+        cardsRef.current.forEach((card, index) => {
+          if (!card) return;
+          const row = Math.floor(index / cols);
+          const col = index % cols;
+          const xDir = (col - 2) * 80;
+          const yDir = (row - 1) * 60;
+          const waveOffset = (row + col) * 0.01;
+
+          scrollTl.to(card,
+            { x: xDir, y: yDir - 50, opacity: 0, scale: 0.7, rotateY: (col - 2) * 10, duration: 0.1 },
+          0.78 + waveOffset);
+        });
+
+      } else {
+        gsap.fromTo(
+          [labelRef.current, titleRef.current, subtitleRef.current],
+          { y: 40, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.8,
+            stagger: 0.1,
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 80%",
+              toggleActions: "play none none reverse",
+            },
+          }
+        );
+
+        cardsRef.current.forEach((card, index) => {
+          if (!card) return;
+          gsap.fromTo(
+            card,
+            { y: 40, opacity: 0 },
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.5,
+              scrollTrigger: {
+                trigger: card,
+                start: "top 90%",
+                toggleActions: "play none none reverse",
+              },
+              delay: (index % 3) * 0.05,
+            }
+          );
+        });
       }
-    });
-  }, [isInView, filteredTechs, isMobile, isTouchDevice]);
+
+      if (!isTouchDevice) {
+        cardsRef.current.forEach((card) => {
+          if (!card) return;
+
+          const handleMouseMove = (e: MouseEvent) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
+
+            gsap.to(card, {
+              x: x * 0.15,
+              y: y * 0.15,
+              scale: 1.08,
+              duration: 0.3,
+              ease: "power2.out",
+            });
+          };
+
+          const handleMouseLeave = () => {
+            gsap.to(card, {
+              x: 0,
+              y: 0,
+              scale: 1,
+              duration: 0.5,
+              ease: "elastic.out(1, 0.5)",
+            });
+          };
+
+          card.addEventListener("mousemove", handleMouseMove);
+          card.addEventListener("mouseleave", handleMouseLeave);
+        });
+      }
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, [isInView, activeCategory, isMobile, isTouchDevice]);
 
   return (
-    <motion.section
+    <section
       id="techstacks"
       ref={sectionRef}
-      className="relative bg-(--bg-darkest) text-white overflow-hidden"
-      style={{
-        minHeight: '100vh',
-        padding: 'clamp(3rem, 8vh, 5rem) clamp(1rem, 4vw, 2rem)',
-      }}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.6 }}
+      className="relative min-h-screen py-24 md:py-32 bg-(--bg-secondary) overflow-hidden"
+      style={{ perspective: "1000px" }}
     >
-      <div className="container mx-auto max-w-7xl">
-        <div style={{ marginBottom: 'clamp(2rem, 5vh, 4rem)' }}>
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6 }}
-            className="text-center"
-            style={{ marginBottom: 'clamp(0.75rem, 2vh, 1rem)' }}
+      <div className="max-w-6xl mx-auto px-6">
+        <div ref={headerRef} className="text-center mb-16">
+          <span
+            ref={labelRef}
+            className="section-label mb-4 block"
           >
-            <span className="uppercase tracking-widest text-(--neon-cyan) font-semibold" style={{ fontSize: 'clamp(0.75rem, 1.5vw, 0.875rem)' }}>
-              Technologies & Tools
-            </span>
-          </motion.div>
-
+            Skills
+          </span>
           <h2
             ref={titleRef}
-            className="font-bold text-center glow-text"
-            style={{
-              fontSize: 'clamp(2rem, 6vw, 4.5rem)',
-              marginBottom: 'clamp(1rem, 3vh, 2rem)',
-              perspective: "1000px"
-            }}
+            className="section-title mb-4"
+            style={{ transformStyle: "preserve-3d" }}
           >
-            Tech Stack
+            Technologies I Work With
           </h2>
-
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="text-center text-gray-400 mx-auto"
-            style={{
-              fontSize: 'clamp(0.875rem, 2vw, 1.25rem)',
-              maxWidth: 'min(90%, 48rem)',
-            }}
+          <p
+            ref={subtitleRef}
+            className="section-subtitle mx-auto"
           >
-            A comprehensive arsenal of modern technologies
-          </motion.p>
+            A curated set of modern tools and technologies I use to build great products
+          </p>
         </div>
 
-        <div className="flex justify-center flex-wrap mb-12" style={{ gap: 'clamp(0.5rem, 1.5vw, 0.75rem)', marginBottom: 'clamp(2rem, 4vh, 3rem)' }}>
+        <div
+          ref={filterRef}
+          className="flex justify-center flex-wrap gap-2 mb-12"
+        >
           {categories.map((category) => (
-            <motion.button
+            <button
               key={category}
               onClick={() => setActiveCategory(category)}
-              className={`relative rounded-full font-semibold transition-all ${
+              className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:scale-105 active:scale-95 ${
                 activeCategory === category
-                  ? "text-white"
-                  : "text-gray-400 hover:text-white"
+                  ? "bg-(--primary) text-white shadow-lg shadow-(--primary)/25"
+                  : "bg-(--bg-elevated) text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--bg-card)"
               }`}
-              style={{ padding: 'clamp(0.625rem, 2vh, 0.75rem) clamp(1rem, 3vw, 1.5rem)', fontSize: 'clamp(0.875rem, 1.8vw, 1rem)' }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
             >
-              {activeCategory === category && (
-                <motion.div
-                  layoutId="activeCategory"
-                  className="absolute inset-0 bg-linear-to-r from-(--neon-cyan) to-(--neon-purple) rounded-full"
-                  style={{ zIndex: -1 }}
-                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                />
-              )}
-              <span className="relative z-10">{category}</span>
-            </motion.button>
+              {category}
+            </button>
           ))}
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 perspective-1000" style={{ gap: 'clamp(1rem, 2.5vw, 1.5rem)' }}>
-          {filteredTechs.map((tech, index) => (
-            <div
-              key={tech.name}
-              ref={(el) => {
-                cardsRef.current[index] = el;
-              }}
-              className="perspective-card cyber-card rounded-2xl relative overflow-hidden group"
-              style={{ padding: 'clamp(1rem, 3vw, 1.5rem)', transformStyle: isTouchDevice ? "flat" : "preserve-3d" }}
-            >
-              <div className="absolute inset-0 bg-linear-to-br from-(--neon-cyan)/10 to-(--neon-purple)/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-              <div className="relative z-10 flex flex-col items-center text-center h-full justify-between">
-                {/* Icon */}
-                <div
-                  className="mb-4 transform transition-all duration-300 group-hover:scale-110 group-hover:rotate-12"
-                  style={{ filter: `drop-shadow(0 0 10px ${tech.color})` }}
+        <div
+          ref={gridRef}
+          className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"
+        >
+          <AnimatePresence mode="popLayout">
+            {filteredTechs.map((tech, index) => (
+              <motion.div
+                key={tech.name}
+                ref={(el) => { cardsRef.current[index] = el; }}
+                layout
+                initial={{ opacity: 0, scale: 0.8, rotateY: -30 }}
+                animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+                exit={{ opacity: 0, scale: 0.8, rotateY: 30 }}
+                transition={{ duration: 0.4, delay: index * 0.03 }}
+                className="card p-6 flex flex-col items-center text-center group hover:border-(--border-hover) cursor-default"
+                style={{ transformStyle: "preserve-3d" }}
+              >
+                <motion.div
+                  className="mb-4"
+                  style={{ color: tech.color }}
+                  whileHover={{ scale: 1.2, rotate: 10 }}
+                  transition={{ type: "spring", stiffness: 300 }}
                 >
                   {typeof tech.icon === "function" ? (
-                    <tech.icon className="text-6xl" style={{ color: tech.color }} />
+                    <tech.icon className="w-10 h-10" />
                   ) : (
-                    <FontAwesomeIcon
-                      icon={tech.icon}
-                      className="text-6xl"
-                      style={{ color: tech.color }}
-                    />
+                    <FontAwesomeIcon icon={tech.icon} className="w-10 h-10" />
                   )}
-                </div>
-
-                {/* Name */}
-                <h3 className="text-xl font-bold mb-1">{tech.name}</h3>
-                <p className="text-xs text-gray-500 mb-4">{tech.description}</p>
-
-                {/* Proficiency Bar */}
-                <div className="w-full">
-                  <div className="flex justify-between text-xs mb-1">
-                    <span className="text-gray-400">Proficiency</span>
-                    <span className="text-(--neon-cyan) font-semibold">
-                      {tech.proficiency}%
-                    </span>
-                  </div>
-                  <div className="w-full h-1.5 bg-(--bg-elevated) rounded-full overflow-hidden">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={isInView ? { width: `${tech.proficiency}%` } : { width: 0 }}
-                      transition={{
-                        duration: 1.5,
-                        delay: index * 0.05,
-                        ease: "easeOut",
-                      }}
-                      className="h-full bg-linear-to-r from-(--neon-cyan) to-(--neon-purple)"
-                      style={{
-                        boxShadow: `0 0 10px ${tech.color}`,
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Glow effect on hover */}
-              <div
-                className="absolute inset-0 opacity-0 group-hover:opacity-30 transition-opacity duration-300 rounded-2xl blur-xl"
-                style={{
-                  background: `radial-gradient(circle at center, ${tech.color}, transparent)`,
-                }}
-              />
-            </div>
-          ))}
+                </motion.div>
+                <span className="text-sm font-medium text-(--text-primary)">
+                  {tech.name}
+                </span>
+                <span className="text-xs text-(--text-muted) mt-1">
+                  {tech.category}
+                </span>
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
       </div>
-
-      {/* Decorative elements */}
-      <div className="absolute top-1/4 right-10 w-3 h-3 rounded-full bg-(--neon-cyan) animate-ping" />
-      <div className="absolute bottom-1/3 left-20 w-2 h-2 rounded-full bg-(--neon-pink) animate-pulse" />
-    </motion.section>
+    </section>
   );
 };
 
