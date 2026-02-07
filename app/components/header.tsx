@@ -148,7 +148,7 @@ const Header: React.FC = () => {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              Let&apos;s Talk
+              Email me
             </motion.a>
 
             <button
@@ -214,7 +214,7 @@ const Header: React.FC = () => {
                     className="block w-full py-3 bg-(--primary) hover:bg-(--primary-dark) text-white text-center font-medium rounded-xl transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    Let&apos;s Talk
+                    Email me
                   </a>
                 </div>
               </div>

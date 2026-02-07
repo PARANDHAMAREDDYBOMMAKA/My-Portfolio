@@ -3,11 +3,10 @@
 import React, { useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useDevice } from "../hooks/useDevice";
-import { ArrowDown, Github, Linkedin, Mail } from "lucide-react";
+import { Github, Linkedin, Mail } from "lucide-react";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -16,132 +15,165 @@ if (typeof window !== "undefined") {
 const HeroSection: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
-  const profileRef = useRef<HTMLDivElement>(null);
+  const annotationRef = useRef<HTMLSpanElement>(null);
   const greetingRef = useRef<HTMLDivElement>(null);
   const nameRef = useRef<HTMLDivElement>(null);
-  const roleRef = useRef<HTMLDivElement>(null);
+  const taglineRef = useRef<HTMLDivElement>(null);
   const descRef = useRef<HTMLParagraphElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
-  const scrollIndicatorRef = useRef<HTMLDivElement>(null);
   const bgGlowRef = useRef<HTMLDivElement>(null);
-  const { isMobile } = useDevice();
+  const bgGlow2Ref = useRef<HTMLDivElement>(null);
+  const lineRef = useRef<HTMLDivElement>(null);
+  const { isMobile, isTouchDevice } = useDevice();
 
   useEffect(() => {
     const ctx = gsap.context(() => {
+      // ── ENTRANCE TIMELINE ──
       const entranceTl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
+      // Dual glow blobs expand in
       entranceTl.fromTo(
-        bgGlowRef.current,
-        { scale: 0.5, opacity: 0 },
-        { scale: 1, opacity: 1, duration: 2, ease: "power2.out" }
-      );
-
-      entranceTl.fromTo(
-        profileRef.current,
+        [bgGlowRef.current, bgGlow2Ref.current],
         { scale: 0, opacity: 0 },
-        { scale: 1, opacity: 1, duration: 1, ease: "back.out(1.4)" },
-        "-=1.5"
+        { scale: 1, opacity: 1, duration: 2.5, ease: "power2.out", stagger: 0.3 }
       );
 
+      // Accent line draws in
+      entranceTl.fromTo(
+        lineRef.current,
+        { scaleX: 0 },
+        { scaleX: 1, duration: 0.8, ease: "power4.inOut" },
+        "-=2"
+      );
+
+      // Annotation typewriter effect
+      if (annotationRef.current) {
+        const text = "// full-stack developer";
+        annotationRef.current.textContent = "";
+        text.split("").forEach((char, i) => {
+          entranceTl.to(annotationRef.current, {
+            duration: 0.03,
+            onComplete: () => {
+              if (annotationRef.current) {
+                annotationRef.current.textContent = text.slice(0, i + 1);
+              }
+            },
+          }, `-=${i === 0 ? 1.6 : 0.015}`);
+        });
+      }
+
+      // Greeting clip-path reveal
       entranceTl.fromTo(
         greetingRef.current,
-        { y: 100, opacity: 0, clipPath: "inset(100% 0% 0% 0%)" },
+        { y: 40, opacity: 0, clipPath: "inset(100% 0% 0% 0%)" },
         { y: 0, opacity: 1, clipPath: "inset(0% 0% 0% 0%)", duration: 0.8 },
-        "-=0.8"
-      );
-
-      entranceTl.fromTo(
-        nameRef.current,
-        { y: 120, opacity: 0, clipPath: "inset(100% 0% 0% 0%)" },
-        { y: 0, opacity: 1, clipPath: "inset(0% 0% 0% 0%)", duration: 1 },
-        "-=0.6"
-      );
-
-      entranceTl.fromTo(
-        roleRef.current,
-        { y: 80, opacity: 0, clipPath: "inset(100% 0% 0% 0%)" },
-        { y: 0, opacity: 1, clipPath: "inset(0% 0% 0% 0%)", duration: 0.8 },
-        "-=0.7"
-      );
-
-      entranceTl.fromTo(
-        descRef.current,
-        { y: 60, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.7 },
         "-=0.5"
       );
 
+      // Name — split each letter and stagger in
+      if (nameRef.current) {
+        const nameSpans = nameRef.current.querySelectorAll(".name-char");
+        entranceTl.fromTo(
+          nameSpans,
+          { y: 120, opacity: 0, rotateX: -90 },
+          {
+            y: 0,
+            opacity: 1,
+            rotateX: 0,
+            duration: 0.8,
+            stagger: 0.03,
+            ease: "back.out(1.2)",
+          },
+          "-=0.6"
+        );
+      }
+
+      // Tagline slides up
       entranceTl.fromTo(
-        ctaRef.current,
+        taglineRef.current,
+        { y: 60, opacity: 0, clipPath: "inset(100% 0% 0% 0%)" },
+        { y: 0, opacity: 1, clipPath: "inset(0% 0% 0% 0%)", duration: 0.8 },
+        "-=0.5"
+      );
+
+      // Description fades in
+      entranceTl.fromTo(
+        descRef.current,
         { y: 40, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.6 },
+        { y: 0, opacity: 1, duration: 0.7 },
         "-=0.4"
       );
 
+      // CTA buttons
       entranceTl.fromTo(
-        scrollIndicatorRef.current,
-        { opacity: 0 },
-        { opacity: 1, duration: 0.5 },
+        ctaRef.current,
+        { y: 30, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.6 },
         "-=0.3"
       );
 
+      // ── SCROLL-OUT: container scale + blur ──
       if (!isMobile) {
         const scrollTl = gsap.timeline({
           scrollTrigger: {
             trigger: containerRef.current,
             start: "top top",
-            end: "+=150%",
-            scrub: 0.8,
-            pin: true,
-            anticipatePin: 1,
+            end: "+=80%",
+            scrub: 1,
             invalidateOnRefresh: true,
           },
         });
 
-        scrollTl.fromTo(bgGlowRef.current,
-          { scale: 1, opacity: 0.15 },
-          { scale: 3, opacity: 0, duration: 1 },
-        0);
+        scrollTl.to(contentRef.current, {
+          scale: 0.92,
+          opacity: 0,
+          filter: "blur(12px)",
+          y: -60,
+          duration: 1,
+        }, 0);
 
-        scrollTl.fromTo(profileRef.current,
-          { y: 0, scale: 1, opacity: 1 },
-          { y: -300, scale: 1.3, opacity: 0, duration: 0.6 },
-        0);
+        scrollTl.to([bgGlowRef.current, bgGlow2Ref.current], {
+          scale: 2,
+          opacity: 0,
+          duration: 1,
+        }, 0);
+      }
 
-        scrollTl.fromTo(greetingRef.current,
-          { y: 0, opacity: 1, clipPath: "inset(0% 0% 0% 0%)" },
-          { y: -200, opacity: 0, clipPath: "inset(0% 0% 100% 0%)", duration: 0.5 },
-        0.05);
+      // ── MOUSE PARALLAX on glow blobs (desktop only) ──
+      if (!isTouchDevice && containerRef.current) {
+        const container = containerRef.current;
+        const handleMouseMove = (e: MouseEvent) => {
+          const rect = container.getBoundingClientRect();
+          const xRatio = (e.clientX - rect.left) / rect.width - 0.5;
+          const yRatio = (e.clientY - rect.top) / rect.height - 0.5;
 
-        scrollTl.fromTo(nameRef.current,
-          { y: 0, scale: 1, opacity: 1 },
-          { y: -400, scale: 0.9, opacity: 0, duration: 0.8 },
-        0.1);
+          gsap.to(bgGlowRef.current, {
+            x: xRatio * 80,
+            y: yRatio * 60,
+            duration: 1.2,
+            ease: "power2.out",
+          });
+          gsap.to(bgGlow2Ref.current, {
+            x: xRatio * -50,
+            y: yRatio * -40,
+            duration: 1.5,
+            ease: "power2.out",
+          });
+          // Subtle tilt on content
+          gsap.to(contentRef.current, {
+            rotateY: xRatio * 2,
+            rotateX: -yRatio * 1.5,
+            duration: 1,
+            ease: "power2.out",
+          });
+        };
 
-        scrollTl.fromTo(roleRef.current,
-          { y: 0, opacity: 1, clipPath: "inset(0% 0% 0% 0%)" },
-          { y: -300, opacity: 0, clipPath: "inset(0% 0% 100% 0%)", duration: 0.6 },
-        0.15);
-
-        scrollTl.fromTo(descRef.current,
-          { y: 0, opacity: 1 },
-          { y: -150, opacity: 0, duration: 0.5 },
-        0.2);
-
-        scrollTl.fromTo(ctaRef.current,
-          { y: 0, opacity: 1 },
-          { y: 150, opacity: 0, duration: 0.4 },
-        0.25);
-
-        scrollTl.fromTo(scrollIndicatorRef.current,
-          { opacity: 1 },
-          { opacity: 0, duration: 0.2 },
-        0);
+        container.addEventListener("mousemove", handleMouseMove);
       }
     }, containerRef);
 
     return () => ctx.revert();
-  }, [isMobile]);
+  }, [isMobile, isTouchDevice]);
 
   const socialLinks = [
     { icon: Github, href: "https://github.com/PARANDHAMAREDDYBOMMAKA", label: "GitHub" },
@@ -149,99 +181,102 @@ const HeroSection: React.FC = () => {
     { icon: Mail, href: "mailto:rparandhama63@gmail.com", label: "Email" },
   ];
 
+  // Split name into individual character spans for animation
+  const renderNameChars = (text: string, className: string) =>
+    text.split("").map((char, i) => (
+      <span
+        key={`${text}-${i}`}
+        className={`name-char inline-block ${className}`}
+        style={{ transformStyle: "preserve-3d" }}
+      >
+        {char === " " ? "\u00A0" : char}
+      </span>
+    ));
+
   return (
     <section
       ref={containerRef}
-      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-(--bg-primary)"
+      className="relative min-h-screen flex items-center overflow-hidden bg-(--bg-primary)"
       style={{ perspective: "1200px" }}
     >
+      {/* Dual organic glow blobs */}
       <div
         ref={bgGlowRef}
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-150 h-150 md:w-225 md:h-225 pointer-events-none"
+        className="absolute top-1/4 left-1/5 w-125 h-100 md:w-200 md:h-150 pointer-events-none"
         style={{
-          background: "radial-gradient(circle, var(--primary) 0%, transparent 60%)",
-          opacity: 0.15,
-          filter: "blur(80px)",
+          background: "radial-gradient(ellipse, rgba(99,102,241,0.15) 0%, transparent 65%)",
+          filter: "blur(60px)",
+        }}
+      />
+      <div
+        ref={bgGlow2Ref}
+        className="absolute bottom-1/4 right-1/5 w-100 h-88 md:w-150 md:h-125 pointer-events-none"
+        style={{
+          background: "radial-gradient(ellipse, rgba(249,115,22,0.08) 0%, transparent 65%)",
+          filter: "blur(60px)",
         }}
       />
 
       <div
         ref={contentRef}
-        className="relative z-10 max-w-5xl mx-auto px-6 text-center"
+        className="relative z-10 max-w-5xl mx-auto px-6 w-full"
         style={{ transformStyle: "preserve-3d" }}
       >
+        {/* Accent line */}
         <div
-          ref={profileRef}
-          className="mb-6 inline-block"
-          style={{ transformStyle: "preserve-3d" }}
-        >
-          <div className="relative">
-            <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden ring-4 ring-(--primary)/40 ring-offset-4 ring-offset-(--bg-primary) shadow-2xl shadow-(--primary)/30">
-              <Image
-                src="/photo.jpeg"
-                alt="Parandhama Reddy"
-                width={160}
-                height={160}
-                priority
-                className="object-cover w-full h-full"
-              />
-            </div>
-            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-4 py-1.5 bg-(--bg-card) border border-(--border-subtle) rounded-full shadow-lg">
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-xs font-medium text-(--text-secondary)">Available for work</span>
-              </div>
-            </div>
-          </div>
-        </div>
+          ref={lineRef}
+          className="w-16 h-0.5 bg-(--primary) mb-8 origin-left"
+        />
 
-        <div
-          ref={greetingRef}
-          className="overflow-hidden mb-2"
-          style={{ transformStyle: "preserve-3d" }}
-        >
-          <span className="block text-xl md:text-2xl text-(--text-secondary) font-medium">
-            Hello, I&apos;m
+        {/* Monospace annotation — typewriter */}
+        <div className="mb-6">
+          <span ref={annotationRef} className="text-caption">
+            {"// full-stack developer"}
           </span>
         </div>
 
-        <div
-          ref={nameRef}
-          className="overflow-hidden mb-3"
-          style={{ transformStyle: "preserve-3d" }}
-        >
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-(--text-primary) tracking-tight leading-none">
-            Parandhama Reddy
+        {/* Greeting */}
+        <div ref={greetingRef} className="overflow-hidden mb-2">
+          <span className="block text-lg md:text-xl text-(--text-secondary)">
+            Hey, I&apos;m
+          </span>
+        </div>
+
+        {/* Name with per-character animation */}
+        <div ref={nameRef} className="overflow-hidden mb-4" style={{ perspective: "600px" }}>
+          <h1 className="text-5xl md:text-7xl lg:text-[6.5rem] font-bold tracking-tight leading-none">
+            {renderNameChars("Parandhama", "text-(--text-primary)")}
+            <span className="name-char inline-block">&nbsp;</span>
+            {renderNameChars("Reddy", "text-accent-italic")}
           </h1>
         </div>
 
-        <div
-          ref={roleRef}
-          className="overflow-hidden mb-6"
-          style={{ transformStyle: "preserve-3d" }}
-        >
-          <span className="block text-2xl md:text-4xl font-semibold gradient-text-primary">
-            Full Stack Developer
+        {/* Tagline */}
+        <div ref={taglineRef} className="overflow-hidden mb-8">
+          <span className="block text-2xl md:text-3xl text-(--text-secondary) font-light">
+            I build things for the web.
           </span>
         </div>
 
+        {/* Bio */}
         <p
           ref={descRef}
-          className="text-lg md:text-xl text-(--text-secondary) max-w-2xl mx-auto mb-10 leading-relaxed"
+          className="text-base md:text-lg text-(--text-muted) max-w-xl mb-10 leading-relaxed"
         >
-          I craft modern web experiences with clean code and thoughtful design.
-          Passionate about building products that make a difference.
+          Currently obsessed with React ecosystems and figuring out why my
+          PostgreSQL queries are slow at 3 AM. Based in India, shipping code worldwide.
         </p>
 
-        <div ref={ctaRef} className="space-y-6" style={{ transformStyle: "preserve-3d" }}>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+        {/* CTAs + Socials */}
+        <div ref={ctaRef} className="space-y-6">
+          <div className="flex flex-col sm:flex-row items-start gap-4">
             <Link href="#projects">
               <motion.button
                 whileHover={{ scale: 1.05, y: -4 }}
                 whileTap={{ scale: 0.98 }}
-                className="px-10 py-4 bg-(--primary) hover:bg-(--primary-dark) text-white text-lg font-semibold rounded-2xl transition-all duration-300 shadow-2xl shadow-(--primary)/40"
+                className="px-8 py-3.5 bg-(--primary) hover:bg-(--primary-dark) text-white text-base font-medium rounded-xl transition-all duration-300 shadow-lg shadow-(--primary)/30"
               >
-                View My Work
+                See what I&apos;ve built
               </motion.button>
             </Link>
 
@@ -249,14 +284,14 @@ const HeroSection: React.FC = () => {
               <motion.button
                 whileHover={{ scale: 1.05, y: -4 }}
                 whileTap={{ scale: 0.98 }}
-                className="px-10 py-4 bg-(--bg-elevated) border-2 border-(--border-default) hover:border-(--primary) text-(--text-primary) text-lg font-semibold rounded-2xl transition-all duration-300"
+                className="px-8 py-3.5 bg-(--bg-elevated) border border-(--border-default) hover:border-(--primary) text-(--text-primary) text-base font-medium rounded-xl transition-all duration-300"
               >
-                Get in Touch
+                Say hello
               </motion.button>
             </Link>
           </div>
 
-          <div className="flex items-center justify-center gap-4">
+          <div className="flex items-center gap-3">
             {socialLinks.map((social, index) => (
               <motion.a
                 key={social.label}
@@ -265,39 +300,18 @@ const HeroSection: React.FC = () => {
                 rel={social.href.startsWith("mailto") ? undefined : "noopener noreferrer"}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.5 + index * 0.1 }}
-                whileHover={{ scale: 1.2, y: -5, rotate: 10 }}
+                transition={{ delay: 2.2 + index * 0.1 }}
+                whileHover={{ scale: 1.15, y: -3, rotate: 5 }}
                 whileTap={{ scale: 0.95 }}
-                className="p-4 rounded-2xl bg-(--bg-card) border border-(--border-subtle) hover:border-(--primary) text-(--text-secondary) hover:text-(--primary) transition-all duration-300 shadow-lg"
+                className="p-3 rounded-xl bg-(--bg-card) border border-(--border-subtle) hover:border-(--primary)/50 text-(--text-muted) hover:text-(--primary) transition-all duration-300"
                 aria-label={social.label}
               >
-                <social.icon size={24} />
+                <social.icon size={20} />
               </motion.a>
             ))}
           </div>
         </div>
       </div>
-
-      {/* Scroll indicator */}
-      {/* <div
-        ref={scrollIndicatorRef}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2"
-      >
-        <motion.div
-          animate={{ y: [0, 12, 0] }}
-          transition={{ repeat: Infinity, duration: 1.8, ease: "easeInOut" }}
-          className="flex flex-col items-center gap-3 text-(--text-muted)"
-        >
-          <span className="text-sm uppercase tracking-widest font-medium">Scroll</span>
-          <div className="w-6 h-10 rounded-full border-2 border-(--text-muted) flex items-start justify-center p-2">
-            <motion.div
-              animate={{ y: [0, 12, 0] }}
-              transition={{ repeat: Infinity, duration: 1.8, ease: "easeInOut" }}
-              className="w-1.5 h-3 rounded-full bg-(--text-muted)"
-            />
-          </div>
-        </motion.div>
-      </div> */}
     </section>
   );
 };

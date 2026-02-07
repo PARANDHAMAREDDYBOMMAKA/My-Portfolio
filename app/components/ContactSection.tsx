@@ -1,10 +1,9 @@
 "use client";
 
 import React, { useRef, useEffect } from "react";
-import { motion, useInView } from "framer-motion";
+import { useInView } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Mail, MapPin, Send } from "lucide-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useDevice } from "../hooks/useDevice";
 import {
@@ -20,13 +19,15 @@ if (typeof window !== "undefined") {
 
 const ContactSection: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
-  const cardRef = useRef<HTMLDivElement>(null);
-  const leftColRef = useRef<HTMLDivElement>(null);
-  const rightColRef = useRef<HTMLDivElement>(null);
-  const socialLinksRef = useRef<(HTMLAnchorElement | null)[]>([]);
+  const subtitleRef = useRef<HTMLParagraphElement>(null);
+  const replyRef = useRef<HTMLParagraphElement>(null);
+  const emailCharsRef = useRef<HTMLSpanElement[]>([]);
+  const underlineRef = useRef<HTMLDivElement>(null);
+  const socialIconsRef = useRef<(HTMLAnchorElement | null)[]>([]);
   const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
-  const { isMobile, isTouchDevice } = useDevice();
+  const { isTouchDevice } = useDevice();
 
   const socialLinks = [
     {
@@ -51,116 +52,152 @@ const ContactSection: React.FC = () => {
     },
   ];
 
+  const emailAddress = "rparandhama63@gmail.com";
+
   useEffect(() => {
     if (!isInView) return;
 
     const ctx = gsap.context(() => {
+      // ── Overall scale-up reveal ──
+      gsap.fromTo(
+        contentRef.current,
+        { scale: 0.9, opacity: 0 },
+        {
+          scale: 1,
+          opacity: 1,
+          duration: 1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 80%",
+            toggleActions: "play none none reverse",
+          },
+        }
+      );
+
+      // ── Title clip reveal ──
       gsap.fromTo(
         titleRef.current,
-        { y: 80, opacity: 0 },
+        { y: 40, opacity: 0, clipPath: "inset(100% 0% 0% 0%)" },
         {
           y: 0,
           opacity: 1,
-          ease: "none",
+          clipPath: "inset(0% 0% 0% 0%)",
+          duration: 0.8,
+          ease: "power3.out",
           scrollTrigger: {
-            trigger: titleRef.current,
-            start: "top 92%",
-            end: "top 65%",
-            scrub: 1,
+            trigger: sectionRef.current,
+            start: "top 75%",
+            toggleActions: "play none none reverse",
           },
         }
       );
 
+      // ── Subtitle + reply text ──
       gsap.fromTo(
-        cardRef.current,
-        {
-          y: 100,
-          opacity: 0,
-          scale: 0.96,
-        },
+        [subtitleRef.current, replyRef.current],
+        { y: 30, opacity: 0 },
         {
           y: 0,
           opacity: 1,
-          scale: 1,
-          ease: "none",
+          duration: 0.7,
+          stagger: 0.15,
+          ease: "power3.out",
           scrollTrigger: {
-            trigger: cardRef.current,
-            start: "top 90%",
-            end: "top 55%",
-            scrub: 1.2,
+            trigger: sectionRef.current,
+            start: "top 72%",
+            toggleActions: "play none none reverse",
           },
         }
       );
 
-      gsap.fromTo(
-        leftColRef.current,
-        { x: -40, opacity: 0 },
-        {
-          x: 0,
-          opacity: 1,
-          ease: "none",
-          scrollTrigger: {
-            trigger: cardRef.current,
-            start: "top 85%",
-            end: "top 55%",
-            scrub: 1,
-          },
-        }
-      );
-
-      gsap.fromTo(
-        rightColRef.current,
-        { x: 40, opacity: 0 },
-        {
-          x: 0,
-          opacity: 1,
-          ease: "none",
-          scrollTrigger: {
-            trigger: cardRef.current,
-            start: "top 85%",
-            end: "top 55%",
-            scrub: 1,
-          },
-        }
-      );
-
-      socialLinksRef.current.forEach((link, index) => {
-        if (!link) return;
-
+      // ── Email: per-character stagger reveal ──
+      if (emailCharsRef.current.length > 0) {
         gsap.fromTo(
-          link,
-          { y: 40, opacity: 0 },
+          emailCharsRef.current,
+          {
+            y: 50,
+            opacity: 0,
+            rotateY: -60,
+          },
           {
             y: 0,
             opacity: 1,
-            ease: "none",
+            rotateY: 0,
+            duration: 0.5,
+            stagger: 0.02,
+            ease: "back.out(1.2)",
             scrollTrigger: {
-              trigger: link,
-              start: "top 95%",
-              end: "top 75%",
-              scrub: 1,
+              trigger: sectionRef.current,
+              start: "top 65%",
+              toggleActions: "play none none reverse",
+            },
+          }
+        );
+      }
+
+      // ── Sketch underline draws in ──
+      if (underlineRef.current) {
+        gsap.fromTo(
+          underlineRef.current,
+          { scaleX: 0, opacity: 0 },
+          {
+            scaleX: 1,
+            opacity: 0.7,
+            duration: 0.8,
+            ease: "power3.inOut",
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 62%",
+              toggleActions: "play none none reverse",
+            },
+          }
+        );
+      }
+
+      // ── Social icons: staggered bounce in ──
+      socialIconsRef.current.forEach((icon, index) => {
+        if (!icon) return;
+        gsap.fromTo(
+          icon,
+          { y: 30, opacity: 0, scale: 0.5 },
+          {
+            y: 0,
+            opacity: 1,
+            scale: 1,
+            duration: 0.5,
+            ease: "back.out(2)",
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 60%",
+              toggleActions: "play none none reverse",
             },
             delay: index * 0.08,
           }
         );
+      });
 
-        if (!isTouchDevice) {
+      // ── Magnetic social icons (desktop) ──
+      if (!isTouchDevice) {
+        socialIconsRef.current.forEach((icon) => {
+          if (!icon) return;
+
           const handleMouseMove = (e: MouseEvent) => {
-            const rect = link.getBoundingClientRect();
+            const rect = icon.getBoundingClientRect();
             const x = e.clientX - rect.left - rect.width / 2;
             const y = e.clientY - rect.top - rect.height / 2;
 
-            gsap.to(link, {
-              x: x * 0.2,
-              y: y * 0.2,
-              scale: 1.08,
+            gsap.to(icon, {
+              x: x * 0.3,
+              y: y * 0.3,
+              scale: 1.2,
               duration: 0.3,
               ease: "power2.out",
             });
           };
 
           const handleMouseLeave = () => {
-            gsap.to(link, {
+            gsap.to(icon, {
               x: 0,
               y: 0,
               scale: 1,
@@ -169,145 +206,117 @@ const ContactSection: React.FC = () => {
             });
           };
 
-          link.addEventListener("mousemove", handleMouseMove);
-          link.addEventListener("mouseleave", handleMouseLeave);
-        }
-      });
-
-      if (!isMobile) {
-        gsap.to(cardRef.current, {
-          y: -30,
-          ease: "none",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top bottom",
-            end: "bottom top",
-            scrub: 2,
-          },
+          icon.addEventListener("mousemove", handleMouseMove);
+          icon.addEventListener("mouseleave", handleMouseLeave);
         });
+
+        // ── Email hover wave effect ──
+        const emailContainer = emailCharsRef.current[0]?.parentElement;
+        if (emailContainer) {
+          emailContainer.addEventListener("mouseenter", () => {
+            emailCharsRef.current.forEach((charEl, i) => {
+              if (!charEl) return;
+              gsap.to(charEl, {
+                y: -4,
+                color: "var(--primary)",
+                duration: 0.3,
+                ease: "power2.out",
+                delay: i * 0.015,
+              });
+            });
+          });
+
+          emailContainer.addEventListener("mouseleave", () => {
+            emailCharsRef.current.forEach((charEl, i) => {
+              if (!charEl) return;
+              gsap.to(charEl, {
+                y: 0,
+                color: "var(--text-primary)",
+                duration: 0.4,
+                ease: "elastic.out(1, 0.5)",
+                delay: i * 0.01,
+              });
+            });
+          });
+        }
       }
     }, sectionRef);
 
     return () => ctx.revert();
-  }, [isInView, isMobile, isTouchDevice]);
+  }, [isInView, isTouchDevice]);
 
   return (
     <section
       id="contact"
       ref={sectionRef}
       className="relative py-24 md:py-32 bg-(--bg-secondary) overflow-hidden"
-      style={{ perspective: "1000px" }}
     >
-      <div className="max-w-4xl mx-auto px-6">
-        <div className="text-center mb-16">
-          <motion.span
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5 }}
-            className="section-label mb-4 block"
-          >
-            Contact
-          </motion.span>
+      <div className="max-w-3xl mx-auto px-6">
+        <div ref={contentRef} className="text-center">
           <h2
             ref={titleRef}
-            className="section-title mb-4"
-            style={{ transformStyle: "preserve-3d" }}
+            className="text-3xl md:text-4xl font-bold text-(--text-primary) mb-4 tracking-tight"
           >
-            Let&apos;s Work Together
+            Get in touch
           </h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="section-subtitle mx-auto"
+          <p
+            ref={subtitleRef}
+            className="text-(--text-secondary) text-base md:text-lg mb-3 leading-relaxed"
           >
-            Have a project in mind? I&apos;d love to hear about it. Let&apos;s discuss how I can help.
-          </motion.p>
-        </div>
+            I&apos;m always open to interesting conversations, new projects,
+            or just a friendly hello.
+          </p>
+          <p
+            ref={replyRef}
+            className="text-(--text-muted) text-sm mb-12"
+          >
+            I usually reply within a day.
+          </p>
 
-        <div
-          ref={cardRef}
-          className="card-elevated p-8 md:p-12"
-          style={{ transformStyle: "preserve-3d" }}
-        >
-          <div className="grid md:grid-cols-2 gap-8 md:gap-12">
-            <div ref={leftColRef}>
-              <h3 className="text-xl font-semibold text-(--text-primary) mb-4">
-                Get in Touch
-              </h3>
-              <p className="text-(--text-secondary) mb-8 leading-relaxed">
-                I&apos;m currently available for freelance work and full-time opportunities.
-                If you have a project that needs development, I&apos;d love to help.
-              </p>
-
-              <div className="space-y-4">
-                <motion.a
-                  href="mailto:rparandhama63@gmail.com"
-                  whileHover={{ scale: 1.02, x: 5 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="flex items-center gap-4 p-4 rounded-xl bg-(--bg-card) border border-(--border-subtle) hover:border-(--primary)/30 transition-all group"
+          {/* Email as hero element with per-character animation */}
+          <div className="mb-12 relative inline-block" style={{ perspective: "600px" }}>
+            <a
+              href={`mailto:${emailAddress}`}
+              className="inline-block text-2xl md:text-4xl font-semibold transition-colors duration-300"
+            >
+              {emailAddress.split("").map((char, i) => (
+                <span
+                  key={i}
+                  ref={(el) => { if (el) emailCharsRef.current[i] = el; }}
+                  className="inline-block text-(--text-primary)"
+                  style={{ transformStyle: "preserve-3d" }}
                 >
-                  <div className="w-10 h-10 rounded-lg bg-(--primary)/10 flex items-center justify-center group-hover:bg-(--primary)/20 group-hover:scale-110 transition-all">
-                    <Mail className="w-5 h-5 text-(--primary)" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-(--text-muted) mb-0.5">Email</p>
-                    <p className="text-sm text-(--text-primary) font-medium">rparandhama63@gmail.com</p>
-                  </div>
-                </motion.a>
+                  {char}
+                </span>
+              ))}
+            </a>
+            {/* Animated sketch underline */}
+            <div
+              ref={underlineRef}
+              className="absolute -bottom-2 left-0 w-full h-2 origin-left"
+              style={{
+                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 8'%3E%3Cpath d='M1 5.5 C 30 2, 50 7, 100 4 S 170 2, 199 5.5' stroke='%236366f1' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E")`,
+                backgroundRepeat: "no-repeat",
+                backgroundSize: "100% 100%",
+              }}
+            />
+          </div>
 
-                <div className="flex items-center gap-4 p-4 rounded-xl bg-(--bg-card) border border-(--border-subtle)">
-                  <div className="w-10 h-10 rounded-lg bg-(--primary)/10 flex items-center justify-center">
-                    <MapPin className="w-5 h-5 text-(--primary)" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-(--text-muted) mb-0.5">Location</p>
-                    <p className="text-sm text-(--text-primary) font-medium">Available Worldwide</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div ref={rightColRef}>
-              <h3 className="text-xl font-semibold text-(--text-primary) mb-4">
-                Connect With Me
-              </h3>
-              <p className="text-(--text-secondary) mb-8 leading-relaxed">
-                Follow me on social media to stay updated with my latest projects and thoughts.
-              </p>
-
-              <div className="grid grid-cols-2 gap-3">
-                {socialLinks.map((link, index) => (
-                  <a
-                    key={link.name}
-                    ref={(el) => { socialLinksRef.current[index] = el; }}
-                    href={link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-3 p-4 rounded-xl bg-(--bg-card) border border-(--border-subtle) hover:border-(--primary)/30 transition-all group"
-                    style={{ transformStyle: "preserve-3d" }}
-                  >
-                    <FontAwesomeIcon
-                      icon={link.icon}
-                      className="w-5 h-5 text-(--text-secondary) group-hover:text-(--primary) group-hover:scale-110 transition-all"
-                    />
-                    <span className="text-sm font-medium text-(--text-primary)">
-                      {link.name}
-                    </span>
-                  </a>
-                ))}
-              </div>
-
-              <motion.a
-                href="mailto:rparandhama63@gmail.com"
-                whileHover={{ scale: 1.02, y: -3 }}
-                whileTap={{ scale: 0.98 }}
-                className="mt-8 w-full flex items-center justify-center gap-2 px-6 py-4 bg-(--primary) hover:bg-(--primary-dark) text-white font-medium rounded-xl transition-all shadow-lg shadow-(--primary)/20"
+          {/* Social icons with magnetic effect */}
+          <div className="flex items-center justify-center gap-4">
+            {socialLinks.map((link, index) => (
+              <a
+                key={link.name}
+                ref={(el) => { socialIconsRef.current[index] = el; }}
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-3 rounded-xl text-(--text-muted) hover:text-(--text-primary) hover:bg-(--bg-elevated) transition-colors duration-200"
+                aria-label={link.name}
               >
-                <Send size={18} />
-                <span>Send a Message</span>
-              </motion.a>
-            </div>
+                <FontAwesomeIcon icon={link.icon} className="w-5 h-5" />
+              </a>
+            ))}
           </div>
         </div>
       </div>
