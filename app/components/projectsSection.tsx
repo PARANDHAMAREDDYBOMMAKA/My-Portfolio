@@ -216,7 +216,7 @@ const ProjectsSection: React.FC = () => {
           </p>
           <div
             ref={lineRef}
-            className="w-16 h-[2px] bg-(--primary) origin-left"
+            className="w-16 h-0.5 bg-(--primary) origin-left"
           />
         </div>
 

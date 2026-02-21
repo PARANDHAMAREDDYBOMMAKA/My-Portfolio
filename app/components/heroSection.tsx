@@ -6,7 +6,8 @@ import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useDevice } from "../hooks/useDevice";
-import { Github, Linkedin, Mail } from "lucide-react";
+import { Github, Linkedin, Mail, Twitter } from "lucide-react";
+import ParticlePhoto from "./ParticlePhoto";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -28,17 +29,14 @@ const HeroSection: React.FC = () => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // ── ENTRANCE TIMELINE ──
       const entranceTl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-      // Dual glow blobs expand in
       entranceTl.fromTo(
         [bgGlowRef.current, bgGlow2Ref.current],
         { scale: 0, opacity: 0 },
         { scale: 1, opacity: 1, duration: 2.5, ease: "power2.out", stagger: 0.3 }
       );
 
-      // Accent line draws in
       entranceTl.fromTo(
         lineRef.current,
         { scaleX: 0 },
@@ -46,7 +44,6 @@ const HeroSection: React.FC = () => {
         "-=2"
       );
 
-      // Annotation typewriter effect
       if (annotationRef.current) {
         const text = "// full-stack developer";
         annotationRef.current.textContent = "";
@@ -62,7 +59,6 @@ const HeroSection: React.FC = () => {
         });
       }
 
-      // Greeting clip-path reveal
       entranceTl.fromTo(
         greetingRef.current,
         { y: 40, opacity: 0, clipPath: "inset(100% 0% 0% 0%)" },
@@ -70,7 +66,6 @@ const HeroSection: React.FC = () => {
         "-=0.5"
       );
 
-      // Name — split each letter and stagger in
       if (nameRef.current) {
         const nameSpans = nameRef.current.querySelectorAll(".name-char");
         entranceTl.fromTo(
@@ -88,7 +83,6 @@ const HeroSection: React.FC = () => {
         );
       }
 
-      // Tagline slides up
       entranceTl.fromTo(
         taglineRef.current,
         { y: 60, opacity: 0, clipPath: "inset(100% 0% 0% 0%)" },
@@ -96,7 +90,6 @@ const HeroSection: React.FC = () => {
         "-=0.5"
       );
 
-      // Description fades in
       entranceTl.fromTo(
         descRef.current,
         { y: 40, opacity: 0 },
@@ -104,7 +97,6 @@ const HeroSection: React.FC = () => {
         "-=0.4"
       );
 
-      // CTA buttons
       entranceTl.fromTo(
         ctaRef.current,
         { y: 30, opacity: 0 },
@@ -112,7 +104,6 @@ const HeroSection: React.FC = () => {
         "-=0.3"
       );
 
-      // ── SCROLL-OUT: container scale + blur ──
       if (!isMobile) {
         const scrollTl = gsap.timeline({
           scrollTrigger: {
@@ -139,7 +130,6 @@ const HeroSection: React.FC = () => {
         }, 0);
       }
 
-      // ── MOUSE PARALLAX on glow blobs (desktop only) ──
       if (!isTouchDevice && containerRef.current) {
         const container = containerRef.current;
         const handleMouseMove = (e: MouseEvent) => {
@@ -159,7 +149,6 @@ const HeroSection: React.FC = () => {
             duration: 1.5,
             ease: "power2.out",
           });
-          // Subtle tilt on content
           gsap.to(contentRef.current, {
             rotateY: xRatio * 2,
             rotateX: -yRatio * 1.5,
@@ -178,10 +167,10 @@ const HeroSection: React.FC = () => {
   const socialLinks = [
     { icon: Github, href: "https://github.com/PARANDHAMAREDDYBOMMAKA", label: "GitHub" },
     { icon: Linkedin, href: "https://www.linkedin.com/in/parandhama-reddy-bommaka/", label: "LinkedIn" },
+    { icon: Twitter, href: "https://x.com/PARANDHAMA123", label: "Twitter" },
     { icon: Mail, href: "mailto:rparandhama63@gmail.com", label: "Email" },
   ];
 
-  // Split name into individual character spans for animation
   const renderNameChars = (text: string, className: string) =>
     text.split("").map((char, i) => (
       <span
@@ -199,7 +188,6 @@ const HeroSection: React.FC = () => {
       className="relative min-h-screen flex items-center overflow-hidden bg-(--bg-primary)"
       style={{ perspective: "1200px" }}
     >
-      {/* Dual organic glow blobs */}
       <div
         ref={bgGlowRef}
         className="absolute top-1/4 left-1/5 w-125 h-100 md:w-200 md:h-150 pointer-events-none"
@@ -219,97 +207,117 @@ const HeroSection: React.FC = () => {
 
       <div
         ref={contentRef}
-        className="relative z-10 max-w-5xl mx-auto px-6 w-full"
+        className="relative z-10 max-w-7xl mx-auto px-6 w-full"
         style={{ transformStyle: "preserve-3d" }}
       >
-        {/* Accent line */}
-        <div
-          ref={lineRef}
-          className="w-16 h-0.5 bg-(--primary) mb-8 origin-left"
-        />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          <div>
+            <div
+              ref={lineRef}
+              className="w-16 h-0.5 bg-(--primary) mb-8 origin-left"
+            />
 
-        {/* Monospace annotation — typewriter */}
-        <div className="mb-6">
-          <span ref={annotationRef} className="text-caption">
-            {"// full-stack developer"}
-          </span>
-        </div>
+            <div className="mb-6">
+              <span ref={annotationRef} className="text-caption">
+                {"// full-stack developer"}
+              </span>
+            </div>
 
-        {/* Greeting */}
-        <div ref={greetingRef} className="overflow-hidden mb-2">
-          <span className="block text-lg md:text-xl text-(--text-secondary)">
-            Hey, I&apos;m
-          </span>
-        </div>
+            <div ref={greetingRef} className="overflow-hidden mb-2">
+              <span className="block text-lg md:text-xl text-(--text-secondary)">
+                Hey, I&apos;m
+              </span>
+            </div>
 
-        {/* Name with per-character animation */}
-        <div ref={nameRef} className="overflow-hidden mb-4" style={{ perspective: "600px" }}>
-          <h1 className="text-5xl md:text-7xl lg:text-[6.5rem] font-bold tracking-tight leading-none">
-            {renderNameChars("Parandhama", "text-(--text-primary)")}
-            <span className="name-char inline-block">&nbsp;</span>
-            {renderNameChars("Reddy", "text-accent-italic")}
-          </h1>
-        </div>
+            <div ref={nameRef} className="overflow-hidden mb-4" style={{ perspective: "600px" }}>
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-none">
+                {renderNameChars("Parandhama", "text-(--text-primary)")}
+                <span className="name-char inline-block">&nbsp;</span>
+                {renderNameChars("Reddy", "text-accent-italic")}
+              </h1>
+            </div>
 
-        {/* Tagline */}
-        <div ref={taglineRef} className="overflow-hidden mb-8">
-          <span className="block text-2xl md:text-3xl text-(--text-secondary) font-light">
-            I build things for the web.
-          </span>
-        </div>
+            <div ref={taglineRef} className="overflow-hidden mb-6">
+              <span className="block text-xl sm:text-2xl md:text-3xl text-(--text-secondary) font-light">
+                Building Agentic AI & Web Apps
+              </span>
+            </div>
 
-        {/* Bio */}
-        <p
-          ref={descRef}
-          className="text-base md:text-lg text-(--text-muted) max-w-xl mb-10 leading-relaxed"
-        >
-          Currently obsessed with React ecosystems and figuring out why my
-          PostgreSQL queries are slow at 3 AM. Based in India, shipping code worldwide.
-        </p>
+            <p
+              ref={descRef}
+              className="text-base md:text-lg text-(--text-muted) max-w-xl mb-8 leading-relaxed"
+            >
+              Full Stack Developer at Product Fusion, crafting intelligent systems with React,
+              Next.js & AI/ML. 119+ repositories, 800+ contributions. Based in Hyderabad,
+              shipping code worldwide.
+            </p>
 
-        {/* CTAs + Socials */}
-        <div ref={ctaRef} className="space-y-6">
-          <div className="flex flex-col sm:flex-row items-start gap-4">
-            <Link href="#projects">
-              <motion.button
-                whileHover={{ scale: 1.05, y: -4 }}
-                whileTap={{ scale: 0.98 }}
-                className="px-8 py-3.5 bg-(--primary) hover:bg-(--primary-dark) text-white text-base font-medium rounded-xl transition-all duration-300 shadow-lg shadow-(--primary)/30"
-              >
-                See what I&apos;ve built
-              </motion.button>
-            </Link>
+            <div ref={ctaRef} className="space-y-6">
+              <div className="flex flex-col sm:flex-row items-start gap-4">
+                <Link href="#projects">
+                  <motion.button
+                    whileHover={{ scale: 1.05, y: -4 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="px-8 py-3.5 bg-(--primary) hover:bg-(--primary-dark) text-white text-base font-medium rounded-xl transition-all duration-300 shadow-lg shadow-(--primary)/30"
+                  >
+                    See my work
+                  </motion.button>
+                </Link>
 
-            <Link href="#contact">
-              <motion.button
-                whileHover={{ scale: 1.05, y: -4 }}
-                whileTap={{ scale: 0.98 }}
-                className="px-8 py-3.5 bg-(--bg-elevated) border border-(--border-default) hover:border-(--primary) text-(--text-primary) text-base font-medium rounded-xl transition-all duration-300"
-              >
-                Say hello
-              </motion.button>
-            </Link>
+                <Link href="#experience">
+                  <motion.button
+                    whileHover={{ scale: 1.05, y: -4 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="px-8 py-3.5 bg-(--bg-elevated) border border-(--border-default) hover:border-(--primary) text-(--text-primary) text-base font-medium rounded-xl transition-all duration-300"
+                  >
+                    My experience
+                  </motion.button>
+                </Link>
+              </div>
+
+              <div className="flex items-center gap-3">
+                {socialLinks.map((social, index) => (
+                  <motion.a
+                    key={social.label}
+                    href={social.href}
+                    target={social.href.startsWith("mailto") ? undefined : "_blank"}
+                    rel={social.href.startsWith("mailto") ? undefined : "noopener noreferrer"}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 2.2 + index * 0.1 }}
+                    whileHover={{ scale: 1.15, y: -3, rotate: 5 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="p-3 rounded-xl bg-(--bg-card) border border-(--border-subtle) hover:border-(--primary)/50 text-(--text-muted) hover:text-(--primary) transition-all duration-300"
+                    aria-label={social.label}
+                  >
+                    <social.icon size={20} />
+                  </motion.a>
+                ))}
+              </div>
+            </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            {socialLinks.map((social, index) => (
-              <motion.a
-                key={social.label}
-                href={social.href}
-                target={social.href.startsWith("mailto") ? undefined : "_blank"}
-                rel={social.href.startsWith("mailto") ? undefined : "noopener noreferrer"}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 2.2 + index * 0.1 }}
-                whileHover={{ scale: 1.15, y: -3, rotate: 5 }}
-                whileTap={{ scale: 0.95 }}
-                className="p-3 rounded-xl bg-(--bg-card) border border-(--border-subtle) hover:border-(--primary)/50 text-(--text-muted) hover:text-(--primary) transition-all duration-300"
-                aria-label={social.label}
-              >
-                <social.icon size={20} />
-              </motion.a>
-            ))}
+          <div className="hidden lg:block">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 1.5, duration: 0.8 }}
+              className="relative"
+            >
+              <ParticlePhoto imageSrc="/photo.jpeg" className="w-full h-125" />
+            </motion.div>
           </div>
+        </div>
+
+        <div className="lg:hidden mt-12">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 2, duration: 0.6 }}
+            className="relative"
+          >
+            <ParticlePhoto imageSrc="/photo.jpeg" className="w-full h-87.5" />
+          </motion.div>
         </div>
       </div>
     </section>

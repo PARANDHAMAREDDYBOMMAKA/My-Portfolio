@@ -9,6 +9,7 @@ import { Menu, X } from "lucide-react";
 
 const NAV_ITEMS = [
   { name: "About", href: "#about" },
+  { name: "Experience", href: "#experience" },
   { name: "Skills", href: "#techstacks" },
   { name: "Projects", href: "#projects" },
   { name: "Contact", href: "#contact" },
@@ -97,6 +98,7 @@ const Header: React.FC = () => {
                     src="/photo.jpeg"
                     alt="PR"
                     fill
+                    sizes="40px"
                     className="object-cover"
                     priority
                   />

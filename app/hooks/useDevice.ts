@@ -14,18 +14,20 @@ interface DeviceInfo {
   screenHeight: number;
 }
 
+const defaultDeviceInfo: DeviceInfo = {
+  isMobile: false,
+  isTablet: false,
+  isDesktop: true,
+  isTouchDevice: false,
+  isLowEndDevice: false,
+  isSmallMobile: false,
+  isLargeMobile: false,
+  screenWidth: 1920,
+  screenHeight: 1080,
+};
+
 export const useDevice = (): DeviceInfo => {
-  const [deviceInfo, setDeviceInfo] = useState<DeviceInfo>({
-    isMobile: false,
-    isTablet: false,
-    isDesktop: true,
-    isTouchDevice: false,
-    isLowEndDevice: false,
-    isSmallMobile: false,
-    isLargeMobile: false,
-    screenWidth: typeof window !== 'undefined' ? window.innerWidth : 1920,
-    screenHeight: typeof window !== 'undefined' ? window.innerHeight : 1080,
-  });
+  const [deviceInfo, setDeviceInfo] = useState<DeviceInfo>(defaultDeviceInfo);
 
   useEffect(() => {
     const checkDevice = () => {

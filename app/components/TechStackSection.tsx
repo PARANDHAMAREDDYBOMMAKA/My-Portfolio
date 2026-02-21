@@ -242,7 +242,7 @@ const TechStacksSection: React.FC = () => {
           </h2>
           <div
             ref={lineRef}
-            className="w-16 h-[2px] bg-(--primary) origin-left"
+            className="w-16 h-0.5 bg-(--primary) origin-left"
           />
         </div>
 
@@ -267,7 +267,7 @@ const TechStacksSection: React.FC = () => {
                       ref={(el) => { pillsRef.current[currentPillIndex] = el; }}
                       className="flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-(--bg-card) border border-(--border-subtle) hover:border-(--border-hover) cursor-default transition-colors duration-200"
                     >
-                      <span style={{ color: tech.color }} className="flex-shrink-0">
+                      <span style={{ color: tech.color }} className="shrink-0">
                         {typeof tech.icon === "function" ? (
                           <tech.icon className="w-5 h-5" />
                         ) : (

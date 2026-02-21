@@ -22,7 +22,6 @@ const AboutSection: React.FC = () => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // ── Title: per-character stagger reveal ──
       if (titleCharsRef.current.length > 0) {
         gsap.fromTo(
           titleCharsRef.current,
@@ -43,7 +42,6 @@ const AboutSection: React.FC = () => {
         );
       }
 
-      // ── Paragraphs: staggered line-by-line reveal with x-shift ──
       paragraphsRef.current.forEach((para, index) => {
         if (!para) return;
         const xDir = index % 2 === 0 ? -30 : 30;
@@ -66,7 +64,6 @@ const AboutSection: React.FC = () => {
         );
       });
 
-      // ── Sidebar border draws in ──
       if (dividerRef.current && !isMobile) {
         gsap.fromTo(
           dividerRef.current,
@@ -84,7 +81,6 @@ const AboutSection: React.FC = () => {
         );
       }
 
-      // ── Sidebar items: staggered fade + slide from right ──
       sidebarItemsRef.current.forEach((item, index) => {
         if (!item) return;
         gsap.fromTo(
@@ -105,7 +101,6 @@ const AboutSection: React.FC = () => {
         );
       });
 
-      // ── "Available" badge pulse scale ──
       if (availableRef.current) {
         gsap.fromTo(
           availableRef.current,
@@ -124,7 +119,6 @@ const AboutSection: React.FC = () => {
         );
       }
 
-      // ── Desktop parallax: sidebar moves slightly slower ──
       if (!isMobile && sidebarRef.current) {
         gsap.to(sidebarRef.current, {
           y: -30,
@@ -138,7 +132,6 @@ const AboutSection: React.FC = () => {
         });
       }
 
-      // ── Hover interactions on sidebar items ──
       if (!isTouchDevice) {
         sidebarItemsRef.current.forEach((item) => {
           if (!item) return;
@@ -168,10 +161,10 @@ const AboutSection: React.FC = () => {
   }, [isMobile, isTouchDevice]);
 
   const currentlyItems = [
-    { label: "Building", value: "Full-stack apps with Next.js & Node" },
+    { label: "Building", value: "Agentic AI systems at Product Fusion" },
     { label: "Learning", value: "System design & cloud architecture" },
-    { label: "Reading", value: "Clean Code by Robert C. Martin" },
-    { label: "Exploring", value: "PostgreSQL performance tuning" },
+    { label: "Stack", value: "React, Next.js, Node.js, Python, TypeScript" },
+    { label: "Location", value: "Hyderabad, India (UTC +05:30)" },
   ];
 
   const titleText = "A bit about me";
@@ -201,16 +194,14 @@ const AboutSection: React.FC = () => {
           ))}
         </h2>
 
-        {/* Asymmetric 3:2 grid */}
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-16">
-          {/* Bio column (3/5) */}
           <div className="lg:col-span-3">
             <div className="space-y-5">
               {[
-                <>I got into programming the way most people do &mdash; I wanted to build something and Googled my way through it. That first project was terrible, but the feeling of making something work on screen was enough to keep me going.</>,
-                <>Since then, I&apos;ve been building full-stack web applications with React, Next.js, Node.js, and PostgreSQL. I care about writing code that other people (including future me) can actually read, and building interfaces that feel right to use.</>,
-                <>When I&apos;m not coding, I&apos;m probably debugging why something broke in production, reading about system design patterns, or trying to convince myself that this time the side project will actually ship.</>,
-                <>Based in India. Open to remote work and interesting conversations about tech.</>,
+                <>I got into programming the way most people do &mdash; I wanted to build something and Googled my way through it. That first project was terrible, but the feeling of making something work on screen was enough to keep me going. Now with 119+ repositories and 800+ contributions on GitHub, that curiosity has become a craft.</>,
+                <>Currently, I&apos;m a Full Stack Developer at Product Fusion, where I build Agentic AI systems that automate complex workflows. My toolkit includes React, Next.js, Node.js, Python, TypeScript, and various databases. I&apos;ve shipped 6+ production apps that solve real problems &mdash; from exam platforms to real-time chat systems.</>,
+                <>I&apos;m a believer in clean code and thoughtful interfaces. Beyond JavaScript, I work with Python for AI/ML integrations, Java for backend systems, and I&apos;m always exploring new technologies. When I&apos;m not coding, I&apos;m probably debugging why something broke in production or reading about system design patterns.</>,
+                <>Based in Hyderabad, India. Open to remote work and building the next generation of intelligent applications.</>,
               ].map((content, i) => (
                 <p
                   key={i}
@@ -223,12 +214,10 @@ const AboutSection: React.FC = () => {
             </div>
           </div>
 
-          {/* "Currently" sidebar (2/5) */}
           <div ref={sidebarRef} className="lg:col-span-2 relative">
-            {/* Animated vertical divider */}
             <div
               ref={dividerRef}
-              className="hidden lg:block absolute left-0 top-0 w-[1px] h-full bg-(--border-subtle) origin-top"
+              className="hidden lg:block absolute left-0 top-0 w-px h-full bg-(--border-subtle) origin-top"
             />
             <div className="lg:pl-8">
               <h3 className="text-caption uppercase tracking-wider mb-6">

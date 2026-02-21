@@ -21,7 +21,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index, featured = fa
         rel="noopener noreferrer"
         className="card group overflow-hidden flex flex-col md:flex-row h-full"
       >
-        <div className="relative h-56 md:h-auto md:w-3/5 overflow-hidden bg-(--bg-elevated) flex-shrink-0">
+        <div className="relative h-56 md:h-auto md:w-3/5 overflow-hidden bg-(--bg-elevated) shrink-0">
           <Image
             src={project.imageUrl}
             alt={project.title}
