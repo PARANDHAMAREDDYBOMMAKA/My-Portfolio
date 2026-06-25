@@ -6,7 +6,7 @@ import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useDevice } from "../hooks/useDevice";
-import { Github, Linkedin, Mail, Twitter } from "lucide-react";
+import { Github, Linkedin, Mail, Twitter, Hand } from "lucide-react";
 import ParticlePhoto from "./ParticlePhoto";
 
 if (typeof window !== "undefined") {
@@ -22,26 +22,18 @@ const HeroSection: React.FC = () => {
   const taglineRef = useRef<HTMLDivElement>(null);
   const descRef = useRef<HTMLParagraphElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
-  const bgGlowRef = useRef<HTMLDivElement>(null);
-  const bgGlow2Ref = useRef<HTMLDivElement>(null);
   const lineRef = useRef<HTMLDivElement>(null);
-  const { isMobile, isTouchDevice } = useDevice();
+  const { isMobile } = useDevice();
 
   useEffect(() => {
     const ctx = gsap.context(() => {
       const entranceTl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
       entranceTl.fromTo(
-        [bgGlowRef.current, bgGlow2Ref.current],
-        { scale: 0, opacity: 0 },
-        { scale: 1, opacity: 1, duration: 2.5, ease: "power2.out", stagger: 0.3 }
-      );
-
-      entranceTl.fromTo(
         lineRef.current,
         { scaleX: 0 },
         { scaleX: 1, duration: 0.8, ease: "power4.inOut" },
-        "-=2"
+        0
       );
 
       if (annotationRef.current) {
@@ -70,14 +62,13 @@ const HeroSection: React.FC = () => {
         const nameSpans = nameRef.current.querySelectorAll(".name-char");
         entranceTl.fromTo(
           nameSpans,
-          { y: 120, opacity: 0, rotateX: -90 },
+          { yPercent: 110, opacity: 0 },
           {
-            y: 0,
+            yPercent: 0,
             opacity: 1,
-            rotateX: 0,
-            duration: 0.8,
-            stagger: 0.03,
-            ease: "back.out(1.2)",
+            duration: 1.1,
+            stagger: 0.045,
+            ease: "power4.out",
           },
           "-=0.6"
         );
@@ -122,47 +113,11 @@ const HeroSection: React.FC = () => {
           y: -60,
           duration: 1,
         }, 0);
-
-        scrollTl.to([bgGlowRef.current, bgGlow2Ref.current], {
-          scale: 2,
-          opacity: 0,
-          duration: 1,
-        }, 0);
-      }
-
-      if (!isTouchDevice && containerRef.current) {
-        const container = containerRef.current;
-        const handleMouseMove = (e: MouseEvent) => {
-          const rect = container.getBoundingClientRect();
-          const xRatio = (e.clientX - rect.left) / rect.width - 0.5;
-          const yRatio = (e.clientY - rect.top) / rect.height - 0.5;
-
-          gsap.to(bgGlowRef.current, {
-            x: xRatio * 80,
-            y: yRatio * 60,
-            duration: 1.2,
-            ease: "power2.out",
-          });
-          gsap.to(bgGlow2Ref.current, {
-            x: xRatio * -50,
-            y: yRatio * -40,
-            duration: 1.5,
-            ease: "power2.out",
-          });
-          gsap.to(contentRef.current, {
-            rotateY: xRatio * 2,
-            rotateX: -yRatio * 1.5,
-            duration: 1,
-            ease: "power2.out",
-          });
-        };
-
-        container.addEventListener("mousemove", handleMouseMove);
       }
     }, containerRef);
 
     return () => ctx.revert();
-  }, [isMobile, isTouchDevice]);
+  }, [isMobile]);
 
   const socialLinks = [
     { icon: Github, href: "https://github.com/PARANDHAMAREDDYBOMMAKA", label: "GitHub" },
@@ -188,19 +143,18 @@ const HeroSection: React.FC = () => {
       className="relative min-h-screen flex items-center overflow-hidden bg-(--bg-primary)"
       style={{ perspective: "1200px" }}
     >
+      {/* Soft warm glows */}
       <div
-        ref={bgGlowRef}
         className="absolute top-1/4 left-1/5 w-125 h-100 md:w-200 md:h-150 pointer-events-none"
         style={{
-          background: "radial-gradient(ellipse, rgba(99,102,241,0.15) 0%, transparent 65%)",
+          background: "radial-gradient(ellipse, rgba(224,122,95,0.16) 0%, transparent 65%)",
           filter: "blur(60px)",
         }}
       />
       <div
-        ref={bgGlow2Ref}
         className="absolute bottom-1/4 right-1/5 w-100 h-88 md:w-150 md:h-125 pointer-events-none"
         style={{
-          background: "radial-gradient(ellipse, rgba(249,115,22,0.08) 0%, transparent 65%)",
+          background: "radial-gradient(ellipse, rgba(224,164,88,0.09) 0%, transparent 65%)",
           filter: "blur(60px)",
         }}
       />
@@ -225,21 +179,35 @@ const HeroSection: React.FC = () => {
 
             <div ref={greetingRef} className="overflow-hidden mb-2">
               <span className="block text-lg md:text-xl text-(--text-secondary)">
-                Hey, I&apos;m
+                hey, i&apos;m
+                <Hand
+                  size={20}
+                  className="inline-block ml-1.5 -mt-1 text-(--accent) origin-bottom-right animate-[wave_2.4s_ease-in-out_1.5s_2]"
+                />
               </span>
             </div>
 
-            <div ref={nameRef} className="overflow-hidden mb-4" style={{ perspective: "600px" }}>
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-none">
-                {renderNameChars("Parandhama", "text-(--text-primary)")}
-                <span className="name-char inline-block">&nbsp;</span>
-                {renderNameChars("Reddy", "text-accent-italic")}
+            <div ref={nameRef} className="mb-4">
+              <h1
+                className="text-display text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] tracking-tight"
+                style={{ lineHeight: 1.04 }}
+              >
+                <span className="block overflow-hidden pb-[0.08em]">
+                  <span className="inline-block whitespace-nowrap">
+                    {renderNameChars("Parandhama", "text-(--text-primary)")}
+                  </span>
+                </span>
+                <span className="block overflow-hidden pb-[0.08em]">
+                  <span className="inline-block whitespace-nowrap">
+                    {renderNameChars("Reddy", "text-accent-italic")}
+                  </span>
+                </span>
               </h1>
             </div>
 
             <div ref={taglineRef} className="overflow-hidden mb-6">
               <span className="block text-xl sm:text-2xl md:text-3xl text-(--text-secondary) font-light">
-                Building Agentic AI & Web Apps
+                I build <span className="underline-sketch text-(--text-primary)">agentic AI</span> &amp; the web apps around it
               </span>
             </div>
 
@@ -247,12 +215,21 @@ const HeroSection: React.FC = () => {
               ref={descRef}
               className="text-base md:text-lg text-(--text-muted) max-w-xl mb-8 leading-relaxed"
             >
-              Full Stack Developer at Product Fusion, crafting intelligent systems with React,
-              Next.js & AI/ML. 119+ repositories, 800+ contributions. Based in Hyderabad,
-              shipping code worldwide.
+              Full-stack developer at Product Fusion. I like turning fuzzy ideas into
+              things that actually ship — lately, intelligent systems built with React,
+              Next.js and a fair bit of AI/ML. Based in Hyderabad, writing code for
+              the world.
             </p>
 
             <div ref={ctaRef} className="space-y-6">
+              <div className="inline-flex items-center gap-2 text-sm text-(--text-secondary)">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full rounded-full bg-(--accent-cool) opacity-75 animate-ping" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-(--accent-cool)" />
+                </span>
+                available for new work
+              </div>
+
               <div className="flex flex-col sm:flex-row items-start gap-4">
                 <Link href="#projects">
                   <motion.button

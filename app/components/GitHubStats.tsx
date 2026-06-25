@@ -3,7 +3,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import { useInView } from "framer-motion";
 import { useDevice } from "../hooks/useDevice";
-import { GitBranch, Star, GitPullRequest, Code2, Zap, Award } from "lucide-react";
+import { GitBranch, Star, GitPullRequest, Code2, Zap, Award, Fish, Target } from "lucide-react";
 
 interface StatItem {
   icon: React.ElementType;
@@ -14,18 +14,18 @@ interface StatItem {
 }
 
 const stats: StatItem[] = [
-  { icon: Code2, label: "Total Repos", value: 119, color: "#6366f1" },
-  { icon: GitBranch, label: "Contributions", value: 847, color: "#22c55e" },
-  { icon: GitPullRequest, label: "Pull Requests", value: 45, suffix: "+", color: "#f59e0b" },
-  { icon: Star, label: "Stars Earned", value: 12, color: "#eab308" },
-  { icon: Zap, label: "Commits", value: 1200, suffix: "+", color: "#06b6d4" },
-  { icon: Award, label: "Achievements", value: 3, color: "#ec4899" },
+  { icon: Code2, label: "Total Repos", value: 119, color: "#e07a5f" },
+  { icon: GitBranch, label: "Contributions", value: 847, color: "#7fa67e" },
+  { icon: GitPullRequest, label: "Pull Requests", value: 45, suffix: "+", color: "#e0a458" },
+  { icon: Star, label: "Stars Earned", value: 12, color: "#efc07a" },
+  { icon: Zap, label: "Commits", value: 1200, suffix: "+", color: "#ef7a52" },
+  { icon: Award, label: "Achievements", value: 3, color: "#c98a6b" },
 ];
 
 const achievements = [
-  { name: "Pull Shark", count: 3, icon: "🦈" },
-  { name: "Quickdraw", count: 1, icon: "⚡" },
-  { name: "YOLO", count: 1, icon: "🎯" },
+  { name: "Pull Shark", count: 3, icon: Fish, color: "#7fa67e" },
+  { name: "Quickdraw", count: 1, icon: Zap, color: "#e0a458" },
+  { name: "YOLO", count: 1, icon: Target, color: "#e07a5f" },
 ];
 
 const GitHubStats: React.FC = () => {
@@ -77,7 +77,9 @@ const GitHubStats: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6 mb-12">
-          {stats.map((stat, index) => (
+          {stats.map((stat, index) => {
+            const Icon = stat.icon as React.ComponentType<{ size?: number; style?: React.CSSProperties }>;
+            return (
             <div
               key={stat.label}
               className={`relative p-4 md:p-6 rounded-xl bg-(--bg-card) border border-(--border-subtle) hover:border-(--primary)/30 transition-all duration-300 text-center group ${
@@ -96,7 +98,7 @@ const GitHubStats: React.FC = () => {
                 className="w-10 h-10 md:w-12 md:h-12 mx-auto mb-3 rounded-xl flex items-center justify-center"
                 style={{ backgroundColor: `${stat.color}20` }}
               >
-                <stat.icon size={isMobile ? 20 : 24} style={{ color: stat.color }} />
+                <Icon size={isMobile ? 20 : 24} style={{ color: stat.color }} />
               </div>
 
               <div className="text-2xl md:text-3xl font-bold text-(--text-primary) mb-1">
@@ -106,7 +108,8 @@ const GitHubStats: React.FC = () => {
 
               <span className="text-xs md:text-sm text-(--text-muted)">{stat.label}</span>
             </div>
-          ))}
+            );
+          })}
         </div>
 
         <div
@@ -119,12 +122,19 @@ const GitHubStats: React.FC = () => {
             GitHub Achievements
           </h4>
           <div className="flex flex-wrap justify-center gap-4 md:gap-6">
-            {achievements.map((achievement) => (
+            {achievements.map((achievement) => {
+              const AchIcon = achievement.icon as React.ComponentType<{ size?: number; style?: React.CSSProperties }>;
+              return (
               <div
                 key={achievement.name}
                 className="flex items-center gap-3 px-4 py-3 rounded-xl bg-(--bg-elevated) border border-(--border-subtle) hover:border-(--primary)/30 transition-colors"
               >
-                <span className="text-2xl">{achievement.icon}</span>
+                <span
+                  className="flex items-center justify-center w-9 h-9 rounded-lg"
+                  style={{ backgroundColor: `${achievement.color}20` }}
+                >
+                  <AchIcon size={18} style={{ color: achievement.color }} />
+                </span>
                 <div>
                   <span className="block text-sm font-medium text-(--text-primary)">
                     {achievement.name}
@@ -134,7 +144,8 @@ const GitHubStats: React.FC = () => {
                   )}
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
 
           <div className="mt-6 text-center">

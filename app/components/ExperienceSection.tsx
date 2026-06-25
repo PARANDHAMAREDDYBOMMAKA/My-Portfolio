@@ -4,7 +4,7 @@ import React, { useRef, useEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useDevice } from "../hooks/useDevice";
-import { Building2, Calendar, MapPin, ExternalLink } from "lucide-react";
+import { Building2, Calendar, MapPin, ExternalLink, ArrowUpRight } from "lucide-react";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -256,8 +256,12 @@ const ExperienceSection: React.FC = () => {
                     {exp.description.map((item, i) => (
                       <li
                         key={i}
-                        className="text-sm md:text-base text-(--text-secondary) leading-relaxed pl-4 relative before:content-['→'] before:absolute before:left-0 before:text-(--primary)"
+                        className="text-sm md:text-base text-(--text-secondary) leading-relaxed pl-6 relative"
                       >
+                        <ArrowUpRight
+                          size={16}
+                          className="absolute left-0 top-1 text-(--primary)"
+                        />
                         {item}
                       </li>
                     ))}

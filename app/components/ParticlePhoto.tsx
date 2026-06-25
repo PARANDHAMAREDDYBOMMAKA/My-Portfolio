@@ -87,14 +87,15 @@ const ParticlePhoto: React.FC<ParticlePhotoProps> = ({ imageSrc, className = "" 
           const px = ox + x;
           const py = oy + y;
 
+          // Warm sepia tint so the portrait reads as crafted, not clinical grayscale
           particles.push({
             x: px,
             y: py,
             originX: px,
             originY: py,
-            r: brightness,
-            g: brightness,
-            b: brightness,
+            r: Math.min(255, Math.round(brightness * 1.06 + 14)),
+            g: Math.round(brightness * 0.92 + 6),
+            b: Math.round(brightness * 0.74),
             size: isMobile ? 1.2 : 0.9,
             vx: 0,
             vy: 0,
@@ -229,7 +230,7 @@ const ParticlePhoto: React.FC<ParticlePhotoProps> = ({ imageSrc, className = "" 
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: "radial-gradient(circle at center, rgba(99,102,241,0.15) 0%, transparent 60%)",
+          background: "radial-gradient(circle at center, rgba(224,122,95,0.16) 0%, rgba(224,164,88,0.06) 35%, transparent 62%)",
         }}
       />
 

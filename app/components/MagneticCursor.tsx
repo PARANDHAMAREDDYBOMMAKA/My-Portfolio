@@ -114,8 +114,8 @@ const MagneticCursor: React.FC = () => {
       case "hover":
       case "link":
         return {
-          backgroundColor: "rgba(99, 102, 241, 0.1)",
-          border: "1px solid rgba(99, 102, 241, 0.5)",
+          backgroundColor: "rgba(224, 122, 95, 0.12)",
+          border: "1px solid rgba(224, 122, 95, 0.55)",
           mixBlendMode: "normal" as const,
         };
       case "project":
@@ -125,7 +125,7 @@ const MagneticCursor: React.FC = () => {
         };
       case "click":
         return {
-          backgroundColor: "rgba(99, 102, 241, 0.8)",
+          backgroundColor: "rgba(224, 122, 95, 0.85)",
           mixBlendMode: "normal" as const,
         };
       default:
@@ -157,7 +157,7 @@ const MagneticCursor: React.FC = () => {
           height: 40,
           translateX: "-50%",
           translateY: "-50%",
-          border: "1px solid rgba(99, 102, 241, 0.3)",
+          border: "1px solid rgba(224, 122, 95, 0.35)",
           opacity: isVisible ? 0.5 : 0,
         }}
         animate={{

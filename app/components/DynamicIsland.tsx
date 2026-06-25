@@ -81,10 +81,10 @@ const DynamicIsland: React.FC = () => {
         <motion.div
           className="relative overflow-hidden cursor-pointer"
           style={{
-            background: "rgba(0, 0, 0, 0.85)",
+            background: "rgba(20, 16, 11, 0.82)",
             backdropFilter: "blur(20px)",
             WebkitBackdropFilter: "blur(20px)",
-            border: "1px solid rgba(255, 255, 255, 0.1)",
+            border: "1px solid rgba(224, 122, 95, 0.18)",
           }}
           animate={{
             width: isExpanded ? (isMobile ? 320 : 500) : isHovered ? 280 : isScrolled ? 200 : 180,
@@ -208,7 +208,8 @@ const DynamicIsland: React.FC = () => {
 
                 <motion.a
                   href="mailto:rparandhama63@gmail.com"
-                  className="mt-4 w-full py-3 bg-linear-to-r from-indigo-500 to-purple-500 text-white text-sm font-medium rounded-xl flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
+                  style={{ background: "linear-gradient(to right, var(--primary), var(--accent-warm))" }}
+                  className="mt-4 w-full py-3 text-white text-sm font-medium rounded-xl flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
@@ -225,7 +226,8 @@ const DynamicIsland: React.FC = () => {
 
         {isScrolled && !isExpanded && (
           <motion.div
-            className="absolute -bottom-1 left-1/2 -translate-x-1/2 h-1 bg-linear-to-r from-indigo-500 to-purple-500 rounded-full"
+            style={{ background: "linear-gradient(to right, var(--primary), var(--accent-warm))" }}
+            className="absolute -bottom-1 left-1/2 -translate-x-1/2 h-1 rounded-full"
             initial={{ width: 0, opacity: 0 }}
             animate={{ width: 40, opacity: 1 }}
             transition={{ delay: 0.2 }}
