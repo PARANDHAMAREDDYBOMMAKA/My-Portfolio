@@ -68,12 +68,36 @@ const GitHubStreak: React.FC = () => {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
   const { isMobile } = useDevice();
   const [isClient, setIsClient] = useState(false);
+  const [contributions, setContributions] = useState<ContributionDay[]>([]);
 
   useEffect(() => {
     setIsClient(true);
-  }, []);
 
-  const contributions = useMemo(() => generateMockContributions(), []);
+    let alive = true;
+    fetch("/api/github")
+      .then((r) => r.json())
+      .then((d) => {
+        if (!alive) return;
+        if (d?.ok && Array.isArray(d.days) && d.days.length) {
+          setContributions(
+            d.days.map((x: ContributionDay) => ({
+              date: x.date,
+              count: x.count,
+              level: x.level,
+            }))
+          );
+        } else {
+          setContributions(generateMockContributions());
+        }
+      })
+      .catch(() => {
+        if (alive) setContributions(generateMockContributions());
+      });
+
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   const weeks = useMemo(() => {
     const result: ContributionDay[][] = [];
@@ -129,18 +153,18 @@ const GitHubStreak: React.FC = () => {
 
   const getLevelColor = (level: number) => {
     const colors = [
-      "bg-[#161b22]",
-      "bg-[#0e4429]",
-      "bg-[#006d32]",
-      "bg-[#26a641]",
-      "bg-[#39d353]",
+      "bg-[#e7dfcf]",
+      "bg-[#c8e0a8]",
+      "bg-[#8fc76a]",
+      "bg-[#4e9e4a]",
+      "bg-[#2f7d3f]",
     ];
     return colors[level] || colors[0];
   };
 
   const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-  if (!isClient) {
+  if (!isClient || !contributions.length) {
     return (
       <div ref={ref} className="bg-(--bg-card) rounded-3xl p-6 md:p-8 border border-(--border-subtle)">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-8">
@@ -207,7 +231,7 @@ const GitHubStreak: React.FC = () => {
                         duration: 0.2,
                       }}
                       className={`w-3 h-3 rounded-sm ${getLevelColor(day.level)} ${
-                        day.date ? "hover:ring-1 hover:ring-white/30 cursor-pointer" : ""
+                        day.date ? "hover:ring-1 hover:ring-black/20 cursor-pointer" : ""
                       }`}
                       title={day.date ? `${day.count} contributions on ${day.date}` : ""}
                     />

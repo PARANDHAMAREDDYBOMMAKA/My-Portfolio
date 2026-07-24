@@ -177,22 +177,26 @@ const AboutSection: React.FC = () => {
       className="relative py-24 md:py-32 bg-(--bg-primary) overflow-hidden"
     >
       <div className="max-w-5xl mx-auto px-6">
-        <h2
-          ref={titleRef}
-          className="text-3xl md:text-4xl font-bold text-(--text-primary) mb-12 tracking-tight overflow-hidden"
-          style={{ perspective: "400px" }}
-        >
-          {titleChars.map((char, i) => (
-            <span
-              key={i}
-              ref={(el) => { if (el) titleCharsRef.current[i] = el; }}
-              className="inline-block"
-              style={{ transformStyle: "preserve-3d" }}
-            >
-              {char === " " ? "\u00A0" : char}
-            </span>
-          ))}
-        </h2>
+        <div className="mb-10">
+          <span className="byline">The Profile \u2014 filed from Hyderabad</span>
+          <h2
+            ref={titleRef}
+            className="text-display text-4xl md:text-5xl text-(--text-primary) mt-3 tracking-tight overflow-hidden"
+            style={{ perspective: "400px" }}
+          >
+            {titleChars.map((char, i) => (
+              <span
+                key={i}
+                ref={(el) => { if (el) titleCharsRef.current[i] = el; }}
+                className="inline-block"
+                style={{ transformStyle: "preserve-3d" }}
+              >
+                {char === " " ? "\u00A0" : char}
+              </span>
+            ))}
+          </h2>
+          <div className="rule-double mt-6" />
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-16">
           <div className="lg:col-span-3">
@@ -206,12 +210,16 @@ const AboutSection: React.FC = () => {
                 <p
                   key={i}
                   ref={(el) => { paragraphsRef.current[i] = el; }}
-                  className={`text-base md:text-lg leading-relaxed ${i === 3 ? "text-(--text-muted)" : "text-(--text-secondary)"}`}
+                  className={`text-base md:text-lg leading-relaxed ${i === 0 ? "dropcap" : ""} ${i === 3 ? "text-(--text-muted)" : "text-(--text-secondary)"}`}
                 >
                   {content}
                 </p>
               ))}
             </div>
+
+            <blockquote className="pull-quote mt-10">
+              &ldquo;I like turning fuzzy ideas into things that actually ship.&rdquo;
+            </blockquote>
           </div>
 
           <div ref={sidebarRef} className="lg:col-span-2 relative">

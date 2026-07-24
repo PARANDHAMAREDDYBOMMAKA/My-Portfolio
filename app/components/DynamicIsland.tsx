@@ -81,14 +81,15 @@ const DynamicIsland: React.FC = () => {
         <motion.div
           className="relative overflow-hidden cursor-pointer"
           style={{
-            background: "rgba(20, 16, 11, 0.82)",
-            backdropFilter: "blur(20px)",
-            WebkitBackdropFilter: "blur(20px)",
-            border: "1px solid rgba(224, 122, 95, 0.18)",
+            background: "rgba(255, 253, 247, 0.82)",
+            backdropFilter: "blur(20px) saturate(1.3)",
+            WebkitBackdropFilter: "blur(20px) saturate(1.3)",
+            border: "1px solid rgba(192, 90, 61, 0.22)",
+            boxShadow: "0 10px 34px rgba(84, 62, 38, 0.14)",
           }}
           animate={{
             width: isExpanded ? (isMobile ? 320 : 500) : isHovered ? 280 : isScrolled ? 200 : 180,
-            height: isExpanded ? (isMobile ? 380 : 280) : 44,
+            height: isExpanded ? (isMobile ? 300 : 210) : 44,
             borderRadius: isExpanded ? 28 : 22,
           }}
           transition={{
@@ -109,7 +110,7 @@ const DynamicIsland: React.FC = () => {
                 transition={{ duration: 0.15 }}
               >
                 <div className="flex items-center gap-3">
-                  <div className="relative w-7 h-7 rounded-full overflow-hidden ring-2 ring-white/20">
+                  <div className="relative w-7 h-7 rounded-full overflow-hidden ring-2 ring-black/10">
                     <Image
                       src="/photo.jpeg"
                       alt="PR"
@@ -119,7 +120,7 @@ const DynamicIsland: React.FC = () => {
                     />
                   </div>
                   <motion.span
-                    className="text-white text-sm font-medium"
+                    className="text-(--text-primary) text-sm font-medium"
                     animate={{ opacity: isHovered || isScrolled ? 1 : 0.8 }}
                   >
                     {isScrolled ? getActiveLabel() : "Parandhama"}
@@ -130,8 +131,8 @@ const DynamicIsland: React.FC = () => {
                   className="flex items-center gap-1"
                   animate={{ opacity: isHovered ? 1 : 0 }}
                 >
-                  <span className="text-white/50 text-xs">tap to expand</span>
-                  <ChevronRight size={14} className="text-white/50" />
+                  <span className="text-(--text-muted) text-xs">tap to expand</span>
+                  <ChevronRight size={14} className="text-(--text-muted)" />
                 </motion.div>
 
                 {isScrolled && !isHovered && (
@@ -153,7 +154,7 @@ const DynamicIsland: React.FC = () => {
               >
                 <div className="flex items-center justify-between mb-5">
                   <div className="flex items-center gap-3">
-                    <div className="relative w-10 h-10 rounded-full overflow-hidden ring-2 ring-white/20">
+                    <div className="relative w-10 h-10 rounded-full overflow-hidden ring-2 ring-black/10">
                       <Image
                         src="/photo.jpeg"
                         alt="Parandhama Reddy"
@@ -163,8 +164,8 @@ const DynamicIsland: React.FC = () => {
                       />
                     </div>
                     <div>
-                      <h3 className="text-white font-semibold text-sm">Parandhama Reddy</h3>
-                      <p className="text-white/50 text-xs">Full Stack Developer</p>
+                      <h3 className="text-(--text-primary) font-semibold text-sm">Parandhama Reddy</h3>
+                      <p className="text-(--text-muted) text-xs">Full Stack Developer</p>
                     </div>
                   </div>
                   <button
@@ -172,9 +173,9 @@ const DynamicIsland: React.FC = () => {
                       e.stopPropagation();
                       setIsExpanded(false);
                     }}
-                    className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors"
+                    className="w-8 h-8 rounded-full bg-black/5 flex items-center justify-center hover:bg-black/10 transition-colors"
                   >
-                    <X size={16} className="text-white" />
+                    <X size={16} className="text-(--text-primary)" />
                   </button>
                 </div>
 
@@ -191,8 +192,8 @@ const DynamicIsland: React.FC = () => {
                         }}
                         className={`flex flex-col items-center gap-2 p-3 rounded-xl transition-all ${
                           isActive
-                            ? "bg-white text-black"
-                            : "bg-white/10 text-white hover:bg-white/20"
+                            ? "bg-(--primary) text-white"
+                            : "bg-black/5 text-(--text-secondary) hover:bg-black/10 hover:text-(--text-primary)"
                         }`}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -206,19 +207,9 @@ const DynamicIsland: React.FC = () => {
                   })}
                 </div>
 
-                <motion.a
-                  href="mailto:rparandhama63@gmail.com"
-                  style={{ background: "linear-gradient(to right, var(--primary), var(--accent-warm))" }}
-                  className="mt-4 w-full py-3 text-white text-sm font-medium rounded-xl flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <Mail size={16} />
-                  Get in touch
-                </motion.a>
+                <div className="mt-4 pt-3 border-t border-(--border-subtle) edition-line text-center">
+                  Late Edition · Always shipping
+                </div>
               </motion.div>
             )}
           </AnimatePresence>

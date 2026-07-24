@@ -253,12 +253,14 @@ const ContactSection: React.FC = () => {
     >
       <div className="max-w-3xl mx-auto px-6">
         <div ref={contentRef} className="text-center">
+          <span className="byline block mb-3">Correspondence — write to the desk</span>
           <h2
             ref={titleRef}
-            className="text-3xl md:text-4xl font-bold text-(--text-primary) mb-4 tracking-tight"
+            className="text-display text-4xl md:text-5xl text-(--text-primary) mb-5 tracking-tight"
           >
-            Get in touch
+            Let&rsquo;s talk
           </h2>
+          <div className="hairline-gold w-24 mx-auto mb-6" />
           <p
             ref={subtitleRef}
             className="text-(--text-secondary) text-base md:text-lg mb-3 leading-relaxed"
@@ -270,7 +272,7 @@ const ContactSection: React.FC = () => {
             ref={replyRef}
             className="text-(--text-muted) text-sm mb-12"
           >
-            I usually reply within a day.
+            Drop a line below — I usually reply within a day.
           </p>
 
           {/* Email as hero element with per-character animation */}
@@ -295,7 +297,7 @@ const ContactSection: React.FC = () => {
               ref={underlineRef}
               className="absolute -bottom-2 left-0 w-full h-2 origin-left"
               style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 8'%3E%3Cpath d='M1 5.5 C 30 2, 50 7, 100 4 S 170 2, 199 5.5' stroke='%236366f1' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E")`,
+                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 8'%3E%3Cpath d='M1 5.5 C 30 2, 50 7, 100 4 S 170 2, 199 5.5' stroke='%23c05a3d' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E")`,
                 backgroundRepeat: "no-repeat",
                 backgroundSize: "100% 100%",
               }}

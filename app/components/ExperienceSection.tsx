@@ -164,24 +164,28 @@ const ExperienceSection: React.FC = () => {
       className="relative py-24 md:py-32 bg-(--bg-primary) overflow-hidden"
     >
       <div className="max-w-5xl mx-auto px-6">
-        <h2
-          ref={titleRef}
-          className="text-3xl md:text-4xl font-bold text-(--text-primary) mb-16 tracking-tight overflow-hidden"
-          style={{ perspective: "400px" }}
-        >
-          {titleChars.map((char, i) => (
-            <span
-              key={i}
-              ref={(el) => {
-                if (el) titleCharsRef.current[i] = el;
-              }}
-              className="inline-block"
-              style={{ transformStyle: "preserve-3d" }}
-            >
-              {char === " " ? "\u00A0" : char}
-            </span>
-          ))}
-        </h2>
+        <div className="mb-14">
+          <span className="byline">The Record \u2014 career to date</span>
+          <h2
+            ref={titleRef}
+            className="text-display text-4xl md:text-5xl text-(--text-primary) mt-3 tracking-tight overflow-hidden"
+            style={{ perspective: "400px" }}
+          >
+            {titleChars.map((char, i) => (
+              <span
+                key={i}
+                ref={(el) => {
+                  if (el) titleCharsRef.current[i] = el;
+                }}
+                className="inline-block"
+                style={{ transformStyle: "preserve-3d" }}
+              >
+                {char === " " ? "\u00A0" : char}
+              </span>
+            ))}
+          </h2>
+          <div className="rule-double mt-6" />
+        </div>
 
         <div className="relative">
           <div

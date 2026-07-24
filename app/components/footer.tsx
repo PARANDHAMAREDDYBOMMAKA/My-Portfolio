@@ -57,8 +57,14 @@ const Footer: React.FC = () => {
   }, []);
 
   return (
-    <footer className="relative py-8 bg-(--bg-primary) border-t border-(--border-subtle)">
+    <footer className="relative py-8 bg-(--bg-primary)">
       <div className="max-w-5xl mx-auto px-6">
+        <div className="rule-double mb-4" />
+        <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-1 edition-line mb-6">
+          <span>The Developer&rsquo;s Gazette</span>
+          <span className="hidden sm:inline">Printed &amp; hosted from Hyderabad</span>
+          <span>Set in Fraunces &amp; Inter</span>
+        </div>
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex flex-col items-center md:items-start gap-2">
             <p className="text-sm text-(--text-muted)">

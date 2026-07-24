@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useMemo } from "react";
 import { useInView } from "framer-motion";
 import { useDevice } from "../hooks/useDevice";
-import { GitBranch, Star, GitPullRequest, Code2, Zap, Award, Fish, Target } from "lucide-react";
+import { GitBranch, Star, Users, Code2, UserPlus, FileCode2, Fish, Zap, Target } from "lucide-react";
 
 interface StatItem {
   icon: React.ElementType;
@@ -13,14 +13,14 @@ interface StatItem {
   color: string;
 }
 
-const stats: StatItem[] = [
-  { icon: Code2, label: "Total Repos", value: 119, color: "#e07a5f" },
-  { icon: GitBranch, label: "Contributions", value: 847, color: "#7fa67e" },
-  { icon: GitPullRequest, label: "Pull Requests", value: 45, suffix: "+", color: "#e0a458" },
-  { icon: Star, label: "Stars Earned", value: 12, color: "#efc07a" },
-  { icon: Zap, label: "Commits", value: 1200, suffix: "+", color: "#ef7a52" },
-  { icon: Award, label: "Achievements", value: 3, color: "#c98a6b" },
-];
+interface GitHubData {
+  repos: number | null;
+  followers: number | null;
+  following: number | null;
+  gists: number | null;
+  stars: number;
+  totalContributions: number;
+}
 
 const achievements = [
   { name: "Pull Shark", count: 3, icon: Fish, color: "#7fa67e" },
@@ -31,49 +31,83 @@ const achievements = [
 const GitHubStats: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
-  const [counters, setCounters] = useState<number[]>(stats.map(() => 0));
-  const hasAnimatedRef = useRef(false);
   const { isMobile } = useDevice();
 
+  const [data, setData] = useState<GitHubData | null>(null);
+
+  // Pull the real numbers from our cached /api/github route.
   useEffect(() => {
-    if (isInView && !hasAnimatedRef.current) {
-      hasAnimatedRef.current = true;
+    let alive = true;
+    fetch("/api/github")
+      .then((r) => r.json())
+      .then((d) => {
+        if (alive && d?.ok) setData(d);
+      })
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, []);
 
-      stats.forEach((stat, index) => {
-        const target = stat.value;
-        const duration = 2000;
-        const startTime = Date.now();
+  // Live stats where GitHub exposes them; sensible fallbacks until they load.
+  const stats = useMemo<StatItem[]>(
+    () => [
+      { icon: Code2, label: "Public Repos", value: data?.repos ?? 119, color: "#c05a3d" },
+      { icon: GitBranch, label: "Contributions", value: data?.totalContributions ?? 847, color: "#5f8a5e" },
+      { icon: Star, label: "Stars Earned", value: data?.stars ?? 12, color: "#b8862b" },
+      { icon: Users, label: "Followers", value: data?.followers ?? 0, color: "#c96a3a" },
+      { icon: UserPlus, label: "Following", value: data?.following ?? 0, color: "#96691d" },
+      { icon: FileCode2, label: "Public Gists", value: data?.gists ?? 0, color: "#9c4527" },
+    ],
+    [data]
+  );
 
-        const animate = () => {
-          const elapsed = Date.now() - startTime;
-          const progress = Math.min(elapsed / duration, 1);
-          const eased = 1 - Math.pow(1 - progress, 3);
-          const current = Math.floor(eased * target);
+  const [counters, setCounters] = useState<number[]>(() => stats.map(() => 0));
+  const animatedSigRef = useRef<string>("");
 
-          setCounters((prev) => {
-            const newCounters = [...prev];
-            newCounters[index] = current;
-            return newCounters;
-          });
+  useEffect(() => {
+    if (!isInView) return;
 
-          if (progress < 1) {
-            requestAnimationFrame(animate);
-          }
-        };
+    const targets = stats.map((s) => s.value);
+    const sig = targets.join(",");
+    if (animatedSigRef.current === sig) return; // already counted to these values
+    animatedSigRef.current = sig;
 
-        setTimeout(() => {
-          requestAnimationFrame(animate);
-        }, index * 100);
-      });
-    }
-  }, [isInView]);
+    const frames: number[] = [];
+    targets.forEach((target, index) => {
+      const duration = 1600;
+      const startTime = performance.now();
+      const startVal = 0;
+
+      const animate = (now: number) => {
+        const progress = Math.min((now - startTime) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = Math.floor(startVal + (target - startVal) * eased);
+
+        setCounters((prev) => {
+          const next = [...prev];
+          next[index] = current;
+          return next;
+        });
+
+        if (progress < 1) frames[index] = requestAnimationFrame(animate);
+      };
+
+      window.setTimeout(() => {
+        frames[index] = requestAnimationFrame(animate);
+      }, index * 90);
+    });
+
+    return () => frames.forEach((f) => cancelAnimationFrame(f));
+  }, [isInView, stats]);
 
   return (
     <div ref={sectionRef} className="py-16 md:py-20">
       <div className="max-w-5xl mx-auto px-6">
         <div className="text-center mb-12">
-          <span className="text-caption uppercase tracking-wider mb-2 block">GitHub Activity</span>
-          <h3 className="text-2xl md:text-3xl font-bold text-(--text-primary)">Code & Contributions</h3>
+          <span className="byline block mb-3">By the Numbers — the commit ledger</span>
+          <h3 className="text-display text-3xl md:text-4xl text-(--text-primary)">Code &amp; Contributions</h3>
+          <div className="hairline-gold w-24 mx-auto mt-5" />
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6 mb-12">

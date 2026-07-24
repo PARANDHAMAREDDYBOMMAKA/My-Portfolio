@@ -4,22 +4,22 @@
 @import "slick-carousel/slick/slick-theme.css";
 
 :root {
-  /* Terracotta / clay — the warm signature accent */
-  --primary: #e07a5f;
-  --primary-light: #ec977f;
-  --primary-dark: #c75f44;
+  /* Terracotta / clay — the warm signature accent (darkened for light-canvas contrast) */
+  --primary: #c05a3d;
+  --primary-light: #cf6f52;
+  --primary-dark: #9c4527;
 
-  /* Supporting earth tones */
-  --accent: #e0a458;        /* ochre / honey */
-  --accent-light: #efc07a;
-  --accent-warm: #ef7a52;   /* clay orange */
-  --accent-cool: #7fa67e;   /* sage */
+  /* Premium gold — the "horizon" signature, plus supporting earth tones */
+  --accent: #b8862b;        /* rich gold / honey */
+  --accent-light: #d0a441;  /* leaf gold for highlights */
+  --accent-warm: #c96a3a;   /* clay orange */
+  --accent-cool: #5f8a5e;   /* sage */
 
   /* Warm stone / sand neutrals */
-  --neutral-50: #f6efe4;
-  --neutral-100: #efe6d6;
-  --neutral-200: #ddcfba;
-  --neutral-300: #c7b59c;
+  --neutral-50: #faf6ee;
+  --neutral-100: #f2ebdd;
+  --neutral-200: #e6dcc9;
+  --neutral-300: #d3c5ac;
   --neutral-400: #a3917a;
   --neutral-500: #7d6e5b;
   --neutral-600: #5d5142;
@@ -28,28 +28,28 @@
   --neutral-900: #1b1610;
   --neutral-950: #120e09;
 
-  /* Espresso canvas — warm near-black, brown-tinted */
-  --bg-base: #14100b;
-  --bg-primary: #14100b;
-  --bg-secondary: #1a150f;
-  --bg-tertiary: #221b13;
-  --bg-card: #1f1810;
-  --bg-elevated: #2a2117;
+  /* Ivory canvas — warm off-white, sunlit paper */
+  --bg-base: #f7f2e8;
+  --bg-primary: #faf6ee;
+  --bg-secondary: #f1e9d9;
+  --bg-tertiary: #ebe1cd;
+  --bg-card: #fffdf7;
+  --bg-elevated: #ffffff;
 
-  /* Candlelit cream text */
-  --text-primary: #f4ead8;
-  --text-secondary: #c3b39c;
-  --text-muted: #8b7d68;
+  /* Deep espresso ink text */
+  --text-primary: #241c14;
+  --text-secondary: #574a3c;
+  --text-muted: #8a7c68;
 
-  /* Warm-tinted borders */
-  --border-subtle: rgba(244, 234, 216, 0.06);
-  --border-default: rgba(244, 234, 216, 0.1);
-  --border-hover: rgba(224, 122, 95, 0.28);
+  /* Warm-ink borders on light */
+  --border-subtle: rgba(36, 28, 20, 0.08);
+  --border-default: rgba(36, 28, 20, 0.13);
+  --border-hover: rgba(192, 90, 61, 0.4);
 
-  --shadow-sm: 0 1px 2px rgba(20, 14, 8, 0.35);
-  --shadow-md: 0 6px 18px rgba(20, 14, 8, 0.45);
-  --shadow-lg: 0 14px 40px rgba(20, 14, 8, 0.55);
-  --shadow-glow: 0 0 50px rgba(224, 122, 95, 0.18);
+  --shadow-sm: 0 1px 2px rgba(74, 56, 36, 0.06);
+  --shadow-md: 0 8px 24px rgba(84, 62, 38, 0.09);
+  --shadow-lg: 0 22px 50px rgba(84, 62, 38, 0.14);
+  --shadow-glow: 0 0 50px rgba(184, 134, 43, 0.16);
 
   /* Signature soft easing for "very smooth" motion */
   --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
@@ -120,7 +120,7 @@ html {
   scrollbar-color: var(--neutral-700) var(--bg-secondary);
 }
 
-/* Organic gradient blobs background */
+/* Warm light-leaks — soft sunlit washes across the ivory canvas */
 body::before {
   content: '';
   position: fixed;
@@ -129,9 +129,9 @@ body::before {
   width: 100%;
   height: 100%;
   background:
-    radial-gradient(ellipse 620px 420px at 12% 18%, rgba(224, 122, 95, 0.06) 0%, transparent 72%),
-    radial-gradient(ellipse 520px 520px at 88% 62%, rgba(224, 164, 88, 0.045) 0%, transparent 72%),
-    radial-gradient(ellipse 420px 320px at 50% 92%, rgba(127, 166, 126, 0.035) 0%, transparent 72%);
+    radial-gradient(ellipse 680px 460px at 10% 12%, rgba(184, 134, 43, 0.14) 0%, transparent 70%),
+    radial-gradient(ellipse 560px 560px at 90% 58%, rgba(192, 90, 61, 0.10) 0%, transparent 70%),
+    radial-gradient(ellipse 460px 360px at 48% 96%, rgba(95, 138, 94, 0.07) 0%, transparent 72%);
   z-index: 0;
   pointer-events: none;
 }
@@ -212,6 +212,296 @@ h1, h2, h3, h4, h5, h6 {
   background-clip: text;
 }
 
+/* Premium gold — the "horizon" signature for headline accents */
+.text-gold {
+  background: linear-gradient(100deg, var(--accent-light) 0%, var(--accent) 45%, #96691d 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Handwritten margin note — a real person left this in the margins */
+.handwritten {
+  font-family: var(--font-hand), 'Caveat', 'Segoe Script', cursive;
+  font-weight: 500;
+  color: var(--primary);
+  line-height: 1.15;
+  transform: rotate(-4deg);
+  display: inline-block;
+}
+
+.handwritten-arrow {
+  font-family: var(--font-hand), 'Caveat', cursive;
+  color: var(--accent);
+}
+
+/* Gold hairline — thin editorial rule */
+.hairline-gold {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent) 20%, var(--accent) 80%, transparent);
+  opacity: 0.5;
+}
+
+/* Oversized editorial index numeral (01 / 02 / 03) */
+.section-index {
+  font-family: var(--font-fraunces), 'Fraunces', Georgia, serif;
+  font-weight: 300;
+  font-size: clamp(3rem, 8vw, 6rem);
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--border-default);
+  letter-spacing: -0.03em;
+  user-select: none;
+}
+
+/* ─────────────  NEWSPAPER / CRAFT PRINT SYSTEM  ───────────── */
+
+/* Masthead edition line — the strip across the top of a gazette */
+.edition-line {
+  font-family: var(--font-mono), 'JetBrains Mono', monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* Double rule — the classic newspaper section divider */
+.rule-double {
+  border-top: 1px solid var(--text-primary);
+  border-bottom: 1px solid var(--text-primary);
+  height: 4px;
+  opacity: 0.85;
+}
+
+.rule-thin {
+  height: 1px;
+  background: var(--border-default);
+}
+
+/* Drop cap — an illuminated first letter to open a column */
+.dropcap::first-letter {
+  font-family: var(--font-fraunces), 'Fraunces', Georgia, serif;
+  font-weight: 600;
+  font-size: 3.4em;
+  line-height: 0.72;
+  float: left;
+  margin: 0.06em 0.12em 0 0;
+  color: var(--primary);
+}
+
+/* Dateline — the "HYDERABAD —" lead-in of a news story */
+.dateline {
+  font-family: var(--font-mono), 'JetBrains Mono', monospace;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  font-size: 0.82em;
+}
+
+/* Pull quote — an oversized set-off line, serif and ruled */
+.pull-quote {
+  font-family: var(--font-fraunces), 'Fraunces', Georgia, serif;
+  font-weight: 500;
+  font-style: italic;
+  font-size: clamp(1.35rem, 3vw, 2rem);
+  line-height: 1.28;
+  color: var(--text-primary);
+  border-left: 3px solid var(--accent);
+  padding-left: 1.25rem;
+}
+
+/* Rubber stamp — pressed-ink "AVAILABLE" mark, a little askew */
+.stamp {
+  font-family: var(--font-mono), 'JetBrains Mono', monospace;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--primary);
+  border: 2px solid var(--primary);
+  border-radius: 6px;
+  padding: 0.4rem 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transform: rotate(-6deg);
+  opacity: 0.82;
+  box-shadow: inset 0 0 0 1px rgba(192, 90, 61, 0.25);
+  mix-blend-mode: multiply;
+}
+
+/* Halftone — faint printed-dot texture for craft surfaces */
+.halftone {
+  background-image: radial-gradient(var(--border-default) 1px, transparent 1.4px);
+  background-size: 7px 7px;
+}
+
+/* Byline / kicker in small caps mono */
+.byline {
+  font-family: var(--font-mono), 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ─────────────  PRINTER CHROME & NEO-PRINT CRAFT  ───────────── */
+
+/* Continuous-feed perforations down the page margins (desktop only) */
+.tractor-feed {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 16px;
+  z-index: 30;
+  pointer-events: none;
+  background-image: radial-gradient(circle at center, rgba(36, 28, 20, 0.14) 0 3px, transparent 3.6px);
+  background-size: 16px 30px;
+  background-repeat: repeat-y;
+  mix-blend-mode: multiply;
+}
+.tractor-feed.left { left: 3px; }
+.tractor-feed.right { right: 3px; }
+
+/* Printer exit-slot — the page prints out from under this lip */
+.printer-slot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 7px;
+  z-index: 35;
+  pointer-events: none;
+  background: linear-gradient(180deg, var(--neutral-800) 0%, var(--neutral-700) 55%, var(--neutral-600) 100%);
+  box-shadow: 0 4px 14px rgba(36, 28, 20, 0.28);
+}
+.printer-slot::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 2px;
+  height: 1px;
+  background: rgba(255, 253, 247, 0.25);
+}
+
+/* Ink misregistration — a second ink pass that didn't quite line up */
+.ink-misreg {
+  text-shadow:
+    2px 0 0 rgba(184, 134, 43, 0.34),
+    -1.5px 1.5px 0 rgba(192, 90, 61, 0.22);
+}
+
+/* Print-head reveal — sections print in as they enter the viewport */
+.print-reveal {
+  position: relative;
+}
+.print-head {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -18%;
+  height: 130px;
+  z-index: 30;
+  opacity: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(184, 134, 43, 0.05) 55%,
+    rgba(184, 134, 43, 0.16) 88%,
+    rgba(192, 90, 61, 0.28) 100%
+  );
+  border-bottom: 2px solid rgba(192, 90, 61, 0.55);
+}
+.print-reveal.printing .print-head {
+  animation: printSweep 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+@keyframes printSweep {
+  0% { top: -18%; opacity: 0; }
+  12% { opacity: 1; }
+  86% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+/* News ticker under the masthead */
+.ticker-track {
+  display: inline-flex;
+  white-space: nowrap;
+  will-change: transform;
+  animation: tickerScroll 40s linear infinite;
+}
+.ticker-mask:hover .ticker-track {
+  animation-play-state: paused;
+}
+@keyframes tickerScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* Stop-the-press — the whole paper goes to grayscale newsprint */
+html.newsprint {
+  filter: grayscale(1) contrast(1.06) brightness(1.02);
+}
+html.newsprint body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  background-image: radial-gradient(circle at center, rgba(0, 0, 0, 0.22) 0 1px, transparent 1.5px);
+  background-size: 4px 4px;
+  mix-blend-mode: multiply;
+  opacity: 0.55;
+}
+
+/* ─────────────  PRINT EDITION (real @media print)  ───────────── */
+@media print {
+  @page {
+    margin: 16mm 14mm;
+  }
+  html, body {
+    background: #fff !important;
+    color: #111 !important;
+  }
+  /* Hide screen-only chrome, effects & interactive furniture */
+  .no-print,
+  .tractor-feed,
+  .printer-slot,
+  .print-head,
+  .grain-overlay,
+  canvas,
+  .stamp,
+  .handwritten,
+  .handwritten-arrow,
+  button {
+    display: none !important;
+  }
+  body::before,
+  body::after {
+    display: none !important;
+  }
+  section,
+  footer {
+    padding: 8mm 0 !important;
+    background: #fff !important;
+    break-inside: avoid;
+  }
+  h1, h2, h3, .text-display {
+    color: #111 !important;
+  }
+  a {
+    color: #111 !important;
+    text-decoration: none;
+  }
+  .rule-double {
+    border-color: #111 !important;
+  }
+  img {
+    filter: grayscale(1) contrast(1.1);
+  }
+}
+
 
 .card {
   background: var(--bg-card);
@@ -239,17 +529,17 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .glass {
-  background: rgba(26, 26, 26, 0.8);
+  background: rgba(255, 253, 247, 0.68);
   border: 1px solid var(--border-subtle);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
 }
 
 .glass-strong {
-  background: rgba(26, 26, 26, 0.95);
+  background: rgba(255, 253, 247, 0.88);
   border: 1px solid var(--border-default);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(22px) saturate(1.3);
+  -webkit-backdrop-filter: blur(22px) saturate(1.3);
 }
 
 
@@ -456,12 +746,12 @@ iframe {
 
 ::selection {
   background-color: var(--primary);
-  color: var(--text-primary);
+  color: #fffdf7;
 }
 
 ::-moz-selection {
   background-color: var(--primary);
-  color: var(--text-primary);
+  color: #fffdf7;
 }
 
 @media screen and (max-width: 768px) {
@@ -477,7 +767,7 @@ iframe {
   .glass-strong {
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
-    background: rgba(26, 26, 26, 0.98);
+    background: rgba(255, 253, 247, 0.96);
   }
 }
 

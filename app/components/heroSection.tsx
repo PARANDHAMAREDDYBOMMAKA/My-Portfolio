@@ -8,6 +8,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useDevice } from "../hooks/useDevice";
 import { Github, Linkedin, Mail, Twitter, Hand } from "lucide-react";
 import ParticlePhoto from "./ParticlePhoto";
+import NewsTicker from "./NewsTicker";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -140,7 +141,7 @@ const HeroSection: React.FC = () => {
   return (
     <section
       ref={containerRef}
-      className="relative min-h-screen flex items-center overflow-hidden bg-(--bg-primary)"
+      className="relative min-h-screen flex flex-col pt-24 md:pt-20 pb-16 overflow-hidden bg-(--bg-primary)"
       style={{ perspective: "1200px" }}
     >
       {/* Soft warm glows */}
@@ -161,10 +162,29 @@ const HeroSection: React.FC = () => {
 
       <div
         ref={contentRef}
-        className="relative z-10 max-w-7xl mx-auto px-6 w-full"
+        className="relative z-10 flex flex-1 flex-col max-w-7xl mx-auto px-6 w-full"
         style={{ transformStyle: "preserve-3d" }}
       >
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+        {/* Masthead — pinned to the top so it always clears the floating nav */}
+        <div className="shrink-0">
+          <div className="flex items-center justify-between edition-line pb-2.5 gap-3">
+            <span>Est. 2022</span>
+            <span className="hidden sm:inline tracking-[0.28em] text-center">The Developer&rsquo;s Gazette</span>
+            <span className="text-right">Hyderabad&nbsp;·&nbsp;IN</span>
+          </div>
+          <div className="rule-double" />
+          <div className="flex items-center justify-between edition-line pt-2 gap-3">
+            <span>
+              Vol. I<span className="hidden sm:inline"> — Full-Stack Edition</span>
+            </span>
+            <span className="text-right">No. 001</span>
+          </div>
+          <div className="mt-3">
+            <NewsTicker />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center flex-1 py-8 lg:py-0">
           <div>
             <div
               ref={lineRef}
@@ -189,7 +209,7 @@ const HeroSection: React.FC = () => {
 
             <div ref={nameRef} className="mb-4">
               <h1
-                className="text-display text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] tracking-tight"
+                className="text-display ink-misreg text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] tracking-tight"
                 style={{ lineHeight: 1.04 }}
               >
                 <span className="block overflow-hidden pb-[0.08em]">
@@ -222,12 +242,12 @@ const HeroSection: React.FC = () => {
             </p>
 
             <div ref={ctaRef} className="space-y-6">
-              <div className="inline-flex items-center gap-2 text-sm text-(--text-secondary)">
+              <div className="stamp text-[0.7rem]">
                 <span className="relative flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full rounded-full bg-(--accent-cool) opacity-75 animate-ping" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-(--accent-cool)" />
+                  <span className="absolute inline-flex h-full w-full rounded-full bg-(--primary) opacity-70 animate-ping" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-(--primary)" />
                 </span>
-                available for new work
+                Open for work · 2026
               </div>
 
               <div className="flex flex-col sm:flex-row items-start gap-4">
@@ -274,7 +294,7 @@ const HeroSection: React.FC = () => {
             </div>
           </div>
 
-          <div className="hidden lg:block">
+          <div className="hidden lg:block relative">
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -282,6 +302,19 @@ const HeroSection: React.FC = () => {
               className="relative"
             >
               <ParticlePhoto imageSrc="/photo.jpeg" className="w-full h-125" />
+            </motion.div>
+
+            {/* Margin note — drawn by an actual hand */}
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 2.6, duration: 0.7 }}
+              className="absolute -bottom-2 -right-2 max-w-[190px] text-right pointer-events-none"
+            >
+              <span className="handwritten text-2xl leading-tight">
+                yep — that&rsquo;s me,<br />drawn in a few thousand ink dots
+              </span>
+              <span className="handwritten-arrow block text-3xl -mt-1 mr-6">↖</span>
             </motion.div>
           </div>
         </div>

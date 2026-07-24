@@ -49,11 +49,11 @@ const TechStacksSection: React.FC = () => {
 
   const techStacks: Technology[] = [
     { name: "React", icon: faReact, color: "#61DAFB", category: "Frontend" },
-    { name: "Next.js", icon: SiNextdotjs, color: "#ffffff", category: "Frontend" },
+    { name: "Next.js", icon: SiNextdotjs, color: "#241c14", category: "Frontend" },
     { name: "HTML5", icon: faHtml5, color: "#E34F26", category: "Frontend" },
     { name: "CSS3", icon: faCss3Alt, color: "#1572B6", category: "Frontend" },
     { name: "Node.js", icon: faNodeJs, color: "#339933", category: "Backend" },
-    { name: "Express.js", icon: SiExpress, color: "#ffffff", category: "Backend" },
+    { name: "Express.js", icon: SiExpress, color: "#241c14", category: "Backend" },
     { name: "TypeScript", icon: SiTypescript, color: "#3178C6", category: "Languages" },
     { name: "JavaScript", icon: faJs, color: "#F7DF1E", category: "Languages" },
     { name: "Python", icon: faPython, color: "#3776AB", category: "Languages" },
@@ -233,16 +233,17 @@ const TechStacksSection: React.FC = () => {
       className="relative py-24 md:py-32 bg-(--bg-secondary) overflow-hidden"
     >
       <div className="max-w-5xl mx-auto px-6">
-        <div className="mb-16">
+        <div className="mb-14">
+          <span className="byline">The Almanac — tools of the trade</span>
           <h2
             ref={titleRef}
-            className="text-3xl md:text-4xl font-bold text-(--text-primary) mb-4 tracking-tight"
+            className="text-display text-4xl md:text-5xl text-(--text-primary) mt-3 tracking-tight"
           >
             My toolkit
           </h2>
           <div
             ref={lineRef}
-            className="w-16 h-0.5 bg-(--primary) origin-left"
+            className="rule-double mt-6 origin-left"
           />
         </div>
 

@@ -8,6 +8,7 @@ import Image from "next/image";
 import { useDevice } from "../hooks/useDevice";
 import { projects } from "../utils/data";
 import { ArrowUpRight, ExternalLink, Sparkles } from "lucide-react";
+import HalftoneLoupe from "./HalftoneLoupe";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -66,7 +67,7 @@ const HorizontalProjects: React.FC = () => {
       <section id="projects" className="py-24 bg-(--bg-secondary)">
         <div className="max-w-5xl mx-auto px-6">
           <div className="h-96 flex items-center justify-center">
-            <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+            <div className="w-8 h-8 border-2 border-(--primary) border-t-transparent rounded-full animate-spin" />
           </div>
         </div>
       </section>
@@ -77,11 +78,12 @@ const HorizontalProjects: React.FC = () => {
     return (
       <section id="projects" className="py-24 bg-(--bg-secondary)">
         <div className="max-w-5xl mx-auto px-6">
-          <div className="mb-12">
-            <span className="text-caption uppercase tracking-wider mb-4 block">Portfolio</span>
-            <h2 className="text-4xl font-bold text-(--text-primary)">
-              Featured Projects
+          <div className="mb-10">
+            <span className="byline mb-3 block">The Portfolio — selected works</span>
+            <h2 className="text-display text-4xl text-(--text-primary)">
+              Things I&rsquo;ve Built
             </h2>
+            <div className="rule-double mt-6" />
           </div>
           <div className="space-y-6">
             {projects.map((project, i) => (
@@ -144,10 +146,10 @@ const HorizontalProjects: React.FC = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
             >
-              <span className="text-caption uppercase tracking-wider mb-3 block">Portfolio</span>
+              <span className="byline mb-3 block">The Portfolio — selected works</span>
               <div className="flex items-end justify-between">
-                <h2 className="text-5xl lg:text-6xl font-bold text-(--text-primary)">
-                  Featured Projects
+                <h2 className="text-display text-5xl lg:text-6xl text-(--text-primary)">
+                  Things I&rsquo;ve Built
                 </h2>
                 <div className="hidden lg:flex items-center gap-6">
                   <div className="flex items-center gap-3">
@@ -190,9 +192,10 @@ const HorizontalProjects: React.FC = () => {
                       priority={index < 2}
                     />
                     <div className="absolute inset-0 bg-linear-to-t from-black via-black/60 to-black/20" />
+                    <HalftoneLoupe src={project.imageUrl} />
                   </div>
 
-                  <div className="absolute top-6 left-6 right-6 flex items-start justify-between">
+                  <div className="absolute top-6 left-6 right-6 z-30 flex items-start justify-between">
                     <span className="px-4 py-2 bg-white/10 backdrop-blur-md rounded-full text-white text-xs font-medium flex items-center gap-2">
                       <Sparkles size={12} />
                       Featured Project
@@ -202,7 +205,7 @@ const HorizontalProjects: React.FC = () => {
                     </span>
                   </div>
 
-                  <div className="absolute inset-x-0 bottom-0 p-8 flex flex-col">
+                  <div className="absolute inset-x-0 bottom-0 z-30 p-8 flex flex-col">
                     <h3 className="text-3xl lg:text-4xl font-bold text-white mb-3">
                       {project.title}
                     </h3>
