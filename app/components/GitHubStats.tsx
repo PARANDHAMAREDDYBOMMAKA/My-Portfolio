@@ -101,6 +101,12 @@ const GitHubStats: React.FC = () => {
     return () => frames.forEach((f) => cancelAnimationFrame(f));
   }, [isInView, stats]);
 
+  useEffect(() => {
+    const finish = () => setCounters(stats.map((s) => s.value));
+    window.addEventListener("beforeprint", finish);
+    return () => window.removeEventListener("beforeprint", finish);
+  }, [stats]);
+
   return (
     <div ref={sectionRef} className="py-16 md:py-20">
       <div className="max-w-5xl mx-auto px-6">
@@ -187,7 +193,7 @@ const GitHubStats: React.FC = () => {
               href="https://github.com/PARANDHAMAREDDYBOMMAKA"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-(--primary) hover:bg-(--primary-dark) text-white font-medium transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-(--primary) hover:bg-(--primary-dark) text-white font-medium transition-colors print:hidden"
             >
               <GitBranch size={18} />
               View Full Profile

@@ -4,12 +4,12 @@ import React, { useState, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
 import { ArrowUp } from "lucide-react";
 import gsap from "gsap";
+import Seal from "./Seal";
 
 const randomFacts = [
   "I debug with console.log and I'm not ashamed.",
   "My first website used <marquee> tags. Unironically.",
   "I once spent 4 hours on a bug that was a missing semicolon.",
-  "This portfolio was not built by AI. I promise.",
   "I have strong opinions about tabs vs spaces. (Tabs.)",
   "My git commit messages get worse after midnight.",
   "I still Google 'how to center a div' sometimes.",
@@ -61,7 +61,10 @@ const Footer: React.FC = () => {
       <div className="max-w-5xl mx-auto px-6">
         <div className="rule-double mb-4" />
         <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-1 edition-line mb-6">
-          <span>The Developer&rsquo;s Gazette</span>
+          <span className="inline-flex items-center gap-3">
+            <Seal size={22} />
+            The Developer&rsquo;s Gazette
+          </span>
           <span className="hidden sm:inline">Printed &amp; hosted from Hyderabad</span>
           <span>Set in Fraunces &amp; Inter</span>
         </div>

@@ -1,174 +1,24 @@
 "use client";
 
-import React, { useRef, useEffect } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useDevice } from "../hooks/useDevice";
+import React from "react";
+import { useGazetteMotion } from "../utils/motion";
 
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
+const paragraphs = [
+  <>I got into programming the way most people do &mdash; I wanted to build something and Googled my way through it. That first project was terrible, but the feeling of making something work on screen was enough to keep me going. A hundred-odd repositories later, that curiosity has become a craft.</>,
+  <>Today I&apos;m a Full Stack Engineer intern at Product Fusion, working on Tone, an open-source platform for building AI voice agents. I built its retrieval pipeline on Docling and pgvector, self-host speech and language models on GPU Kubernetes, and wrote the benchmarks that say whether any of it is fast enough for a live call.</>,
+  <>I like the unglamorous middle of AI products: clean ingestion, honest latency numbers, autoscaling that lets a call survive a pod restart. On my own time I build things end to end to learn them properly &mdash; a voice pipeline in Go, a Kubernetes-as-a-service API, an insurance fraud platform.</>,
+  <>Studying Software Engineering at The Apollo University, graduating 2027. Based in Hyderabad, India, and open to GenAI and full-stack roles.</>,
+];
+
+const currentlyItems = [
+  { label: "Building", value: "Tone, an open-source AI voice agent platform, at Product Fusion" },
+  { label: "Studying", value: "B.Tech Software Engineering, The Apollo University (2023 to 2027)" },
+  { label: "Stack", value: "Python, FastAPI, TypeScript, Next.js, Go, Kubernetes" },
+  { label: "Location", value: "Hyderabad, India (UTC +05:30)" },
+];
 
 const AboutSection: React.FC = () => {
-  const sectionRef = useRef<HTMLElement>(null);
-  const titleRef = useRef<HTMLHeadingElement>(null);
-  const titleCharsRef = useRef<HTMLSpanElement[]>([]);
-  const paragraphsRef = useRef<(HTMLParagraphElement | null)[]>([]);
-  const sidebarRef = useRef<HTMLDivElement>(null);
-  const sidebarItemsRef = useRef<(HTMLDivElement | null)[]>([]);
-  const dividerRef = useRef<HTMLDivElement>(null);
-  const availableRef = useRef<HTMLDivElement>(null);
-  const { isMobile, isTouchDevice } = useDevice();
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      if (titleCharsRef.current.length > 0) {
-        gsap.fromTo(
-          titleCharsRef.current,
-          { y: 80, opacity: 0, rotateX: -40 },
-          {
-            y: 0,
-            opacity: 1,
-            rotateX: 0,
-            duration: 0.6,
-            stagger: 0.04,
-            ease: "back.out(1.5)",
-            scrollTrigger: {
-              trigger: sectionRef.current,
-              start: "top 80%",
-              toggleActions: "play none none reverse",
-            },
-          }
-        );
-      }
-
-      paragraphsRef.current.forEach((para, index) => {
-        if (!para) return;
-        const xDir = index % 2 === 0 ? -30 : 30;
-
-        gsap.fromTo(
-          para,
-          { y: 40, x: isMobile ? 0 : xDir, opacity: 0 },
-          {
-            y: 0,
-            x: 0,
-            opacity: 1,
-            duration: 0.8,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: para,
-              start: "top 88%",
-              toggleActions: "play none none reverse",
-            },
-          }
-        );
-      });
-
-      if (dividerRef.current && !isMobile) {
-        gsap.fromTo(
-          dividerRef.current,
-          { scaleY: 0 },
-          {
-            scaleY: 1,
-            duration: 1,
-            ease: "power3.inOut",
-            scrollTrigger: {
-              trigger: sidebarRef.current,
-              start: "top 80%",
-              toggleActions: "play none none reverse",
-            },
-          }
-        );
-      }
-
-      sidebarItemsRef.current.forEach((item, index) => {
-        if (!item) return;
-        gsap.fromTo(
-          item,
-          { x: 40, opacity: 0 },
-          {
-            x: 0,
-            opacity: 1,
-            duration: 0.6,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: item,
-              start: "top 90%",
-              toggleActions: "play none none reverse",
-            },
-            delay: index * 0.1,
-          }
-        );
-      });
-
-      if (availableRef.current) {
-        gsap.fromTo(
-          availableRef.current,
-          { scale: 0.8, opacity: 0 },
-          {
-            scale: 1,
-            opacity: 1,
-            duration: 0.5,
-            ease: "back.out(2)",
-            scrollTrigger: {
-              trigger: availableRef.current,
-              start: "top 92%",
-              toggleActions: "play none none reverse",
-            },
-          }
-        );
-      }
-
-      if (!isMobile && sidebarRef.current) {
-        gsap.to(sidebarRef.current, {
-          y: -30,
-          ease: "none",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top bottom",
-            end: "bottom top",
-            scrub: 2,
-          },
-        });
-      }
-
-      if (!isTouchDevice) {
-        sidebarItemsRef.current.forEach((item) => {
-          if (!item) return;
-          const handleEnter = () => {
-            gsap.to(item, {
-              x: 6,
-              scale: 1.02,
-              duration: 0.3,
-              ease: "power2.out",
-            });
-          };
-          const handleLeave = () => {
-            gsap.to(item, {
-              x: 0,
-              scale: 1,
-              duration: 0.4,
-              ease: "elastic.out(1, 0.5)",
-            });
-          };
-          item.addEventListener("mouseenter", handleEnter);
-          item.addEventListener("mouseleave", handleLeave);
-        });
-      }
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, [isMobile, isTouchDevice]);
-
-  const currentlyItems = [
-    { label: "Building", value: "Agentic AI systems at Product Fusion" },
-    { label: "Learning", value: "System design & cloud architecture" },
-    { label: "Stack", value: "React, Next.js, Node.js, Python, TypeScript" },
-    { label: "Location", value: "Hyderabad, India (UTC +05:30)" },
-  ];
-
-  const titleText = "A bit about me";
-  const titleChars = titleText.split("");
+  const sectionRef = useGazetteMotion<HTMLElement>();
 
   return (
     <section
@@ -178,65 +28,49 @@ const AboutSection: React.FC = () => {
     >
       <div className="max-w-5xl mx-auto px-6">
         <div className="mb-10">
-          <span className="byline">The Profile \u2014 filed from Hyderabad</span>
-          <h2
-            ref={titleRef}
-            className="text-display text-4xl md:text-5xl text-(--text-primary) mt-3 tracking-tight overflow-hidden"
-            style={{ perspective: "400px" }}
-          >
-            {titleChars.map((char, i) => (
-              <span
-                key={i}
-                ref={(el) => { if (el) titleCharsRef.current[i] = el; }}
-                className="inline-block"
-                style={{ transformStyle: "preserve-3d" }}
-              >
-                {char === " " ? "\u00A0" : char}
-              </span>
-            ))}
+          <span data-ink className="byline block">The Profile &mdash; filed from Hyderabad</span>
+          <h2 data-ink className="text-display text-4xl md:text-5xl text-(--text-primary) mt-3 tracking-tight">
+            A bit about me
           </h2>
-          <div className="rule-double mt-6" />
+          <div data-rule className="rule-double mt-6" />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-16">
           <div className="lg:col-span-3">
-            <div className="space-y-5">
-              {[
-                <>I got into programming the way most people do &mdash; I wanted to build something and Googled my way through it. That first project was terrible, but the feeling of making something work on screen was enough to keep me going. Now with 119+ repositories and 800+ contributions on GitHub, that curiosity has become a craft.</>,
-                <>Currently, I&apos;m a Full Stack Developer at Product Fusion, where I build Agentic AI systems that automate complex workflows. My toolkit includes React, Next.js, Node.js, Python, TypeScript, and various databases. I&apos;ve shipped 6+ production apps that solve real problems &mdash; from exam platforms to real-time chat systems.</>,
-                <>I&apos;m a believer in clean code and thoughtful interfaces. Beyond JavaScript, I work with Python for AI/ML integrations, Java for backend systems, and I&apos;m always exploring new technologies. When I&apos;m not coding, I&apos;m probably debugging why something broke in production or reading about system design patterns.</>,
-                <>Based in Hyderabad, India. Open to remote work and building the next generation of intelligent applications.</>,
-              ].map((content, i) => (
+            <div className="print-columns space-y-5">
+              {paragraphs.map((content, i) => (
                 <p
                   key={i}
-                  ref={(el) => { paragraphsRef.current[i] = el; }}
-                  className={`text-base md:text-lg leading-relaxed ${i === 0 ? "dropcap" : ""} ${i === 3 ? "text-(--text-muted)" : "text-(--text-secondary)"}`}
+                  data-ink
+                  className={`text-base md:text-lg leading-relaxed ${i === 0 ? "dropcap" : ""} ${
+                    i === 3 ? "text-(--text-muted)" : "text-(--text-secondary)"
+                  }`}
                 >
                   {content}
                 </p>
               ))}
             </div>
 
-            <blockquote className="pull-quote mt-10">
+            <blockquote data-ink className="pull-quote mt-10">
               &ldquo;I like turning fuzzy ideas into things that actually ship.&rdquo;
             </blockquote>
           </div>
 
-          <div ref={sidebarRef} className="lg:col-span-2 relative">
+          <div className="lg:col-span-2 relative">
             <div
-              ref={dividerRef}
-              className="hidden lg:block absolute left-0 top-0 w-px h-full bg-(--border-subtle) origin-top"
+              data-rule="y"
+              className="hidden lg:block absolute left-0 top-0 w-px h-full bg-(--border-default)"
             />
             <div className="lg:pl-8">
-              <h3 className="text-caption uppercase tracking-wider mb-6">
+              <h3 data-ink className="text-caption uppercase tracking-wider mb-6">
                 Currently
               </h3>
               <div className="space-y-5">
-                {currentlyItems.map((item, index) => (
+                {currentlyItems.map((item) => (
                   <div
                     key={item.label}
-                    ref={(el) => { sidebarItemsRef.current[index] = el; }}
-                    className="cursor-default py-2 px-3 -mx-3 rounded-lg hover:bg-(--bg-card)/50 transition-colors duration-200"
+                    data-ink
+                    className="py-2 px-3 -mx-3 rounded-lg hover:bg-(--bg-card) transition-colors duration-300"
                   >
                     <span className="text-xs font-medium text-(--primary) uppercase tracking-wider">
                       {item.label}
@@ -248,10 +82,7 @@ const AboutSection: React.FC = () => {
                 ))}
               </div>
 
-              <div
-                ref={availableRef}
-                className="mt-8 pt-6 border-t border-(--border-subtle)"
-              >
+              <div data-ink className="mt-8 pt-6 border-t border-(--border-subtle)">
                 <div className="flex items-center gap-2 text-sm">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                   <span className="text-(--text-muted)">Available for work</span>

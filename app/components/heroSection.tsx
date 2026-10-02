@@ -5,10 +5,10 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useDevice } from "../hooks/useDevice";
 import { Github, Linkedin, Mail, Twitter, Hand } from "lucide-react";
 import ParticlePhoto from "./ParticlePhoto";
 import NewsTicker from "./NewsTicker";
+import Seal from "./Seal";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -24,7 +24,6 @@ const HeroSection: React.FC = () => {
   const descRef = useRef<HTMLParagraphElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
   const lineRef = useRef<HTMLDivElement>(null);
-  const { isMobile } = useDevice();
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -38,7 +37,7 @@ const HeroSection: React.FC = () => {
       );
 
       if (annotationRef.current) {
-        const text = "// full-stack developer";
+        const text = "// full-stack engineer, voice AI";
         annotationRef.current.textContent = "";
         text.split("").forEach((char, i) => {
           entranceTl.to(annotationRef.current, {
@@ -96,29 +95,10 @@ const HeroSection: React.FC = () => {
         "-=0.3"
       );
 
-      if (!isMobile) {
-        const scrollTl = gsap.timeline({
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: "top top",
-            end: "+=80%",
-            scrub: 1,
-            invalidateOnRefresh: true,
-          },
-        });
-
-        scrollTl.to(contentRef.current, {
-          scale: 0.92,
-          opacity: 0,
-          filter: "blur(12px)",
-          y: -60,
-          duration: 1,
-        }, 0);
-      }
     }, containerRef);
 
     return () => ctx.revert();
-  }, [isMobile]);
+  }, []);
 
   const socialLinks = [
     { icon: Github, href: "https://github.com/PARANDHAMAREDDYBOMMAKA", label: "GitHub" },
@@ -141,7 +121,7 @@ const HeroSection: React.FC = () => {
   return (
     <section
       ref={containerRef}
-      className="relative min-h-screen flex flex-col pt-24 md:pt-20 pb-16 overflow-hidden bg-(--bg-primary)"
+      className="relative min-h-screen flex flex-col pt-24 md:pt-20 pb-16 overflow-hidden bg-(--bg-primary) print:pt-0!"
       style={{ perspective: "1200px" }}
     >
       {/* Soft warm glows */}
@@ -168,8 +148,11 @@ const HeroSection: React.FC = () => {
         {/* Masthead — pinned to the top so it always clears the floating nav */}
         <div className="shrink-0">
           <div className="flex items-center justify-between edition-line pb-2.5 gap-3">
-            <span>Est. 2022</span>
-            <span className="hidden sm:inline tracking-[0.28em] text-center">The Developer&rsquo;s Gazette</span>
+            <span>Est. 2023</span>
+            <span className="hidden sm:inline-flex items-center gap-3 tracking-[0.28em] text-center">
+              <Seal size={22} />
+              The Developer&rsquo;s Gazette
+            </span>
             <span className="text-right">Hyderabad&nbsp;·&nbsp;IN</span>
           </div>
           <div className="rule-double" />
@@ -193,7 +176,7 @@ const HeroSection: React.FC = () => {
 
             <div className="mb-6">
               <span ref={annotationRef} className="text-caption">
-                {"// full-stack developer"}
+                {"// full-stack engineer, voice AI"}
               </span>
             </div>
 
@@ -227,7 +210,7 @@ const HeroSection: React.FC = () => {
 
             <div ref={taglineRef} className="overflow-hidden mb-6">
               <span className="block text-xl sm:text-2xl md:text-3xl text-(--text-secondary) font-light">
-                I build <span className="underline-sketch text-(--text-primary)">agentic AI</span> &amp; the web apps around it
+                I build <span className="underline-sketch text-(--text-primary)">AI voice agents</span> &amp; the systems behind them
               </span>
             </div>
 
@@ -235,10 +218,10 @@ const HeroSection: React.FC = () => {
               ref={descRef}
               className="text-base md:text-lg text-(--text-muted) max-w-xl mb-8 leading-relaxed"
             >
-              Full-stack developer at Product Fusion. I like turning fuzzy ideas into
-              things that actually ship — lately, intelligent systems built with React,
-              Next.js and a fair bit of AI/ML. Based in Hyderabad, writing code for
-              the world.
+              Full-stack engineer intern at Product Fusion, working on Tone, an
+              open-source AI voice agent platform. I build retrieval pipelines,
+              self-host speech and language models on GPU Kubernetes, and ship
+              the Next.js front end around them. Based in Hyderabad.
             </p>
 
             <div ref={ctaRef} className="space-y-6">
@@ -250,7 +233,7 @@ const HeroSection: React.FC = () => {
                 Open for work · 2026
               </div>
 
-              <div className="flex flex-col sm:flex-row items-start gap-4">
+              <div className="flex flex-col sm:flex-row items-start gap-4 print:hidden">
                 <Link href="#projects">
                   <motion.button
                     whileHover={{ scale: 1.05, y: -4 }}
@@ -272,7 +255,12 @@ const HeroSection: React.FC = () => {
                 </Link>
               </div>
 
-              <div className="flex items-center gap-3">
+              <p className="hidden print:block text-sm text-(--text-secondary)">
+                rparandhama63@gmail.com &nbsp;|&nbsp; github.com/PARANDHAMAREDDYBOMMAKA &nbsp;|&nbsp;
+                linkedin.com/in/parandhama-reddy-bommaka
+              </p>
+
+              <div className="flex items-center gap-3 print:hidden">
                 {socialLinks.map((social, index) => (
                   <motion.a
                     key={social.label}
@@ -294,7 +282,7 @@ const HeroSection: React.FC = () => {
             </div>
           </div>
 
-          <div className="hidden lg:block relative">
+          <div className="hidden lg:block relative print:hidden">
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -319,7 +307,7 @@ const HeroSection: React.FC = () => {
           </div>
         </div>
 
-        <div className="lg:hidden mt-12">
+        <div className="lg:hidden mt-12 print:hidden">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}

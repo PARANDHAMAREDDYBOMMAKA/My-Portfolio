@@ -199,7 +199,7 @@ const GitHubStreak: React.FC = () => {
         </div>
       </div>
 
-      <div className="overflow-x-auto pb-4">
+      <div className="streak-graph overflow-x-auto pb-4">
         <div className="inline-block min-w-full">
           <div className="flex gap-1 text-xs text-(--text-muted) mb-2 ml-8">
             {months.map((month, i) => (

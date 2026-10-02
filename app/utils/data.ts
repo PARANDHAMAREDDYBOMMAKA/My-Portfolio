@@ -2,52 +2,112 @@ export interface Project {
   [x: string]: any;
   id: number;
   title: string;
+  kicker: string;
   description: string;
-  link: string;
-  imageUrl: string;
+  link?: string;
+  repo?: string;
+  proxy?: boolean;
+  tags: string[];
+  imageUrl?: string;
 }
+
+const GITHUB = "https://github.com/PARANDHAMAREDDYBOMMAKA";
 
 export const projects: Project[] = [
   {
     id: 1,
-    title: "Open World Games Explore",
-    description: "Built this to scratch my own itch — I wanted a better way to browse open-world games. The fun part was wiring up the filtering logic to feel instant, even with a lot of data.",
-    link: "https://frontend-gamma-woad.vercel.app/",
-    imageUrl: "https://firebasestorage.googleapis.com/v0/b/capstone-46186.appspot.com/o/Screenshot%202024-08-31%20at%202.44.56%E2%80%AFPM.png?alt=media&token=3cb1a934-8047-4195-ae7e-5dcc1039b571",
+    title: "Tone",
+    kicker: "At Product Fusion, May 2025 to present",
+    description:
+      "An open-source platform for building AI voice agents. I work across it: the RAG pipeline, self-hosted speech and language models on GPU Kubernetes, evals and benchmarks, phone and web calling, and the Next.js interface.",
+    link: "https://www.trytone.ai/",
+    repo: "https://github.com/tonehq/tone",
+    tags: ["Python", "FastAPI", "Next.js", "Pipecat", "pgvector", "Kubernetes"],
   },
   {
     id: 2,
-    title: "Examinato",
-    description: "An online exam platform with automated grading. The tricky part was making the timer sync reliably across sessions and handling edge cases when students lose connection mid-exam.",
-    link: "https://client-ten-navy.vercel.app/",
-    imageUrl: "https://firebasestorage.googleapis.com/v0/b/capstone-46186.appspot.com/o/Screenshot%202024-08-31%20at%202.41.09%E2%80%AFPM.png?alt=media&token=01312103-0d82-4641-806e-d13b901bdccd",
+    title: "ClaimGuard",
+    kicker: "Solo build, Jul to Aug 2026",
+    description:
+      "Reads hospital insurance claims with a vision-language model, checks them for duplicates, tampering and implausible figures, then auto-approves or routes them to a reviewer. Every decision lands in a hash-chained audit log.",
+    link: "https://claimguard-pi.vercel.app/",
+    proxy: true,
+    repo: `${GITHUB}/cm`,
+    tags: ["Spring Boot", "Next.js", "Postgres", "Workers AI", "Groq"],
   },
   {
     id: 3,
-    title: "Converse",
-    description: "A real-time chat app. This was my deep dive into WebSockets and managing live state across users. Learned a lot about what happens when two people type at the same time.",
-    link: "https://chat-app-silk-nine.vercel.app/",
-    imageUrl: "https://firebasestorage.googleapis.com/v0/b/capstone-46186.appspot.com/o/Screenshot%202025-12-24%20at%209.41.19%E2%80%AFPM.png?alt=media&token=0ec4416d-dadb-43c0-a6bc-af2d37a0cd59",
+    title: "Voice Agent Pipeline",
+    kicker: "Solo build in Go, Jun 2026",
+    description:
+      "A real-time voice agent written from scratch in Go: speech-to-text, an LLM with tool calling, and text-to-speech streamed over a phone call, with a state machine that handles barge-in.",
+    repo: `${GITHUB}/go-pipeline`,
+    tags: ["Go", "Twilio", "Deepgram", "Cartesia", "OpenAI"],
   },
   {
     id: 4,
-    title: "Claims Management",
-    description: "Built for managing insurance claims end-to-end. The challenge was modeling the claim lifecycle with all its status transitions and making the UI clear for non-technical users.",
-    link: "https://minimal-claims.vercel.app/",
-    imageUrl: "https://firebasestorage.googleapis.com/v0/b/capstone-46186.appspot.com/o/Screenshot%202025-03-21%20at%2011.14.48%E2%80%AFAM.png?alt=media&token=7ec9c700-e944-4224-961c-f87ec6e8d8a1",
+    title: "Kube",
+    kicker: "Solo build in Go, Mar to Jul 2026",
+    description:
+      "A self-hosted Kubernetes-as-a-service API. REST endpoints create, scale and delete real k3s clusters inside Docker, behind JWT auth and per-IP rate limiting.",
+    repo: `${GITHUB}/kubernetes`,
+    tags: ["Go", "k3s", "Docker", "JWT"],
   },
   {
     id: 5,
-    title: "Library Management",
-    description: "A system for tracking books and borrowers. Straightforward on the surface, but handling overdue logic, availability states, and search across thousands of records taught me a lot about data modeling.",
-    link: "https://library-management-gamma-nine.vercel.app/",
-    imageUrl: "https://firebasestorage.googleapis.com/v0/b/capstone-46186.appspot.com/o/Screenshot%202025-03-21%20at%2011.17.18%E2%80%AFAM.png?alt=media&token=b40c321e-11dd-42d5-a407-fbf683a7a59e",
+    title: "FarmCon",
+    kicker: "Solo build, Jan to Apr 2025",
+    description:
+      "A marketplace connecting farmers, suppliers and buyers, with a dashboard for each. Real-time order notifications over Socket.io, and search that went from 500 ms to 50 ms with MeiliSearch and Redis.",
+    link: "https://farmcon-cyan.vercel.app/",
+    repo: `${GITHUB}/farmcon`,
+    tags: ["Next.js 15", "PostgreSQL", "Prisma", "Socket.io", "Redis"],
   },
   {
     id: 6,
-    title: "Farmcon",
-    description: "Connects farmers directly with consumers. The interesting problem was designing the product listing flow so farmers with limited tech experience could manage their inventory easily.",
-    link: "https://farmcon-cyan.vercel.app/",
-    imageUrl: "https://firebasestorage.googleapis.com/v0/b/capstone-46186.appspot.com/o/Screenshot%202025-12-24%20at%209.45.07%E2%80%AFPM.png?alt=media&token=26539b98-0b80-4ee2-bcd6-8aad5eea0136",
+    title: "Converse",
+    kicker: "Solo build",
+    description:
+      "A real-time chat app with video and audio calls. This was my deep dive into live state across users, and what happens when two people type at the same time.",
+    link: "https://chat-app-silk-nine.vercel.app/",
+    imageUrl: "/projects/converse.jpg",
+    repo: `${GITHUB}/realtime-chat-application`,
+    tags: ["Next.js", "Convex", "Clerk", "LiveKit"],
+  },
+  {
+    id: 7,
+    title: "Examinato",
+    kicker: "Capstone project",
+    description:
+      "An online exam platform with automated grading. The tricky part was making the timer sync reliably across sessions and handling students who lose connection mid-exam.",
+    link: "https://client-ten-navy.vercel.app/",
+    tags: ["JavaScript"],
+  },
+  {
+    id: 8,
+    title: "Open World Games Explore",
+    kicker: "Side project",
+    description:
+      "Built to scratch my own itch: a better way to browse open-world games. The fun part was making the filtering feel instant, even with a lot of data.",
+    link: "https://frontend-gamma-woad.vercel.app/",
+    tags: ["JavaScript"],
+  },
+  {
+    id: 9,
+    title: "Claims Management",
+    kicker: "Side project",
+    description:
+      "Manages insurance claims end to end. The challenge was modelling the claim lifecycle with all its status transitions and keeping the UI clear for non-technical users.",
+    link: "https://minimal-claims.vercel.app/",
+    tags: ["JavaScript"],
+  },
+  {
+    id: 10,
+    title: "Library Management",
+    kicker: "Side project",
+    description:
+      "Tracks books and borrowers. Simple on the surface, but overdue logic, availability states and search across thousands of records taught me a lot about data modelling.",
+    link: "https://library-management-gamma-nine.vercel.app/",
+    tags: ["TypeScript"],
   },
 ];

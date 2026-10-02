@@ -1,26 +1,204 @@
 "use client";
 
 import React, { useRef, useEffect, useState } from "react";
-import { motion } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
+import { ArrowUpRight, Github } from "lucide-react";
 import { useDevice } from "../hooks/useDevice";
-import { projects } from "../utils/data";
-import { ArrowUpRight, ExternalLink, Sparkles } from "lucide-react";
-import HalftoneLoupe from "./HalftoneLoupe";
+import { projects, Project } from "../utils/data";
+import { useGazetteMotion } from "../utils/motion";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
+const FRAME_WIDTH = 1280;
+
+const LiveFrame: React.FC<{ url: string; title: string; proxyId?: number; overlay?: boolean }> = ({
+  url,
+  title,
+  proxyId,
+  overlay,
+}) => {
+  const boxRef = useRef<HTMLDivElement>(null);
+  const [box, setBox] = useState({ width: 0, height: 0 });
+  const [near, setNear] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    const el = boxRef.current;
+    if (!el) return;
+
+    const fit = () => setBox({ width: el.clientWidth, height: el.clientHeight });
+    fit();
+    const sizeObserver = new ResizeObserver(fit);
+    sizeObserver.observe(el);
+
+    const viewObserver = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setNear(true);
+          viewObserver.disconnect();
+        }
+      },
+      { rootMargin: "300px" }
+    );
+    viewObserver.observe(el);
+
+    return () => {
+      sizeObserver.disconnect();
+      viewObserver.disconnect();
+    };
+  }, []);
+
+  const scale = box.width / FRAME_WIDTH;
+
+  return (
+    <div ref={boxRef} className={`absolute inset-0 overflow-hidden ${loaded || overlay ? "" : "img-loading"}`}>
+      {near && scale > 0 && (
+        <iframe
+          src={proxyId ? `/api/preview?id=${proxyId}` : url}
+          title={`Live preview of ${title}`}
+          loading="lazy"
+          onLoad={() => setLoaded(true)}
+          sandbox={proxyId ? "" : "allow-scripts allow-same-origin"}
+          referrerPolicy="no-referrer"
+          tabIndex={-1}
+          className={`absolute left-0 top-0 origin-top-left border-0 pointer-events-none transition-opacity duration-700 ${
+            loaded ? "opacity-100" : "opacity-0"
+          }`}
+          style={{
+            width: FRAME_WIDTH,
+            maxWidth: "none",
+            height: Math.ceil(box.height / scale),
+            transform: `scale(${scale})`,
+          }}
+        />
+      )}
+      <a
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`Open ${title} live site`}
+        className="group/open absolute inset-0 flex items-end justify-end p-4"
+      >
+        <span className="byline normal-case tracking-normal flex items-center gap-1.5 px-3 py-1.5 rounded-full glass-strong text-(--text-primary) opacity-0 translate-y-1 group-hover/open:opacity-100 group-hover/open:translate-y-0 transition-all duration-300 ease-(--ease-soft)">
+          Live now &middot; open site <ArrowUpRight size={13} />
+        </span>
+      </a>
+    </div>
+  );
+};
+
+const Screenshot: React.FC<{ project: Project }> = ({ project }) => {
+  const [live, setLive] = useState(false);
+
+  useEffect(() => {
+    if (!project.link) return;
+    let alive = true;
+    fetch(`/api/preview?id=${project.id}&check=1`)
+      .then((r) => r.json())
+      .then((d) => {
+        if (alive && d?.live) setLive(true);
+      })
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, [project.id, project.link]);
+
+  return (
+    <>
+      <a
+        href={project.link ?? project.repo}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`Open ${project.title}`}
+        className="absolute inset-0 overflow-hidden"
+      >
+        <Image
+          src={project.imageUrl ?? ""}
+          alt={`Screenshot of ${project.title}`}
+          fill
+          sizes="(max-width: 1024px) 90vw, 45vw"
+          className="object-cover object-top"
+        />
+      </a>
+      {live && project.link && <LiveFrame url={project.link} title={project.title} overlay />}
+    </>
+  );
+};
+
+const Placard: React.FC<{ project: Project }> = ({ project }) => (
+  <div className="absolute inset-0 halftone bg-(--bg-tertiary) flex flex-col items-center justify-center text-center px-8">
+    <span className="text-display italic text-4xl lg:text-5xl text-(--text-primary) ink-misreg">
+      {project.title}
+    </span>
+    <span className="byline normal-case tracking-normal mt-4 max-w-xs">
+      No public demo. This one runs on a server, so the source is the exhibit.
+    </span>
+  </div>
+);
+
+const ProjectCard: React.FC<{ project: Project; className?: string }> = ({ project, className = "" }) => (
+  <article
+    className={`project-card group flex flex-col rounded-2xl overflow-hidden bg-(--bg-card) border border-(--border-default) hover:border-(--border-hover) shadow-(--shadow-md) hover:shadow-(--shadow-lg) transition-all duration-500 ease-(--ease-soft) ${className}`}
+  >
+    <div className="project-preview relative flex-1 min-h-52 border-b border-(--border-default)">
+      {project.imageUrl ? (
+        <Screenshot project={project} />
+      ) : project.link ? (
+        <LiveFrame url={project.link} title={project.title} proxyId={project.proxy ? project.id : undefined} />
+      ) : (
+        <Placard project={project} />
+      )}
+    </div>
+    <div className="p-6 lg:p-7">
+      <span className="byline normal-case tracking-normal">{project.kicker}</span>
+      <h3 className="text-display text-2xl lg:text-3xl text-(--text-primary) mt-1.5 mb-2.5">
+        {project.title}
+      </h3>
+      <p className="text-(--text-secondary) text-sm lg:text-[0.95rem] leading-relaxed line-clamp-3 mb-4">
+        {project.description}
+      </p>
+      <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
+        <p className="text-caption">{project.tags.join(" / ")}</p>
+        <div className="project-links flex items-center gap-4 text-sm font-medium">
+          {project.link && (
+            <a
+              href={project.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="link-underline flex items-center gap-1 hover:text-(--primary) transition-colors"
+            >
+              Visit <ArrowUpRight size={15} />
+            </a>
+          )}
+          {project.repo && (
+            <a
+              href={project.repo}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="link-underline flex items-center gap-1.5 hover:text-(--primary) transition-colors"
+            >
+              <Github size={15} /> Source
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+  </article>
+);
+
 const HorizontalProjects: React.FC = () => {
-  const sectionRef = useRef<HTMLElement>(null);
   const triggerRef = useRef<HTMLDivElement>(null);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const barRef = useRef<HTMLDivElement>(null);
   const { isMobile } = useDevice();
   const [activeIndex, setActiveIndex] = useState(0);
   const [isMounted, setIsMounted] = useState(false);
+  const sectionRef = useGazetteMotion<HTMLElement>(`${isMounted}-${isMobile}`);
 
   useEffect(() => {
     setIsMounted(true);
@@ -29,31 +207,29 @@ const HorizontalProjects: React.FC = () => {
   useEffect(() => {
     if (!isMounted || isMobile) return;
 
-    const scrollContainer = scrollContainerRef.current;
+    const track = trackRef.current;
     const trigger = triggerRef.current;
-    if (!scrollContainer || !trigger) return;
+    if (!track || !trigger) return;
 
-    const totalWidth = scrollContainer.scrollWidth - window.innerWidth + 200;
+    const distance = () => Math.max(0, track.scrollWidth - window.innerWidth);
 
     const ctx = gsap.context(() => {
-      gsap.to(scrollContainer, {
-        x: -totalWidth,
+      gsap.to(track, {
+        x: () => -distance(),
         ease: "none",
         scrollTrigger: {
-          trigger: trigger,
+          trigger,
           start: "top top",
-          end: () => `+=${totalWidth}`,
+          end: () => `+=${distance()}`,
           pin: true,
-          scrub: 1,
+          scrub: 0.6,
           anticipatePin: 1,
           invalidateOnRefresh: true,
           onUpdate: (self) => {
-            const progress = self.progress;
-            const newIndex = Math.min(
-              Math.floor(progress * projects.length),
-              projects.length - 1
+            barRef.current?.style.setProperty("transform", `scaleX(${self.progress})`);
+            setActiveIndex(
+              Math.min(Math.round(self.progress * (projects.length - 1)), projects.length - 1)
             );
-            setActiveIndex(newIndex);
           },
         },
       });
@@ -62,73 +238,32 @@ const HorizontalProjects: React.FC = () => {
     return () => ctx.revert();
   }, [isMobile, isMounted]);
 
+  const heading = (
+    <>
+      <span data-ink className="byline mb-3 block">The Portfolio &mdash; selected works</span>
+      <h2 data-ink className="text-display text-4xl md:text-5xl lg:text-6xl text-(--text-primary)">
+        Things I&rsquo;ve Built
+      </h2>
+    </>
+  );
+
   if (!isMounted) {
-    return (
-      <section id="projects" className="py-24 bg-(--bg-secondary)">
-        <div className="max-w-5xl mx-auto px-6">
-          <div className="h-96 flex items-center justify-center">
-            <div className="w-8 h-8 border-2 border-(--primary) border-t-transparent rounded-full animate-spin" />
-          </div>
-        </div>
-      </section>
-    );
+    return <section id="projects" ref={sectionRef} className="sheet-edge relative min-h-screen bg-(--bg-secondary)" />;
   }
 
   if (isMobile) {
     return (
-      <section id="projects" className="py-24 bg-(--bg-secondary)">
+      <section id="projects" ref={sectionRef} className="sheet-edge relative py-24 bg-(--bg-secondary)">
         <div className="max-w-5xl mx-auto px-6">
           <div className="mb-10">
-            <span className="byline mb-3 block">The Portfolio — selected works</span>
-            <h2 className="text-display text-4xl text-(--text-primary)">
-              Things I&rsquo;ve Built
-            </h2>
-            <div className="rule-double mt-6" />
+            {heading}
+            <div data-rule className="rule-double mt-6" />
           </div>
-          <div className="space-y-6">
-            {projects.map((project, i) => (
-              <motion.div
-                key={project.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="group relative bg-(--bg-card) rounded-2xl overflow-hidden border border-(--border-subtle)"
-              >
-                <div className="relative h-52 overflow-hidden">
-                  <Image
-                    src={project.imageUrl}
-                    alt={project.title}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent" />
-                  <div className="absolute top-4 left-4">
-                    <span className="px-3 py-1.5 bg-white/10 backdrop-blur-md rounded-full text-white text-xs font-medium flex items-center gap-1">
-                      <Sparkles size={12} />
-                      Featured
-                    </span>
-                  </div>
-                </div>
-                <div className="p-6">
-                  <div className="flex items-start justify-between gap-4 mb-3">
-                    <h3 className="text-xl font-bold text-(--text-primary)">{project.title}</h3>
-                    <span className="text-xs font-mono text-(--text-muted) bg-(--bg-elevated) px-2 py-1 rounded">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                  </div>
-                  <p className="text-(--text-muted) text-sm mb-5 line-clamp-2">{project.description}</p>
-                  <a
-                    href={project.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-(--primary) text-white text-sm font-medium rounded-xl hover:opacity-90 transition-opacity"
-                  >
-                    View Project <ArrowUpRight size={16} />
-                  </a>
-                </div>
-              </motion.div>
+          <div className="space-y-8">
+            {projects.map((project) => (
+              <div key={project.id} data-ink>
+                <ProjectCard project={project} className="min-h-[26rem]" />
+              </div>
             ))}
           </div>
         </div>
@@ -137,140 +272,60 @@ const HorizontalProjects: React.FC = () => {
   }
 
   return (
-    <section id="projects" ref={sectionRef} className="relative bg-(--bg-secondary)">
-      <div ref={triggerRef} className="relative overflow-hidden">
+    <section id="projects" ref={sectionRef} className="sheet-edge relative bg-(--bg-secondary)">
+      <div ref={triggerRef} className="projects-pin relative overflow-hidden bg-(--bg-secondary)">
         <div className="h-screen flex flex-col">
-          <div className="pt-20 px-12 pb-6">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-            >
-              <span className="byline mb-3 block">The Portfolio — selected works</span>
-              <div className="flex items-end justify-between">
-                <h2 className="text-display text-5xl lg:text-6xl text-(--text-primary)">
-                  Things I&rsquo;ve Built
-                </h2>
-                <div className="hidden lg:flex items-center gap-6">
-                  <div className="flex items-center gap-3">
-                    {projects.map((_, i) => (
-                      <div
-                        key={i}
-                        className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                          i === activeIndex ? "w-8 bg-(--primary)" : "bg-(--border-subtle)"
-                        }`}
-                      />
-                    ))}
-                  </div>
-                  <span className="text-(--text-muted) text-sm font-mono">
-                    {String(activeIndex + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}
-                  </span>
+          <div className="projects-head pt-20 px-12 pb-5">
+            <div className="flex items-end justify-between gap-8">
+              <div>{heading}</div>
+              <div className="hidden lg:flex items-center gap-6 pb-2">
+                <div className="flex items-center gap-2">
+                  {projects.map((project, i) => (
+                    <div
+                      key={project.id}
+                      className={`h-1.5 rounded-full transition-all duration-500 ease-(--ease-soft) ${
+                        i === activeIndex ? "w-8 bg-(--primary)" : "w-1.5 bg-(--border-default)"
+                      }`}
+                    />
+                  ))}
                 </div>
+                <span className="text-(--text-muted) text-sm font-mono tabular-nums">
+                  {String(activeIndex + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}
+                </span>
               </div>
-            </motion.div>
+            </div>
           </div>
 
-          <div
-            ref={scrollContainerRef}
-            className="flex-1 flex items-center gap-8 px-12 will-change-transform"
-          >
-            {projects.map((project, index) => (
-              <div
-                key={project.id}
-                className="shrink-0 w-[65vw] lg:w-[45vw] h-[65vh]"
-                data-cursor="project"
-                data-cursor-text="View"
-              >
-                <div className="group relative h-full rounded-3xl overflow-hidden bg-(--bg-card) border border-(--border-subtle) hover:border-(--primary)/40 transition-all duration-500 shadow-2xl shadow-black/20">
-                  <div className="absolute inset-0">
-                    <Image
-                      src={project.imageUrl}
-                      alt={project.title}
-                      fill
-                      sizes="(max-width: 1024px) 65vw, 45vw"
-                      className="object-cover transition-transform duration-700 group-hover:scale-105"
-                      priority={index < 2}
-                    />
-                    <div className="absolute inset-0 bg-linear-to-t from-black via-black/60 to-black/20" />
-                    <HalftoneLoupe src={project.imageUrl} />
-                  </div>
-
-                  <div className="absolute top-6 left-6 right-6 z-30 flex items-start justify-between">
-                    <span className="px-4 py-2 bg-white/10 backdrop-blur-md rounded-full text-white text-xs font-medium flex items-center gap-2">
-                      <Sparkles size={12} />
-                      Featured Project
-                    </span>
-                    <span className="text-5xl font-bold text-white/10 font-mono">
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-                  </div>
-
-                  <div className="absolute inset-x-0 bottom-0 z-30 p-8 flex flex-col">
-                    <h3 className="text-3xl lg:text-4xl font-bold text-white mb-3">
-                      {project.title}
-                    </h3>
-                    <p className="text-white/70 text-sm lg:text-base max-w-lg mb-6 line-clamp-2">
-                      {project.description}
-                    </p>
-
-                    <div className="flex items-center gap-4">
-                      <a
-                        href={project.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group/btn relative px-6 py-3 bg-white text-black font-medium rounded-xl flex items-center gap-2 overflow-hidden transition-transform hover:scale-105"
-                        data-magnetic
-                      >
-                        <span className="relative z-10 flex items-center gap-2">
-                          Live Demo <ArrowUpRight size={16} className="transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
-                        </span>
-                      </a>
-                      <a
-                        href={project.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/20 transition-colors"
-                        data-magnetic
-                      >
-                        <ExternalLink size={20} />
-                      </a>
-                    </div>
-                  </div>
-
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
-                    <div className="absolute inset-0 bg-linear-to-tr from-(--primary)/10 to-transparent" />
-                  </div>
-                </div>
-              </div>
+          <div ref={trackRef} className="projects-track flex-1 min-h-0 flex items-stretch gap-8 px-12 py-2 will-change-transform">
+            {projects.map((project) => (
+              <ProjectCard key={project.id} project={project} className="shrink-0 w-[62vw] lg:w-[44vw]" />
             ))}
 
-            <div className="shrink-0 w-[30vw] h-[65vh] flex items-center justify-center">
+            <div className="project-more shrink-0 w-[30vw] flex items-center justify-center">
               <div className="text-center">
-                <p className="text-(--text-muted) text-lg mb-4">Want to see more?</p>
+                <p className="text-display italic text-2xl text-(--text-primary) mb-5">More in the archive</p>
                 <a
                   href="https://github.com/PARANDHAMAREDDYBOMMAKA"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-6 py-3 border border-(--border-subtle) rounded-xl text-(--text-primary) hover:bg-(--bg-card) transition-colors"
-                  data-magnetic
+                  className="inline-flex items-center gap-2 px-6 py-3 border border-(--border-default) rounded-xl text-(--text-primary) hover:border-(--primary) hover:text-(--primary) transition-colors duration-300"
                 >
-                  View All Projects <ArrowUpRight size={16} />
+                  All repositories <ArrowUpRight size={16} />
                 </a>
               </div>
             </div>
           </div>
 
-          <div className="px-12 py-6">
+          <div className="projects-foot px-12 py-5">
             <div className="flex items-center gap-4">
-              <div className="flex-1 h-1 bg-(--border-subtle) rounded-full overflow-hidden">
+              <div className="flex-1 h-px bg-(--border-default) overflow-hidden">
                 <div
-                  className="h-full bg-linear-to-r from-(--primary) to-purple-500 rounded-full transition-all duration-300"
-                  style={{ width: `${((activeIndex + 1) / projects.length) * 100}%` }}
+                  ref={barRef}
+                  className="h-full origin-left bg-(--primary)"
+                  style={{ transform: "scaleX(0)" }}
                 />
               </div>
-              <span className="text-(--text-muted) text-sm">
-                Scroll to explore
-              </span>
+              <span className="byline normal-case tracking-normal">Keep scrolling to turn the page</span>
             </div>
           </div>
         </div>

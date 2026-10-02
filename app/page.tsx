@@ -15,20 +15,20 @@ const Home: React.FC = () => (
   <>
     <div className="p-0 m-0">
       <DynamicIsland />
-      <HeroSection />
-      <PrintReveal><AboutSection /></PrintReveal>
-      <PrintReveal><ExperienceSection /></PrintReveal>
-      <PrintReveal><TechStacksSection /></PrintReveal>
-      <PrintReveal><GitHubStats /></PrintReveal>
-      <PrintReveal>
-        <section className="py-16 bg-(--bg-secondary)">
+      <PrintReveal anchor="top"><HeroSection /></PrintReveal>
+      <PrintReveal anchor="about"><AboutSection /></PrintReveal>
+      <PrintReveal anchor="experience"><ExperienceSection /></PrintReveal>
+      <HorizontalProjects />
+      <PrintReveal anchor="techstacks"><TechStacksSection /></PrintReveal>
+      <PrintReveal anchor="github">
+        <section id="github" className="bg-(--bg-primary) pb-20">
+          <GitHubStats />
           <div className="max-w-6xl mx-auto px-6">
             <GitHubStreak />
           </div>
         </section>
       </PrintReveal>
-      <HorizontalProjects />
-      <PrintReveal><ContactSection /></PrintReveal>
+      <PrintReveal anchor="contact"><ContactSection /></PrintReveal>
       <Footer />
     </div>
   </>

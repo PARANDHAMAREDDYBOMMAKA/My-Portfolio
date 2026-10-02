@@ -23,7 +23,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index, featured = fa
       >
         <div className="relative h-56 md:h-auto md:w-3/5 overflow-hidden bg-(--bg-elevated) shrink-0">
           <Image
-            src={project.imageUrl}
+            src={project.imageUrl ?? ""}
             alt={project.title}
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -59,7 +59,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index, featured = fa
     >
       <div className="relative h-48 overflow-hidden bg-(--bg-elevated)">
         <Image
-          src={project.imageUrl}
+          src={project.imageUrl ?? ""}
           alt={project.title}
           fill
           className="object-cover transition-transform duration-500 group-hover:scale-105"

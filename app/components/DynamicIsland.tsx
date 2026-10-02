@@ -9,8 +9,8 @@ import { X, User, Briefcase, Code2, FolderGit2, Mail, ChevronRight } from "lucid
 const NAV_ITEMS = [
   { name: "About", href: "#about", icon: User },
   { name: "Experience", href: "#experience", icon: Briefcase },
-  { name: "Skills", href: "#techstacks", icon: Code2 },
   { name: "Projects", href: "#projects", icon: FolderGit2 },
+  { name: "Skills", href: "#techstacks", icon: Code2 },
   { name: "Contact", href: "#contact", icon: Mail },
 ];
 
@@ -57,9 +57,13 @@ const DynamicIsland: React.FC = () => {
   }, []);
 
   const handleNavClick = (href: string) => {
-    const element = document.querySelector(href);
+    const element =
+      document.querySelector(`[data-anchor="${href.slice(1)}"]`) ?? document.querySelector(href);
     if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+      window.scrollTo({
+        top: element.getBoundingClientRect().top + window.scrollY,
+        behavior: "smooth",
+      });
       setIsExpanded(false);
     }
   };
@@ -70,7 +74,7 @@ const DynamicIsland: React.FC = () => {
   };
 
   return (
-    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50">
+    <div className="no-print fixed top-4 left-1/2 -translate-x-1/2 z-50">
       <motion.div
         ref={islandRef}
         className="relative"

@@ -72,7 +72,7 @@ body {
   padding: 0;
   font-family: var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   min-height: 100vh;
-  overflow-x: hidden;
+  overflow-x: clip;
   width: 100%;
   position: relative;
   -webkit-font-smoothing: antialiased;
@@ -392,9 +392,44 @@ h1, h2, h3, h4, h5, h6 {
     -1.5px 1.5px 0 rgba(192, 90, 61, 0.22);
 }
 
-/* Print-head reveal — sections print in as they enter the viewport */
 .print-reveal {
   position: relative;
+}
+
+.sheet {
+  position: sticky;
+  top: var(--sheet-top, 0px);
+  background: var(--bg-primary);
+}
+.sheet,
+.sheet-edge {
+  box-shadow: 0 -26px 50px -30px rgba(60, 40, 20, 0.4), 0 -1px 0 rgba(36, 28, 20, 0.14);
+}
+.sheet-edge {
+  z-index: 1;
+}
+.sheet-inner {
+  transform-origin: 50% 100%;
+  transform: scale(calc(1 - var(--cover, 0) * 0.045));
+}
+.sheet::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  background: #241c14;
+  opacity: calc(var(--cover, 0) * 0.42);
+}
+.sheet-covered .sheet-inner {
+  visibility: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sheet {
+    position: relative;
+    top: auto;
+  }
 }
 .print-head {
   position: absolute;
@@ -455,22 +490,50 @@ html.newsprint body::after {
   opacity: 0.55;
 }
 
-/* ─────────────  PRINT EDITION (real @media print)  ───────────── */
 @media print {
   @page {
-    margin: 16mm 14mm;
+    size: A4;
+    margin: 14mm 13mm 16mm;
   }
-  html, body {
+  :root {
+    --text-primary: #111;
+    --text-secondary: #222;
+    --text-muted: #444;
+    --bg-base: #fff;
+    --bg-primary: #fff;
+    --bg-secondary: #fff;
+    --bg-tertiary: #fff;
+    --bg-card: #fff;
+    --bg-elevated: #fff;
+    --border-subtle: rgba(0, 0, 0, 0.28);
+    --border-default: rgba(0, 0, 0, 0.45);
+  }
+  html,
+  body {
     background: #fff !important;
     color: #111 !important;
+    font-size: 10.5pt;
   }
-  /* Hide screen-only chrome, effects & interactive furniture */
+  *,
+  *::before,
+  *::after {
+    box-shadow: none !important;
+    text-shadow: none !important;
+    animation: none !important;
+    transition: none !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
   .no-print,
   .tractor-feed,
   .printer-slot,
   .print-head,
   .grain-overlay,
+  .project-preview,
+  .project-more,
+  .projects-foot,
   canvas,
+  iframe,
   .stamp,
   .handwritten,
   .handwritten-arrow,
@@ -481,14 +544,49 @@ html.newsprint body::after {
   body::after {
     display: none !important;
   }
+  .sheet {
+    position: static !important;
+  }
+  .sheet-inner {
+    transform: none !important;
+    visibility: visible !important;
+  }
+  .sheet::after {
+    display: none !important;
+  }
+  [data-ink],
+  #github * {
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+  }
+  [data-rule] {
+    transform: none !important;
+  }
   section,
   footer {
-    padding: 8mm 0 !important;
+    padding: 6mm 0 !important;
+    min-height: 0 !important;
+    overflow: visible !important;
     background: #fff !important;
-    break-inside: avoid;
   }
-  h1, h2, h3, .text-display {
-    color: #111 !important;
+  section > div,
+  footer > div {
+    max-width: none !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  .byline {
+    break-after: avoid;
+  }
+  p,
+  li {
+    orphans: 3;
+    widows: 3;
   }
   a {
     color: #111 !important;
@@ -500,8 +598,66 @@ html.newsprint body::after {
   img {
     filter: grayscale(1) contrast(1.1);
   }
+  .print-columns {
+    columns: 2;
+    column-gap: 8mm;
+  }
+  .print-card {
+    break-inside: avoid;
+    border-color: #111 !important;
+  }
+  .pin-spacer,
+  .projects-pin {
+    position: static !important;
+    inset: auto !important;
+    transform: none !important;
+    width: auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-width: none !important;
+    max-height: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+  .projects-pin > div {
+    display: block !important;
+    height: auto !important;
+  }
+  .projects-head {
+    padding: 0 0 5mm !important;
+  }
+  .projects-track {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 5mm !important;
+    padding: 0 !important;
+    transform: none !important;
+  }
+  .project-card {
+    width: auto !important;
+    break-inside: avoid;
+    border: 0.3mm solid #111 !important;
+    border-radius: 0 !important;
+  }
+  .project-card p {
+    display: block !important;
+    overflow: visible !important;
+    -webkit-line-clamp: unset !important;
+  }
+  .project-links a::after,
+  .print-url::after {
+    content: " <" attr(href) ">";
+    font-family: var(--font-mono), monospace;
+    font-size: 7pt;
+    font-weight: 400;
+    word-break: break-all;
+  }
+  .streak-graph {
+    zoom: 0.8;
+    overflow: visible !important;
+  }
 }
-
 
 .card {
   background: var(--bg-card);
@@ -819,3 +975,4 @@ iframe {
 *:focus:not(:focus-visible) {
   outline: none;
 }
+

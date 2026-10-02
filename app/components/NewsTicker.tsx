@@ -33,8 +33,8 @@ const NewsTicker: React.FC = () => {
       setItems([
         ...base,
         ...extra,
-        "STATUS — Open for freelance & full-time",
-        "DESK — Built by hand in Hyderabad",
+        "STATUS — Open to GenAI & full-stack roles",
+        "DESK — Filed from Hyderabad",
         "COFFEE LEVEL — Dangerously high ☕",
       ]);
     };
