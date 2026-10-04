@@ -4,15 +4,15 @@ import React from "react";
 import { useGazetteMotion } from "../utils/motion";
 
 const paragraphs = [
-  <>I got into programming the way most people do &mdash; I wanted to build something and Googled my way through it. That first project was terrible, but the feeling of making something work on screen was enough to keep me going. A hundred-odd repositories later, that curiosity has become a craft.</>,
-  <>Today I&apos;m a Full Stack Engineer intern at Product Fusion, working on Tone, an open-source platform for building AI voice agents. I built its retrieval pipeline on Docling and pgvector, self-host speech and language models on GPU Kubernetes, and wrote the benchmarks that say whether any of it is fast enough for a live call.</>,
-  <>I like the unglamorous middle of AI products: clean ingestion, honest latency numbers, autoscaling that lets a call survive a pod restart. On my own time I build things end to end to learn them properly &mdash; a voice pipeline in Go, a Kubernetes-as-a-service API, an insurance fraud platform.</>,
-  <>Studying Software Engineering at The Apollo University, graduating 2027. Based in Hyderabad, India, and open to GenAI and full-stack roles.</>,
+  <>I got into programming the way most people do &mdash; I wanted to build something and Googled my way through it. That first project was terrible, but the feeling of making something work on screen was enough to keep going.</>,
+  <>Today I&apos;m a Full Stack Engineer intern at Product Fusion, working on Tone, an open-source platform for building AI voice agents. I built its retrieval pipeline on Docling and pgvector, selected embeddings with practical relevance, and kept the product focused on real agent workflows instead of demo-only UX.</>,
+  <>I like the unglamorous middle of AI products: clean ingestion, honest latency numbers, autoscaling that lets a call survive a pod restart. On my own time I build things end to end to learn them properly, especially when they touch backend systems, infrastructure, or developer experience.</>,
+  <>Studying Software Engineering at Kalvium, graduating 2027 with a CGPA of 9.4. Based in Hyderabad, India, and open to GenAI and full-stack roles.</>,
 ];
 
 const currentlyItems = [
   { label: "Building", value: "Tone, an open-source AI voice agent platform, at Product Fusion" },
-  { label: "Studying", value: "B.Tech Software Engineering, The Apollo University (2023 to 2027)" },
+  { label: "Studying", value: "B.Tech Software Engineering, Kalvium (2023 to 2027) · CGPA: 9.4" },
   { label: "Stack", value: "Python, FastAPI, TypeScript, Next.js, Go, Kubernetes" },
   { label: "Location", value: "Hyderabad, India (UTC +05:30)" },
 ];
